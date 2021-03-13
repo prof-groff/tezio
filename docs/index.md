@@ -8,3 +8,7 @@ Tezio (pronounced tez-eye-oh) aims to develop open-source tools to connect IoT d
 * [Arduino](https://arduino.cc)
 * [IoT with Archetype](https://docs.archetype-lang.org/contract-library/iot/switch)
 * ["Three-Legged-Stool" of Cryptography](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8972-CryptoAuth-3-Legged-Stool-Article.pdf)
+
+## Pages
+
+* [IoT with Arduino MKR](arduino_iot.md)
