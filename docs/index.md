@@ -12,3 +12,6 @@ Tezio (pronounced tez-eye-oh) aims to develop open-source tools to connect IoT d
 ## Pages
 
 * [IoT with Arduino MKR](arduino_iot.md)
+
+## Resources
+* [OSH Park](https://oshpark.com/) on-demand PCB manufacturing.
