@@ -15,3 +15,5 @@ Tezio (pronounced tez-eye-oh) aims to develop open-source tools to connect IoT d
 
 ## Resources
 * [OSH Park](https://oshpark.com/) on-demand PCB manufacturing.
+* [Project boards on OSH Park](https://oshpark.com/profiles/AetherBot)
+* [Project boards on SeeedStudio Fusion](https://www.seeedstudio.com/Langstroth-Bee-Hive-Deep-Frame-Foundation-g-1102593)
