@@ -1,6 +1,8 @@
 ## About
 
-Tezio (pronounced tez-eye-oh) aims to develop open-source tools to connect IoT devices with the Tezos blockchain. With the arrival of integrated circuits like the Microchip ECC608 crypto chip, IoT devices can now securely participate in networks using eliptic curve digital signatures algorithms and Diffie Hellman key exchange. Tezio is developing on Arduino open-source hardware. 
+The Tezio project aims to develop open-source hardware and software tools to connect IoT devices with the Tezos blockchain. Using integrated circuits like the Microchip ECC608 crypto chip, IoT devices can now securely participate in networks using eliptic curve digital signatures algorithms and Diffie Hellman key exchange. 
+
+[Project Overview](project_overview.md)
 
 ## Knowledge
 
