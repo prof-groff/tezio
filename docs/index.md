@@ -11,6 +11,7 @@ Tezio (pronounced tez-eye-oh) aims to develop open-source tools to connect IoT d
 
 ## Pages
 
+* [Summary of How Tezos Addresses are Deterministically Related to Private Keys](tezos_crypto_intro.md)
 * [IoT with Arduino MKR](arduino_iot.md)
 
 ## Resources
