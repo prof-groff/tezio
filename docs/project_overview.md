@@ -7,6 +7,7 @@
 ## Hardware
 * Developed on low-cost open-source hardware
   - Arduino or Arduino compatible, Raspberry Pi
+  - [Scout Project](hardware/scout.md)
 * Edge devices use WiFi, 2.4 Ghz mesh networks (e.g., Zigbee), or LoRa communications to directly interact with cloud resources or with a network-connected coordinator.
 * Cryptographic private keys are stored on tamper proof cyrptographic integrated circuits (cryptochips).
 
