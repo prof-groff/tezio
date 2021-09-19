@@ -9,6 +9,8 @@
 - Switchable XBee and MCU Status LEDs 
 - An Arduino Library Including a Scout Class to Facilitate Entry and Exit from Low-Power XBee and MCU Sleep States
 
+![Scout](scout.jpg)
+
 **Overview**
 
 Scout is a small-footprint (< 4 in<sup>2</sup>), XBee RF module-ready, Arduino-compatible, single-board platform designed for deploying low-power wireless sensor modules as part of a wireless sensor network. Target applications include environmental monitoring and environmental. XBee RF modules are widely used in the open-source hardware community to provide wireless serial communication between devices. These radios are relatively easy to program, well supported by Digi International, and available in a variety of power envelopes for short-range (< 30 m) and long range (> 1000 m) transmission. Moreover, a variety of XBee shields exist for the Arduino platform making these radios easy to incorporate into Arduino projects. Unlike other available XBee radio hardware, Scout is designed specifically with low-power applications in mind. 
@@ -64,6 +66,8 @@ Scout is designed using all through-hole componentsThe decision to use all throu
 Scout uses a Microchip MCP1702 low drop-out voltage regulator, and is designed specifically for low-power wireless sensor networks. The Microchip MCP1702 regulator accepts input voltages from 2.7 to 13.2 V and outputs 3.3 V making it ideal for small battery applications including single cell lithium polymer batteries (3.7 V). Importantly, the MCP1702 is designed with battery applications in mind having an extremely low quiescent current of approximately 2 microA. The regulator is capable of supplying sustained output of 250 mA and peak output of 500 mA making it idea to power the ATmega328, a small number of sensors, and an XBee radio. 
 
 ## Current State of Development
+
+![PCB](scoutv1brd.png)
 
 - PCB designed (Eagle CAD files attached) and prototype boards built (OSHpark.com) and tested.
 - Arduino Scout libraries have been written and being tested. This library defines a class with functions to sleep the MCU for a given period of time, sleep the XBee, and wake the XBee. 
