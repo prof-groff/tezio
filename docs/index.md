@@ -16,7 +16,7 @@ The Tezio project aims to develop open-source hardware and software tools to con
   - [Arduino-compatible code for edge devices (C++).](https://arduino.cc)
   - Cloud-based data management and dashboards (Python).
   - Remote access to edge and collector devices.
-  - [Cryptographically verifiable data provenance.](tezos_crypto_intro.md)
+  - [Cryptographically verifiable data provenance.](pages/tezos_crypto_intro.md)
 
 ## Related Projects
 
@@ -33,8 +33,6 @@ The Tezio project aims to develop open-source hardware and software tools to con
 
 ## Links
 
-* [Secure Cryptoprocessors](https://en.wikipedia.org/wiki/Secure_cryptoprocessor)
-* [Arduino](https://arduino.cc)
 * [IoT with Archetype](https://docs.archetype-lang.org/contract-library/iot/switch)
 * ["Three-Legged-Stool" of Cryptography](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8972-CryptoAuth-3-Legged-Stool-Article.pdf)
 
