@@ -1,6 +1,25 @@
 ## About
 
-The Tezio project aims to develop open-source hardware and software tools to connect IoT devices with the Tezos blockchain. Using integrated circuits like the Microchip ECC608 crypto chip, IoT devices can now securely participate in networks using eliptic curve digital signatures algorithms and Diffie Hellman key exchange. 
+The Tezio project aims to develop open-source hardware and software tools to connect IoT devices with the Tezos blockchain. 
+
+## Design Requirements
+
+* Hardware
+  - Arduino-compatible edge devices.
+  - Raspberry Pi-based data collectors/internet gateways.
+  - Wireless communications for edge devices.
+  - Internet connectivity for edge and/or collector devices
+  - Flexible I/O options for a variety of use cases.
+  - Low-power battery-operated edge devices. 
+* Software
+  - Arduino-compatible code for edge devices (C++).
+  - Cloud-based data management and dashboards (Python).
+  - Remote access to edge and collector devices.
+  - Cryptographically verifiable data provenance.
+
+## Research and Development
+
+Using integrated circuits like the Microchip ECC608 crypto chip, IoT devices can now securely participate in networks using eliptic curve digital signatures algorithms and Diffie Hellman key exchange. 
 
 [Project Overview](project_overview.md)
 
