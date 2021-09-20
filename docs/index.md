@@ -5,18 +5,18 @@ The Tezio project aims to develop open-source hardware and software tools to con
 ## Design Requirements
 
 * Hardware
-  - Arduino-compatible edge devices.
-  - Raspberry Pi-based data collectors/internet gateways.
+  - [Arduino-compatible edge devices.](https://arduino.cc)
+  - [Raspberry Pi-based data collectors/internet gateways.](https://www.raspberrypi.org)
   - Wireless communications for edge devices.
   - Internet connectivity for edge and/or collector devices
   - Flexible I/O options for a variety of use cases.
   - Low-power battery-operated edge devices. 
   - [Secure cryptoprocessor on all edge devices.](pages/cryptoprocessor.md)
 * Software
-  - Arduino-compatible code for edge devices (C++).
+  - [Arduino-compatible code for edge devices (C++).](https://arduino.cc)
   - Cloud-based data management and dashboards (Python).
   - Remote access to edge and collector devices.
-  - Cryptographically verifiable data provenance.
+  - [Cryptographically verifiable data provenance.](tezos_crypto_intro.md)
 
 ## Related Projects
 
