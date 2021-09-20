@@ -17,3 +17,10 @@ The Tezos address is deterministically determined from the public key as follows
 Nothing, but if people use a random number generator with sufficient entropy to generate private keys, the probability of the same private key being drawn twice is exceedingly rare. Consider that there are 10<sup>256</sup> possible private keys. If all 8 billion people on Earth each had a quadrillion Tezos private keys, this would only exaust 8E-231 percent of the possible private keys. But there is another problem. The private keys generate public keys and these keys are hashed into the tezos addresses. And there are much fewer possilbe addresses. So is it possible that two private keys yield the same address. Yes, but again it is exceedingly unlikely based on how large the space of possibilities is and how the hashing algorithms are designed.
 
 1. For tz1 addresses, the prefix is {0x06, 0xa1, 0x9f}. For tz2 addresses, the prefix is {0x06, 0xa1, 0xa1}.
+
+# Elliptic Curve Cryptography and Digital Signatures
+
+## Digital Signatures Prove the Signer Has the Private Key
+
+In order to function, disitrubted ledger blockchain networks need parties to be able to validate transactions. Using publically available data, anyone should be able to verify transaction authenticity (the originating account) and integrity (the transaction instructions have not been modified). This is achieved uisng digital signatures. In practice, ownership is synonomous with pocession of the private key associated with an account. And, private keys are used to generate digital signatures. A transaction is first hashed into a digest. This digest is cryptographically signed using the private key. This digital signature is included with the transaction. A validator can then use the public key associated with the orgininating account to verify the signer has the private key (confirm authenticity). A nonce is often used when generating the signature to prevent replay attacks. Since the signature is a function of the content of the transation, it aslo validates the integrity of the transaction.
+
