@@ -1,2 +1,2 @@
 ## Example SmartPy Contracts
-These were in part written during a smart contract training run by Nomadic Labs (December 2021)
+Some of these were written in part during a smart contract training run by Nomadic Labs (December 2021).
