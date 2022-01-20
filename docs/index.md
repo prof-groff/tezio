@@ -38,7 +38,7 @@ The Tezio project aims to develop open-source hardware and software tools to con
 
 ## Pages
 
-* [Summary of How Tezos Addresses are Deterministically Related to Private Keys](tezos_crypto_intro.md)
+* [Summary of How Tezos Addresses are Deterministically Related to Private Keys](pages/tezos_crypto_intro.md)
 * [IoT with Arduino MKR](arduino_iot.md)
 
 ## Resource Links
