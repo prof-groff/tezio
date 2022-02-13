@@ -26,7 +26,7 @@ Convert a 24-word mnemonic phrase into 32-bytes of secret entropy.
     phrase = 'motor jazz team food when coach reward hidden obtain faculty tornado crew toast inhale purchase conduct cube omit illness carbon ripple thank crew material'
     myShares.phrase_to_secret(phrase)
     
-Convert secret entropy into share phrases stored as a dictionary. The keys are the index (x-coordinate) used to generate each share.
+Convert secret entropy into share phrases stored as a dictionary. Each key is the index (x-coordinates) used to generate each share.
 
     myShares.secret_to_shares()
     print(myShares.secret_share_phrases)
@@ -55,7 +55,7 @@ Recover the secret.
 
 ### Other methods and attributes 
 
-If shares or secrets are already loaded from previous use of <code>.add_share()</code>, </code>.secret_to_shares()</code>, or <code>.phrase_to_shares</code>, they can be cleared.
+If shares or secrets are already loaded from previous use of <code>.add_share()</code>, <code>.secret_to_shares()</code>, or <code>.phrase_to_shares</code>, they can be cleared.
 
     myShares.clear_secrets()
     myShares.clear_shares()
