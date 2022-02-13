@@ -62,3 +62,9 @@ The raw 32-byte entropy for both the secret phrase and the share phrases can be 
 
     myShares.secret_entropy
     myShares.phrase_entropies
+    
+### Dependencies
+
+    hashlib
+    ctypes
+    secrets
