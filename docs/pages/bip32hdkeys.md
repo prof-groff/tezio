@@ -4,7 +4,7 @@ This Python module defines a class, BIP32HDKeys, useful for deriving child keys 
 
 ## Usage
 
-Download and copy the <code>tezio</code> directory to the project folder or Python module path. Import the SecretShares class.
+Download and copy the <code>tezio</code> directory to the project folder or Python module path. Import the BIP32HDKeys class.
 
 [Link to Github repository.](https://github.com/prof-groff/tezio)
 
