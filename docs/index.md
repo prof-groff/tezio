@@ -14,4 +14,4 @@ This Python module defines a class, BIP32HDKeys, useful for deriving child keys 
 
 ## Tutorials
 
-How art Tezos addresses deterministically determined from private keys? [Click here to find out.](pages/tezos_crypt_intro.md)
+How art Tezos addresses deterministically determined from private keys? [Click here to find out.](pages/tezos_crypto_intro.md)
