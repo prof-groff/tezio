@@ -1,4 +1,4 @@
-# Summary of How Tezos Addresses are Deterministically Related to Private Keys
+# How are Tezos Addresses Deterministically Related to Private Keys?
 
 ## Private Keys
 
