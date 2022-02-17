@@ -14,7 +14,7 @@ The Tezos address is deterministically determined from the public key as follows
 
 ## What Prevents The Same Tezos Address From Being Generated Twice?
 
-Nothing, but if people use a random number generator with sufficient entropy to generate private keys, the probability of the same private key being drawn twice is exceedingly rare. Consider that there are 10<sup>256</sup> possible private keys. If all 8 billion people on Earth each had a quadrillion Tezos private keys, this would only exaust 8E-231 percent of the possible private keys. But there is another problem. The private keys generate public keys and these keys are hashed into the tezos addresses. And there are much fewer possilbe addresses. So is it possible that two private keys yield the same address. Yes, but again it is exceedingly unlikely based on how large the space of possibilities is and how the hashing algorithms are designed.
+Nothing, but if people use a random number generator with sufficient entropy to generate private keys, the probability of the same private key being drawn twice is exceedingly rare. Consider that there are 2<sup>256</sup> possible private keys. If all 8 billion people on Earth each had a quadrillion Tezos private keys, this would only exaust 6.9e-51 percent of the possible private keys. But there is another problem. The private keys generate public keys and these keys are hashed into the tezos addresses. And there are much fewer possilbe addresses. So is it possible that two private keys yield the same address. Yes, but again it is exceedingly unlikely based on how large the space of possibilities is and how the hashing algorithms are designed.
 
 1. For tz1 addresses, the prefix is {0x06, 0xa1, 0x9f}. For tz2 addresses, the prefix is {0x06, 0xa1, 0xa1}.
 
