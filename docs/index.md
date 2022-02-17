@@ -1,6 +1,8 @@
-## (tez-ee-oh or tez-ahy-oh, you decide) 
+# (tez-ee-oh or tez-ahy-oh, you decide) 
 
 Hardware and software tools for the Tezos blockchain developed by a guy in West Virginia, USA. 
+
+## Software Tools
 
 ### SecretShares
 
@@ -9,3 +11,7 @@ This Python module defines a class, SecretShares, useful for taking a 24-word se
 ### BIP32HDKeys
 
 This Python module defines a class, BIP32HDKeys, useful for deriving child keys from a master key, master chaincode, and a derivation path. The class abides by the specifications of BIP32 and SLIP10, the later adapts BIP32 for eliptic curves other than secp256k1. The class specifically approaches child key derivation using the ed25519 curve, which is the default curve used by the Tezos blockchain. [More...](pages/bip32hdkeys.md)
+
+## Tutorials
+
+How art Tezos addresses deterministically determined from private keys? [Click here to find out.](pages/tezos_crypt_intro.md)
