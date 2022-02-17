@@ -1,6 +1,6 @@
 # (tez-ee-oh or tez-ahy-oh, you decide) 
 
-Hardware and software tools for the Tezos blockchain developed by a guy in West Virginia, USA. 
+Hardware and software tools for the Tezos blockchain developed by a guy and a coffee mug in West Virginia, USA. 
 
 ## Software Tools
 
