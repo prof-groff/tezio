@@ -2,7 +2,7 @@
 
 ## [About](pages/about.md)
 
-## [Educational Resources](pages/educatonal.md)
+## [Educational Resources](pages/educational.md)
 
 ## [Software Tools](pages/software.md)
 
