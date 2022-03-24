@@ -6,5 +6,3 @@ Currently, the Tezio Project has three dimensions.
   - To eductate the community about blockchain technology and Tezos. 
   - To contribute to the Tezos ecosystem by starting a bakery, the Tezos name for a network node that forms and validates new blocks.
   - To develop open software and hardware tools for the Tezos blockchain.
-
-Tezio is the work of Jeff Groff, a professor of physics at Shepherd University in Shepherdstown, West Virginia, United States of America
