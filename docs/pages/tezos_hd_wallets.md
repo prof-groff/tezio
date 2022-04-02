@@ -24,5 +24,5 @@ This step is difficult to explain compactly. For now, let me say that it involve
 
 ## Secret Key to Public Key and Public Key Hash (Tezos Address)
 
-The secret key from the previous step is used to dervie a corresponing public key using the Ed25519 elliptic curve. The public key will be shared with the world and used for signature varification on the Tezos network. The public key is also used to derive a Tezos address 
+The secret key from the previous step is used to dervie a corresponing public key using the Ed25519 elliptic curve. The public key will be shared with the world and used for signature varification on the Tezos network. The public key is also used to derive a Tezos address. First it is hashed using the Blake2b hashing algorithm with a digest size of 20 bytes. A three-byte prefix is added, <code>0x06, 0xa1, 0xa4</code>, and then this 23-byte sequence is passed through the SHA-256 hashing algorithm. The result of this hash (32-bytes) is passed through SHA-256 again. The first 4-bytes of this second hash is appended to the original 23-byte sequence. Finally, the 27-bytes is encoded in base58 yielding a 36 character address begining with <code>tz1</code>. The End!
 
