@@ -15,4 +15,6 @@ For secp256r1 the domain is between 1 and n-1 where
 
 Interestingly, the SLIP10 reference and [others](https://crypto.stackexchange.com/questions/60866/is-every-bytestring-a-valid-ed25519-private-key) say that any number between 0 (yes zero) and 2^256 - 1 is a valid private key for ed25519 but this makes no sense because the curve itself is a field defined by prime 2^255 - 19, and there is some business about "clamping" some bits to make the key valid. [Source](https://crypto.stackexchange.com/questions/71140/valid-private-keys-on-curve25519). My best guess here is that the implementation of ed25519 takes care of these invalid keys on the fly and any number between 0 and 2^256-1 works. 
  
+### About Public Keys
 
+For the ed25519 curve, public keys are 32 bytes. For secp255k1 and P256, public keys are 64 bytes, 32 for an x coordinate and 32 for a y coordinate. My understanding is that the y coordinate can be found from the x coordinate but occurs as y^2 so it can be positive or negative (above or below the x axis) so while the value doesn't need to be preserved whether it is even or odd needs to be preserved (don't understand what even/odd has to do with pos/neg). In compressed form  the public key is the x coordinate with a prefix of 0x02 if the y coordinate is even and 0x03 if it is odd.
