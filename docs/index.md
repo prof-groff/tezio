@@ -7,3 +7,5 @@
 ## [Software Tools](pages/software.md)
 
 ## [Hardware Tools](pages/hardware.md)
+
+## [Public Baker](pages/baker.md)
