@@ -20,15 +20,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#include <Arduino.h>
 #include "sha2.h"
-#include <SHA512.h>
 
 #if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT)
 #include <ArduinoECCX08.h>
-#else 
-#include <SHA256.h>
 #endif
+
+#include <SHA256.h>
 
 void sha512_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output) {
   SHA512 sha512; // hash object
@@ -99,3 +97,24 @@ void sha256_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output) {
 }
 
 #endif
+
+void sha256_func_host(uint8_t *data, uint16_t data_length, uint8_t *hash_output) {
+  SHA256 sha256; // hash object
+  SHA256 *hash = &sha256; // pointer to hash object
+  
+  hash->reset();
+  uint16_t _cursor = 0;
+  uint16_t current_block_length; 
+
+  uint16_t n_blocks = data_length / SHA256_BLOCK_SIZE; // integer math
+  if (data_length % SHA256_BLOCK_SIZE) {
+    n_blocks++;
+  }
+  for (uint16_t i = 0; i < n_blocks; i++) {
+    current_block_length = min(SHA256_BLOCK_SIZE, data_length - _cursor);
+    hash->update(data+_cursor, current_block_length);
+    _cursor += current_block_length;
+  }
+  hash->finalize(hash_output, SHA256_HASH_SIZE);
+  return;
+}

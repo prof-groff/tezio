@@ -24,6 +24,7 @@ SOFTWARE. */
 #define SHA2_H
 
 #include <Arduino.h>
+#include <SHA512.h>
 
 #define SHA512_HASH_SIZE 64
 #define SHA512_BLOCK_SIZE 128
@@ -32,5 +33,6 @@ SOFTWARE. */
 
 void sha512_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output);
 void sha256_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output);
+void sha256_func_host(uint8_t *data, uint16_t data_length, uint8_t *hash_output);
 
 #endif

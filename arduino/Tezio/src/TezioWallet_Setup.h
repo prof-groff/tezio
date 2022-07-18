@@ -20,19 +20,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#ifndef BIP39_H
-#define BIP39_H
+#ifndef TEZIOWALLET_SETUP_H
+#define TEZIOWALLET_SETUP_H
 
 #include <Arduino.h>
-#include "sha2.h"
-#include "pbkdf2.h"
+#include "Cryptochip.h"
+#include "ui.h"
+#include "bip39.h"
+#include "slip10.h"
+#include "constants.h"
+#include "crypto_helpers.h"
 
-uint16_t word_to_index(const char* myword);
-uint16_t mnemonic_to_entropy(char mnemonic[][10], uint16_t n_words, uint8_t entropy[]);
-uint16_t entropy_to_mnemonic(uint8_t entropy[], uint16_t entropy_length, char mnemonic[][10]);
-uint16_t mnemonic_to_string(char (*mnemonic)[10], uint16_t n_words, char* mnemonic_string);
-uint16_t mnemonic_string_to_array(char *mnemonic_string, uint16_t mnemonic_string_length, char (*mnemonic)[10]);
-void mnemonic_string_to_seed(char *mnemonic_string, uint16_t mnemonic_string_length, uint8_t *seed, char *password = NULL, uint16_t password_length = 0, uint16_t iterations = 2048);
-uint16_t validate_mnemonic_string(char *mnemonic_string, uint16_t mnemonic_string_length);
+class TezioWallet_Setup {
+    
+    private:
+	
+		char mnemonicString[24*10]; 
+		uint8_t mnemonicStringLength; 
+	
+		uint8_t edsk[32];
+		uint8_t spsk[32];
+		uint8_t p2sk[32];
+	    
+    public:
+	
+		uint8_t edpk[32];
+		uint8_t sppk[64]; // only 33 bytes in compressed format with a prefix 0x02 (y even) or 0x03 (y odd)
+		uint8_t p2pk[64];
+	
+		uint16_t configure(const uint8_t *config_data);
+		uint16_t check_mnemonic(char *mnemonic, uint16_t mnemonic_length);
+		uint16_t derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length);
+		uint16_t provision(const uint8_t *RWKey);
+		
+		TezioWallet_Setup();
+	
+};
+
 
 #endif

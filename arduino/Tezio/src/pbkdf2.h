@@ -24,8 +24,8 @@ SOFTWARE. */
 #define PBKDF2_H
 
 #include <Arduino.h>
-#include "hmac.h"
 #include "sha2.h"
+#include "hmac.h"
 
 #define PBKDF2_HMAC_SHA512_DK_LENGTH 64
 

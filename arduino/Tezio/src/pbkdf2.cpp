@@ -20,10 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#include <Arduino.h>
 #include "pbkdf2.h"
-#include "sha2.h"
-#include "hmac.h"
 
 void pbkdf2_hmac_sha512(uint8_t *pwd, uint16_t pwd_length, uint8_t *salt, uint16_t salt_length, uint16_t c, uint16_t dk_length, uint8_t *dk)
 {

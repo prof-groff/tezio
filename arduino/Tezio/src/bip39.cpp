@@ -20,9 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#include <Arduino.h>
 #include "bip39.h"
-#include "sha2.h"
 
 const char* bip39vocab[2048] = {"abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident", "account", "accuse", "achieve", 
                                 "acid", "acoustic", "acquire", "across", "act", "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit", "adult", 
@@ -152,7 +150,7 @@ const char* bip39vocab[2048] = {"abandon", "ability", "able", "about", "above", 
                                 "winner", "winter", "wire", "wisdom", "wise", "wish", "witness", "wolf", "woman", "wonder", "wood", "wool", "word", "work", "world", "worry", "worth", 
                                 "wrap", "wreck", "wrestle", "wrist", "write", "wrong", "yard", "year", "yellow", "you", "young", "youth", "zebra", "zero", "zone", "zoo"};
 
-uint16_t word2index(const char* myword) {
+uint16_t word_to_index(const char* myword) {
     uint16_t j = 0;
     while (j < 2048) {
         if (strcmp(myword, bip39vocab[j]) == 0) {
@@ -165,70 +163,107 @@ uint16_t word2index(const char* myword) {
     return j;  
 }
 
-void mnemonic2entropy(uint8_t entropy[], const char mnemonic[][10]) {
+uint16_t mnemonic_to_entropy(char mnemonic[][10], uint16_t n_words, uint8_t entropy[]) {
+	
+	if (((n_words-12)%3 != 0) || (n_words > 24)) {
+		Serial.println("Warning: The mnemonic is not a valid number of words.");
+		return 0; // only 12, 15, 18, 21, and 24 word mnemonics are valid
+	}
+	
     uint32_t _buffer = 0;
     uint32_t mask = 255;
     uint8_t loaded = 0;
     uint8_t octet;
+	
+	uint16_t n_bytes = 0;
 
-    uint8_t octets[33];
+    uint8_t octets[33]; // enough room for all bytes regardless of n_words
     uint8_t *p = octets; // pointer
     uint8_t cs;
     
-    for (int i = 0; i < 24; i++) {
-        uint16_t index = word2index(mnemonic[i]);
+    for (int i = 0; i < n_words; i++) {
+        uint16_t index = word_to_index(mnemonic[i]);
+		if (index >= 2048) { 
+			Serial.println("Warning: The mnemonic contains a word that is not in the vocab.");
+			return 0; // word not in vocab
+		}
         _buffer = (_buffer << 11) ^ index; // shift and load new index
         loaded += 11;
         while (loaded >= 8) {
             octet = _buffer >> (loaded - 8); // pull off a byte
+			n_bytes++;
             *p++ = octet;
             _buffer = ~(mask << (loaded - 8)) & _buffer; // delete used bits from buffer
             loaded -= 8;
         }
     }
-    
-    memcpy(entropy, octets, 32);
-    cs = octets[32]; // last byte is a checksum
+	
+	// any remaining bits loaded are the checksum bits
+	if (loaded == 0) {
+		// last byte is the checksum
+		n_bytes--; // so the total number of bytes in the entry is one less
+		cs = octets[n_bytes]; // if n_words is 24 then the cs is the entire last byte
+		loaded = 8; // set to 8 since that is now many cs bit there are.
+	}
+	else {
+		cs = _buffer << (8 - loaded); // extra bits stored in order left (MSB) to right
+	}
+	
+	
+    memcpy(entropy, octets, n_bytes);
 
-    uint8_t sha256[32]; // find checksum on first 32 bytes and compare to byte 33.
-    sha256_func(entropy, 32, sha256);
-    if (cs != sha256[0]) {
-        Serial.println("Warning: Incorrect checksum byte. Invalid mnemonic phrase.");
+    uint8_t sha256[32]; // find checksum of entropy and compare to cs bits.
+    sha256_func_host(entropy, n_bytes, sha256);
+    if (cs != (sha256[0] & (255 << (8 - loaded)))) {
+        Serial.println("Warning: Incorrect checksum byte. Mnemonic phrase does not conform to BIP-0039.");
+		return 0;
     }
+	
+	
+	return n_bytes; // number of entropy bytes not including the checksum
 }
 
-void entropy2mnemonic(uint8_t entropy[], char mnemonic[][10]) {
+uint16_t entropy_to_mnemonic(uint8_t entropy[], uint16_t entropy_length, char mnemonic[][10]) {
+	
+	if (entropy_length != 16 && entropy_length != 20 && entropy_length != 24 && entropy_length != 28 && entropy_length != 32) {
+		return 0; // not a valid number of entropy bytes
+	}
     
     uint32_t _buffer = 0; // buffer
     uint8_t loaded = 0;
     char (*p)[10] = mnemonic;
     uint16_t index;
     uint32_t mask = 2047;
+	uint16_t n_words = 0;
     
-    // calculate and add checksum byte
+    // calculate and add checksum bits
     uint8_t sha256[32];
-    sha256_func(entropy, 32, sha256);
-    uint8_t entropy_cs[33];
-    memcpy(entropy_cs, entropy, 32);
-    entropy_cs[32] = sha256[0];
+	// uint8_t cs_bits = (entropy_length*8)/32;  
+    sha256_func_host(entropy, entropy_length, sha256);
+    uint8_t entropy_cs[entropy_length+1]; // add one for the checksum
+    memcpy(entropy_cs, entropy, entropy_length);
+    entropy_cs[entropy_length] = sha256[0]; // some extra bits are appended but wont be used if n_words < 24
   
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < entropy_length+1; i++) {
         _buffer = (_buffer << 8) ^ entropy_cs[i]; 
         loaded += 8;
         if (loaded >= 11) { 
-            index = _buffer >> (loaded - 11); // pull of 11 bits
+            index = _buffer >> (loaded - 11); // pull off 11 bits
+			n_words++;
             strcpy(*p++, bip39vocab[index]);
             _buffer = ~(mask << (loaded - 11)) & _buffer; // delete 11 used bits
             loaded -= 11;
         }
     }
+	
+	return n_words;
 }
 
-uint16_t mnemonic2string(char (*mnemonic)[10], uint16_t mnemonic_length, char* mnemonic_string) { // parse the mnemonic phrase from an array to one long string
+uint16_t mnemonic_to_string(char (*mnemonic)[10], uint16_t n_words, char* mnemonic_string) { // parse the mnemonic phrase from an array to one long string
     char current_word[10];
     uint16_t word_length;
     uint16_t _cursor = 0;
-    for (uint16_t i = 0; i < 24; i++) {
+    for (uint16_t i = 0; i < n_words; i++) {
         strcpy(current_word, mnemonic[i]);
         word_length = strlen(current_word);
         memcpy(mnemonic_string + _cursor, current_word, word_length);
@@ -241,4 +276,62 @@ uint16_t mnemonic2string(char (*mnemonic)[10], uint16_t mnemonic_length, char* m
     return _cursor; // mnemonic_string_length
 
     
+}
+
+uint16_t mnemonic_string_to_array(char *mnemonic_string, uint16_t mnemonic_string_length, char (*mnemonic)[10]) {
+	char currentWord[10];
+	memset(currentWord, '\0', 10);
+	uint16_t numWords = 0;
+	uint16_t i;
+	uint16_t j = 0;
+	for (i = 0; i < mnemonic_string_length; i++) {
+		if (mnemonic_string[i] == ' ' || mnemonic_string[i] == '\0') { // end of word
+			currentWord[j] = '\0';
+			strcpy(mnemonic[numWords], currentWord);
+			memset(currentWord, '\0', 10); 
+			j = 0;
+			numWords++;
+		}
+		else {
+			currentWord[j] = mnemonic_string[i];
+			j++;
+		}
+		
+	}
+	return numWords;
+}
+
+
+uint16_t validate_mnemonic_string(char *mnemonic_string, uint16_t mnemonic_string_length) {
+	char mnemonic[24][10];
+	uint8_t entropy[32];
+	uint16_t numWords = mnemonic_string_to_array(mnemonic_string, mnemonic_string_length, mnemonic);
+	uint16_t numBytes = mnemonic_to_entropy(mnemonic, numWords, entropy);
+	
+	if (numBytes == 0) { // number of valid bytes of entropy recovered from the mnemonic
+		return 0;
+	}
+	else {
+		return 1; 
+	}	
+}
+
+
+void mnemonic_string_to_seed(char *mnemonic_string, uint16_t mnemonic_string_length, uint8_t *seed, char *password, uint16_t password_length, uint16_t iterations) {
+    uint8_t salt_prefix[] = "mnemonic";
+    uint16_t salt_prefix_length = sizeof(salt_prefix)-1; // ignore null terminator
+    uint16_t salt_length = salt_prefix_length + password_length - 1;
+    uint8_t salt[salt_length];
+    
+    memcpy(&salt[0], &salt_prefix[0], salt_prefix_length);
+    
+    if (password != NULL) {
+        memcpy(&salt[salt_prefix_length], &password[0], password_length - 1); 
+    }
+    
+   
+    uint8_t mnemonic_string_bytes[mnemonic_string_length - 1]; // convert mnemonic string from char to uint8_t, ignore null terminator
+    memcpy(mnemonic_string_bytes, mnemonic_string, mnemonic_string_length - 1);
+    pbkdf2_hmac_sha512(mnemonic_string_bytes, sizeof(mnemonic_string_bytes), salt, sizeof(salt), iterations, 64, seed);
+	return; 
 }
