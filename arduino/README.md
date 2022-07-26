@@ -1,4 +1,26 @@
-## Tezio Wallet Notebook
+## Tezio Wallet
+
+Welcome to Tezio Wallet, an Arduino-based hardware wallet for the Tezos blockchain. Tezio Wallet is compatible with the Arduino MKR WiFi 1010 and the Arduino Nano 33 IoT, both of which include a cryptographic coprocessor to securely store keys and perform certain crytpographic functions.
+
+###  Installation
+
+Install the Arduino IDE. Download and move the `TezioWallet` folder to your Arduino libraries folder, which is usually `My Documents\Arduino\libraries` on Windows or `Documents\Arduino\libraries` on macOS. Open the Arduino IDE and install the following dependencies using `Tools > Manage Libraries...`.
+
+- ArduinoECCX08
+- Crypto
+- micro-ecc
+
+### Usage
+
+#### Setup
+
+Running Tezio Wallet on your Arduino device requires that the device first be configured, provisioned, and locked. This is done using the `Tezio_Wallet_Setup.ino` sketch. The sketch runs an interactive setup process using the Arduino IDE's Serial Monitor to share data with the user and get user inputs. The process begins by loading default configuration data onto the Arduino's cryptographic coprocessor. Once the configuration data is written to the device, the user has the option to lock the cofiguration zone. This must be done before the device can be used. Note that the default configuration data stored in the `configuration.h` file is set up to enable current functionality but also to allow for possible future functionality such as encrypted writes to certain slots of the cryptochip's data zone. After the device is configured, the sketch proceeds to derive HD wallet cryptographic keys from a user supplied mnemonic phrase specifice in the `secrets.h` file, or if a mnemonic phrase isn't provided the sketch proceeds to derive a new 24 word phrase using entropy provided by the cryptochip's true random number generator. Mnemonic and key derivation are carried out using specifications outlined in the BIP-0039, BIP-0032, BIP-0044, SLIP-0044, and SLIP-0010. Secret keys are derived for all three elliptic curves supported by the Tezos blockchain: Ed25519, Secp256k1, and NIST P256 (Secp256r1). The keys are written to the Arduino's cryptochip. A user supplied read/write key is also written to the device. The read/write key will allow the user to perform encrypted reads and writes to certain data slots of the device after it is locked. After keys are written, the user is given the option to lock the cryptochip's data zone. After the data zone is locked, clear writes of cryptographic secrets will no longer be supported. The device must be locked before use. 
+
+#### API
+
+After the device is setup, provisioned, and locked, upload the `Tezio_Wallet_API.ino` sketch. The sketch can be run in debug (interactive) mode using the Arduino IDE's serial monitor. However, setting the debug flag to false puts the device into listening mode. It can then be connected via USB to any host machine and recieve and send data via serial. The API sketch invokes the TezioWallet_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. This hardware support also means that cryptographic functions involving the NIST P256 curve are much faster than those of the other supported curves. See the .ipynb included in this director for more details about the structure of data packets sent and received using the API and example interactions with a Tezio Wallet using Python. 
+
+## NOTES...
 * Notes during development; helpful for me; not very orderly, but will turn into project docs someday...
 
 ### Keys Used During Master Secret Derivation
