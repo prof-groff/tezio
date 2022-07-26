@@ -39,6 +39,7 @@ public:
   long random(long max);
   long random(long min, long max);
   int random(byte data[], size_t length);
+
   
   int info(uint8_t param1, uint16_t param2, uint8_t state[], uint16_t length);
 
@@ -60,8 +61,8 @@ public:
   int privWriteSlot(uint16_t slot, const byte data[], int length);
   int encryptedPrivWrite(uint16_t slot, uint8_t data[], uint16_t length);
   
-  void decryptData(uint8_t cyphertext[], uint8_t plaintext[], uint16_t length);
-  void encryptData(uint8_t plaintext[], uint8_t cyphertext[], uint16_t length);
+  uint16_t decryptData(uint8_t cyphertext[], uint8_t plaintext[], uint16_t length);
+  uint16_t encryptData(uint8_t plaintext[], uint8_t cyphertext[], uint16_t length);
 
   int locked(uint8_t lock_status[]); 
   int writeConfiguration(const byte data[]);

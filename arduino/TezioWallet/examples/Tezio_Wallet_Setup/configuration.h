@@ -16,14 +16,6 @@ Bits are set so the ATECC608 on the NANO 33 IoT opperate like the ATECC508 on th
 #ifndef ATECCX08_CONFIGURATION_H
 #define ATECCX08_CONFIGURATION_H
 
-// the read/write key is stored and used by the system to perform encrypted reads and writes into enabled slots.
-// this can be changed to any 32 bytes but the same key must be used with both wallet setup and wallet operation sketches.
-const uint8_t readWriteKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62, 
-                                  0x0B, 0xEA, 0x19, 0x7A, 0x73, 0xAD, 0x10, 0x54, 
-                                  0x22, 0xA0, 0x19, 0x1A, 0x87, 0x79, 0xE6, 0x2C, 
-                                  0xA4, 0x61, 0x26, 0x63, 0xA3, 0xF0, 0x99, 0xFB};
-
-
 const byte CryptochipConfiguration[128] = {
   // Bytes 0 through 15 are read only
   0x00, 0x00, 0x00, 0x00, // SN<0:3>

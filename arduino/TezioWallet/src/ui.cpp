@@ -96,4 +96,10 @@ void print_mnemonic(char (*secret_mnemonic)[10]) {
     Serial.print(secret_mnemonic[i]); Serial.print(' '); 
   }
   Serial.println();
+	return;
+}
+
+void send_bytes(uint8_t *data, uint16_t dataLength) {
+	Serial.write(data, dataLength);
+	return;
 }

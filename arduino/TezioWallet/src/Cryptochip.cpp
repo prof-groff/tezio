@@ -1168,15 +1168,15 @@ uint16_t Cryptochip::crc16(const byte data[], size_t length)
 }
 
 
-  void Cryptochip::decryptData(uint8_t cyphertext[], uint8_t plaintext[], uint16_t length) {
+  uint16_t Cryptochip::decryptData(uint8_t cyphertext[], uint8_t plaintext[], uint16_t length) {
       
     for (int i = 0; i < length; i++) {
         plaintext[i] = cyphertext[i] ^ privSessionKey[i];
     }
-    return;
+    return 1;
       
   }
-  void Cryptochip::encryptData(uint8_t plaintext[], uint8_t cyphertext[], uint16_t length) {
+ uint16_t Cryptochip::encryptData(uint8_t plaintext[], uint8_t cyphertext[], uint16_t length) {
     
     
      
@@ -1192,7 +1192,7 @@ uint16_t Cryptochip::crc16(const byte data[], size_t length)
         }
         
     }
-    return;
+    return 1;
       
   }
 

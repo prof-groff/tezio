@@ -68,3 +68,53 @@ size_t base58_func(uint8_t *data, size_t datalen, char *out)
     return outlen;
   
 }
+
+
+uint16_t base58_decode_func(char *b58, uint16_t b58Length, uint8_t *data) {
+	
+	const size_t bufferSize = ((b58Length - 1) * 100)/138; 
+	uint8_t buffer[bufferSize] = {0};
+	uint16_t digits = 1;
+    bool flag = false;
+    uint16_t zeros = 0;
+	
+    
+    for (int i = 0; i < b58Length - 1; i++) { // last char is a '\0' so ignore
+        if (!flag && b58[i] == '1') {
+            zeros++;
+        }
+        if (!flag && b58[i] != '1') {
+            flag = true;
+        }
+        if (flag) {
+            uint32_t carry = (uint32_t) base58_decode[b58[i]];
+
+            for (int j = 0; j < digits; j++) {
+                carry += ((uint32_t) buffer[j]) * 58;
+                buffer[j] = carry % 256;
+                carry = carry / 256;
+            }
+            while (carry > 0) {
+                buffer[digits] = carry % 256;
+                digits ++;
+                carry = carry/256;
+            }
+        }
+		
+    }
+	
+	
+	size_t outlen = zeros + digits;
+    int k = 0;
+    for (; k < zeros;) {
+        data[k] = 0; // 
+        k++;
+    }
+    for (; k < zeros+digits;) {
+        data[k] = buffer[digits-k-1]; // order of digits reversed
+        k++;
+    }
+
+    return outlen;
+	
+}

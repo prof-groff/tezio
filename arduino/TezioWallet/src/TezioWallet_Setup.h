@@ -30,6 +30,8 @@ SOFTWARE. */
 #include "slip10.h"
 #include "constants.h"
 #include "crypto_helpers.h"
+#include <BLAKE2b.h>
+#include <uECC.h>
 
 class TezioWallet_Setup {
     
@@ -41,6 +43,7 @@ class TezioWallet_Setup {
 		uint8_t edsk[32];
 		uint8_t spsk[32];
 		uint8_t p2sk[32];
+	
 	    
     public:
 	
