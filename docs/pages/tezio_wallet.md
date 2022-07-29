@@ -4,9 +4,9 @@ An Arduino-based hardware wallet for the Tezos blockchain.
 
 ## Contents
 
-[Introduction](#introduction)
-[Getting Started](#getting_started)
-[API Reference](#api_reference)
+- [Introduction](#introduction)
+- [Getting Started](#getting_started)
+- [API Reference](#api_reference)
 
 <a name="introduction"></a> 
 ## Introduction
@@ -123,3 +123,27 @@ Signs a message using the secret key for a speciric curve. The message can be pr
 | 0x03 | no             | Raw (64 bytes)          |
 | 0x04 | no             | Base58 Checksum Encoded |
 
+# Verify (op_verify)
+
+Verifies that a signature is valid for a given message and specific curve. The message can be hashed or unhashed and the signature can be raw bytes or base58 checksum encoded. The data portion of the packet body is the message with the signature appended to it. Parameter 3 gives the message length and is not necessary if the message is pre-hashed because a hashed message is always 32 bytes long. 
+
+| Packet Vars | Value              |
+|-------------|--------------------| 
+| opCode      | 0x22               |
+| param1      | curve              |
+| param2      | mode               |
+| param3      | message length     |
+| data        | message + signature|
+
+| curve | ECC curve |
+|-------|-----------|
+| 0x01  | Ed25519   |
+| 0x02  | Secp256k1 |
+| 0x03  | NIST P256 |
+
+| mode | message hashed | signature format        |
+|------|----------------|-------------------------|
+| 0x01 | yes            | Raw (64 bytes)          |
+| 0x02 | yes            | Base58 Checksum Encoded |
+| 0x03 | no             | Raw (64 bytes)          |
+| 0x04 | no             | Base58 Checksum Encoded |
