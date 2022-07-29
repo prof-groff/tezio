@@ -35,3 +35,29 @@ The Tezio Wallet library includes several example sketches. Open the Arduino IDE
 #### Upload and Run the Setup Sketch
 
 Connect your Arduino to your computer via USB and navigate to Tools > Port to verify it was detected. You may have to manually select the port corresponding to your device. Next verify that your Arduino device is selected in the Tools > Board > Arduino SAMD menu so the IDE compiles for the correct device. Open the Serial Monitor using the button in the upper right corner or by navigating to Tools > Serial Monitor. Then, upload the sketch to your board using the Upload button or Tools > Upload. Once the sketch is uploaded it will begin running on the Arduino automatically. The sketch runs an interactive setup using the Serial Monitor to share data with the user and get user inputs. The process begins by loading the configuration data onto the Arduino's cryptographic co-processor. Once the configuration data is written to the device, the user has the option to lock the cofiguration zone. This must be done before the device can be used. After the device is configured, the sketch proceeds to derive HD wallet cryptographic keys from a user supplied mnemonic phrase specifice in the secrets.h file, or if a mnemonic phrase isn't provided the sketch proceeds to derive a new 24 word phrase using entropy provided by the cryptochip's true random number generator. Mnemonic and key derivation are carried out using specifications outlined in the BIP-0039, BIP-0032, BIP-0044, SLIP-0044, and SLIP-0010. Secret keys are derived for all three elliptic curves supported by the Tezos blockchain: Ed25519, Secp256k1, and NIST P256 (Secp256r1). The secret keys, derived public keys, and the user supplied read/write key are written to the Arduino's cryptochip. After keys are written, the user is given the option to lock the cryptochip's data zone. After the data zone is locked, clear writes of cryptographic secrets will no longer be possible. The device must be locked before use.
+
+### Step 3: Upload the API Sketch
+
+Navigate to File > Examples > TezioWallet and open the Tezio_Wallet_API.ino sketch. This sketch can be run in debug (interactive) mode using the Arduino IDE's Serial Monitor. However, debug flag to set to false by default putting the device into listening mode. In this mode the device can then be connected via USB to any host machine and recieve and send data via a serial connection. Once the sketch is uploaded to the device, it will begin running and will restart whenever power is supplied to the device. That's it, your Tezio Wallet is ready.
+
+## API Reference
+
+The API sketch invokes the TezioWallet_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. This hardware support also means that cryptographic functions involving the NIST P256 curve are much faster than those of the other supported curves. See the .ipynb included in the [GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino) for example interactions with a Tezio Wallet using Python.
+
+### Communication and Packets
+
+Communication between the Tezio Wallet and a host computer is via a USB serial connection. Data is sent as packets of bytes. Packets sent from the host computer to the Tezio Wallet have four components, a prefix byte, a length byte, one or more body bytes, and two checksum bytes:
+
+`packet = prefix [1 byte] + length [1 byte] + body [1 or more bytes] + checksum [2 bytes]`
+
+The contents of the body depends on the command being sent but in general is is composed of an operation code byte (opCode), one or more parameter bytes, and data bytes.
+
+`body = opCode [1 byte] + param1 [1 byte] + param2 [1 byte] + param3 [2 bytes] + data [1 or more bytes]`
+
+The opCode is always required but some calls may not require data or all parameters. However, if data is sent then values for all parameters must also be included even if 0s are used as placeholders. Parameter 3 is represented in code as a 16-bit variable but is always sent over serial as two bytes with the the LSB first. Packets are constructed as follows: First the body is constructed. The length byte is the length of the body in bytes plus 3 to account for both the length byte itself and the checksum bytes. The length byte is prepended to the body and the checksum is calculated using a 16-bit cyclic redundancy check algorithm. The checksum is appended to the body LSB first. Finally the prefix byte is prepended. The prefix is always 0x03 and serves as a listening byte for the hardware wallet to detect incoming communication. 
+
+Packets of bytes received by the host from the hardware wallet have the following structure:
+
+`packet = length [1 byte] + body [1 or more bytes] + checksum [2 bytes]`
+
+The contents of the body depends on the operation that was called and no prefix is needed since the host expects a prompt reply and doesn't need to listen for a reply to be sent.
