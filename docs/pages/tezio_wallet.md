@@ -5,11 +5,15 @@ An Arduino-based hardware wallet for the Tezos blockchain.
 ## Contents
 
 [Introduction](#introduction)
+[Getting Started](#getting_started)
+[API Reference](#api_reference)
 
-<a name="introduction"></a>## Introduction
+<a name="introduction"></a> 
+## Introduction
 
 [Arduino](http://www.arduino.cc) is an ecosystem of open-source hardware and software tools for microcontroller-based electronics. It is popular among so-called “makers”, who have a technology-centric do-it-yourself (DIY) culture. Makers celebrate entrepreneurship, the capacity of individuals to create and innovate, and the ability of a community of like-minded developers to facilitate this process. Tezio Wallet turns an off-the-shelf Arduino board into a hardware wallet allowing users to confidently and securely take self-custody of their Tezos blockchain assets and participate in network transactions. Currently, two Arduino boards are supported, The MKR WiFi 1010 and the Nano 33 IoT. Both of these boards include a cryptographic co-processor (the Microchip ATECC508 and ATECC608 on the MKR WiFi 1010 and Nano 33 IoT, respectively) to securely store keys and accelerate certain cryptographic functions. There are many online stores from which an Arduino can be purchased, my favorite are [SparkFun](http://www.sparkfun.com), [Adafruit](http://www.adafruit.com), and [Mouser](http://www.mouser.com).
 
+<a name="getting_started"></a> 
 ## Getting Started
 
 Setting up Tezio Wallet on your Arduino is a three step process. First, the Arduino IDE and library files installed, Next, the cryptographic co-processor is configured, provisioned with keys, and locked. Finally, the API software is installed.
@@ -44,6 +48,7 @@ Connect your Arduino to your computer via USB and navigate to Tools > Port to ve
 
 Navigate to File > Examples > TezioWallet and open the Tezio_Wallet_API.ino sketch. This sketch can be run in debug (interactive) mode using the Arduino IDE's Serial Monitor. However, debug flag to set to false by default putting the device into listening mode. In this mode the device can then be connected via USB to any host machine and recieve and send data via a serial connection. Once the sketch is uploaded to the device, it will begin running and will restart whenever power is supplied to the device. That's it, your Tezio Wallet is ready.
 
+<a name="api_reference"></a> 
 ## API Reference
 
 The API sketch invokes the TezioWallet_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. This hardware support also means that cryptographic functions involving the NIST P256 curve are much faster than those of the other supported curves. See the .ipynb included in the [GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino) for example interactions with a Tezio Wallet using Python.
