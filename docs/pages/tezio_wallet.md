@@ -61,3 +61,56 @@ Packets of bytes received by the host from the hardware wallet have the followin
 `packet = length [1 byte] + body [1 or more bytes] + checksum [2 bytes]`
 
 The contents of the body depends on the operation that was called and no prefix is needed since the host expects a prompt reply and doesn't need to listen for a reply to be sent.
+
+### Operations
+
+#### Get Public Key (op_get_pk)
+
+Returns the public key for a specific curve. The returned key can be be raw bytes, compressed, base58 checksum encoding, or hashed (Tezos Address). 
+
+| Packet Vars | Value |
+|-------------|-------| 
+| opCode      | 0x11  |
+| param1      | curve |
+| param2      | mode  |
+| param3      | -     |
+| data        | -     |
+
+| curve | ECC curve |
+|-------|-----------|
+| 0x01  | Ed25519   |
+| 0x02  | Secp256k1 |
+| 0x03  | NIST P256 |
+
+| mode | Public Key Format           |
+|------|-----------------------------|
+| 0x01 | Raw (32 or 64 bytes)        |
+| 0x02 | Compressed (32 or 33 bytes) |
+| 0x03 | Base58 Checksum Encoded     |
+| 0x04 | Hashed (Tezos Address)      |
+
+#### Sign (op_sign)
+
+Signs a message using the secret key for a speciric curve. The message can be prehashed by the host system or sent as raw bytes. The returned signature can be raw bytes or base58 checksum encoded. This operaiton does not use param3 but a value must be included in the packet since data is included. 
+
+| Packet Vars | Value  |
+|-------------|--------| 
+| opCode      | 0x21   |
+| param1      | curve  |
+| param2      | mode   |
+| param3      | 0x0000 |
+| data        | message|
+
+| curve | ECC curve |
+|-------|-----------|
+| 0x01  | Ed25519   |
+| 0x02  | Secp256k1 |
+| 0x03  | NIST P256 |
+
+| mode | message hashed | signature format        |
+|------|----------------|-------------------------|
+| 0x01 | yes            | Raw (64 bytes)          |
+| 0x02 | yes            | Base58 Checksum Encoded |
+| 0x03 | no             | Raw (64 bytes)          |
+| 0x04 | no             | Base58 Checksum Encoded |
+
