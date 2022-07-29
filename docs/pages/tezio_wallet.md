@@ -2,7 +2,11 @@
 
 An Arduino-based hardware wallet for the Tezos blockchain. 
 
-## Introduction
+## Contents
+
+[Introduction](#introduction)
+
+<a name="introduction"></a>## Introduction
 
 [Arduino](http://www.arduino.cc) is an ecosystem of open-source hardware and software tools for microcontroller-based electronics. It is popular among so-called “makers”, who have a technology-centric do-it-yourself (DIY) culture. Makers celebrate entrepreneurship, the capacity of individuals to create and innovate, and the ability of a community of like-minded developers to facilitate this process. Tezio Wallet turns an off-the-shelf Arduino board into a hardware wallet allowing users to confidently and securely take self-custody of their Tezos blockchain assets and participate in network transactions. Currently, two Arduino boards are supported, The MKR WiFi 1010 and the Nano 33 IoT. Both of these boards include a cryptographic co-processor (the Microchip ATECC508 and ATECC608 on the MKR WiFi 1010 and Nano 33 IoT, respectively) to securely store keys and accelerate certain cryptographic functions. There are many online stores from which an Arduino can be purchased, my favorite are [SparkFun](http://www.sparkfun.com), [Adafruit](http://www.adafruit.com), and [Mouser](http://www.mouser.com).
 
