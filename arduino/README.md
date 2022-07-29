@@ -2,7 +2,7 @@
 
 Welcome to Tezio Wallet, an Arduino-based hardware wallet for the Tezos blockchain. Tezio Wallet is compatible with the Arduino MKR WiFi 1010 and the Arduino Nano 33 IoT, both of which include a cryptographic coprocessor to securely store keys and perform certain crytpographic functions. 
 
-See the (Tezio Wallet Project Page)[https://tezio.cc/pages/tezio_wallet.html) for installation notes and an API reference. 
+See the (Tezio Wallet Project Page)[https://tezio.cc/pages/tezio_wallet.html] for installation notes and an API reference. 
 
 ## NOTES...
 * Notes during development; helpful for me; not very orderly, but will turn into project docs someday...
