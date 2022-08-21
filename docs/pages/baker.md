@@ -1,6 +1,6 @@
 # Tezio Public Baker
 
-Help support the Tezio project by delegating to the Tezio public baker. Rewards will be distributed with a six cycle delay. For example, delegations at the beginning of cycle 511 determine baking rights for cycle 516 with rewards from cycle 516 paid out during cycle 517.  
+Help support the Tezio project by delegating to the Tezio public baker. Rewards will be distributed with a seven cycle delay. For example, delegations during cycle 510 determine baking rights at the beginning of cycle 511 for cycle 517 with rewards from cycle 517 paid out during cycle 518.  
 
 <strong>ADDRESS:</strong> tz1gVC3dVsJWk6jiZSeQnGj2QAJWS84pA8VE <br>
 <strong>DOMAIN:</strong> tezio.tez <br>
