@@ -46,7 +46,7 @@ class TezioWallet_API {
     public:
 	
 		tezioPacket packet;
-		uint8_t buffer[256]; 
+		uint8_t buffer[512]; 
 	
 		TezioWallet_API(uint32_t baud, const uint8_t *RWKey, bool debug = false);
 	

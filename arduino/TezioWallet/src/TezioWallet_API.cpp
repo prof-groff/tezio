@@ -110,12 +110,17 @@ uint16_t TezioWallet_API::op_sign() {
 	uint8_t curve = packet.param1;
 	uint8_t mode = packet.param2; 
 	
+	uint8_t signature[64];
+	uint8_t prefix[5];
+	uint16_t prefixLength;
+	
 	/* 	curve		ECC curve to use
 		0x01		Ed25519
 		0x02		Secp256k1
 		0x03		NIST P256
 	
 		mode		message is hashed		signature format
+		0x00		N/A						default (zeros) base58 checksum encoded
 		0x01		yes						raw bytes
 		0x02		yes						base58 checksum encoded
 		0x03		no						raw bytes
@@ -124,106 +129,115 @@ uint16_t TezioWallet_API::op_sign() {
 	if (curve == NULL || curve > 3) { // for variables NULL is 0
 		return 0; // don't know which curve to use
 	}
-	if (mode == NULL || mode > 4) {
+	if (mode > 5) {
 		return 0; // don't know which mode to use
 	}
-	if (packet.data == NULL || packet.dataLength == 0) {
-		return 0; // no data to sign
-	}
-	
-	
-	// hash the message if necessary - store result in the buffer
-	if (mode > 2) { // message must be hashed first
-		BLAKE2b blake2b; 
-    	blake2b.reset(32);
-    	blake2b.update(packet.data, packet.dataLength);
-    	blake2b.finalize(buffer, 32);
-	}
-	else if (mode <= 2 && packet.dataLength == 32) {// message already hashed
-		memcpy(buffer, packet.data, packet.dataLength);
-	}
-	else {
-		return 0; // error
-	}
-	
-	uint8_t signature[64];
-	uint8_t prefix[5];
-	uint16_t prefixLength;
-	
-	// sign the message, result is 64 raw bytes but set up prefix in case the base58 encoded sig is requested
+
+	// set prefix for curve
 	if (curve == NISTP256) {
-		
 		prefixLength = 4;
 		memcpy(prefix, TZ3_SIG, prefixLength);
-		
-		Cryptochip myChip(Wire, 0x60);
-		if (!myChip.begin()) {
-			return 0; 
-		}
-		if (!myChip.ecSign(P2_SK_SLOT, buffer, signature)) {
-			return 0;
-		}
-		myChip.end();
 	}
 	else if (curve == SECP256K1) {
-		
 		prefixLength = 5;
 		memcpy(prefix, TZ2_SIG, prefixLength);
-		
-		uint8_t sk[32];
-		uint8_t sessionKey[32];
-		uint8_t cypherText[32];
-		Cryptochip myChip(Wire, 0x60);
-		if (!myChip.begin()) {
-			return 0; 
-		}
-		if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
-			return 0;
-		}
-		if (!myChip.encryptedRead(SP_SK_SLOT, cypherText, 32)) {
-			return 0;
-		}
-		if (!myChip.decryptData(cypherText, sk, 32)){
-			return 0;
-		}
-		myChip.end();
-		
-		secp256k1_sign(buffer, sk, signature);
-		
 	}
 	else if (curve == ED25519) {
-		
 		prefixLength = 5;
 		memcpy(prefix, TZ1_SIG, prefixLength);
-		
-		uint8_t sk[32];
-		uint8_t sessionKey[32];
-		uint8_t cypherText[32];
-		uint8_t pk[32];
-		Cryptochip myChip(Wire, 0x60);
-		if (!myChip.begin()) {
-			return 0;
-		}
-		if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
-			return 0;
-		}
-		if (!myChip.encryptedRead(ED_SK_SLOT, cypherText, 32)) {
-			return 0;
-		}
-		if (!myChip.decryptData(cypherText, sk, 32)){
-			return 0;
-		}
-		if (!myChip.readSlot(ED_PK_SLOT, pk, 32)) {
-			return 0;
-		}
-		myChip.end();
-
-		
-		ed25519_sign(buffer, sk, pk, signature);
-		
 	}
 	else {
 		return 0;
+	}
+	
+	
+	if (mode == NULL || mode == 0) { // return default signature (base58 checksum of zeros)
+		memset(signature, 0, 64);
+	}
+	else {
+		if (packet.data == NULL || packet.dataLength == 0) {
+			return 0; // no data to sign
+		}
+		// hash the message if necessary - store result in the buffer
+		if (mode > 2) { // message must be hashed first
+			BLAKE2b blake2b; 
+    		blake2b.reset(32);
+    		blake2b.update(packet.data, packet.dataLength);
+    		blake2b.finalize(buffer, 32);
+		}
+		else if (mode <= 2 && packet.dataLength == 32) {// message already hashed
+			memcpy(buffer, packet.data, packet.dataLength);
+		}
+		else {
+			return 0; // error
+		}
+		
+		// sign the message, result is 64 raw bytes but set up prefix in case the base58 encoded sig is requested
+	
+		if (curve == NISTP256) {
+
+			Cryptochip myChip(Wire, 0x60);
+			if (!myChip.begin()) {
+				return 0; 
+			}
+			if (!myChip.ecSign(P2_SK_SLOT, buffer, signature)) {
+				return 0;
+			}
+			myChip.end();
+		}
+		else if (curve == SECP256K1) {
+		
+			uint8_t sk[32];
+			uint8_t sessionKey[32];
+			uint8_t cypherText[32];
+			Cryptochip myChip(Wire, 0x60);
+			if (!myChip.begin()) {
+				return 0; 
+			}
+			if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
+				return 0;
+			}
+			if (!myChip.encryptedRead(SP_SK_SLOT, cypherText, 32)) {
+				return 0;
+			}
+			if (!myChip.decryptData(cypherText, sk, 32)){
+				return 0;
+			}
+			myChip.end();
+		
+			secp256k1_sign(buffer, sk, signature);
+		
+		}
+		else if (curve == ED25519) {
+		
+			uint8_t sk[32];
+			uint8_t sessionKey[32];
+			uint8_t cypherText[32];
+			uint8_t pk[32];
+			Cryptochip myChip(Wire, 0x60);
+			if (!myChip.begin()) {
+				return 0;
+			}
+			if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
+				return 0;
+			}
+			if (!myChip.encryptedRead(ED_SK_SLOT, cypherText, 32)) {
+				return 0;
+			}
+			if (!myChip.decryptData(cypherText, sk, 32)){
+				return 0;
+			}
+			if (!myChip.readSlot(ED_PK_SLOT, pk, 32)) {
+			return 0;
+			}
+			myChip.end();
+
+			ed25519_sign(buffer, sk, pk, signature);
+		
+		}
+		else {
+			return 0;
+		}
 	}
 	
 	
@@ -233,7 +247,7 @@ uint16_t TezioWallet_API::op_sign() {
 	}
 	else if (mode%2 == 0) { // even mode, return base58 checksum encoding
 		// base58 checksum encode and return length of encoded signature
-		return base58_encode_prefix_checksum(prefix, prefixLength, signature, sizeof(signature), buffer); 
+		return base58_encode_prefix_checksum(prefix, prefixLength, signature, sizeof(signature), buffer) - 1; // subtract one so null character is not returned
 	
 	}
 	else {
@@ -440,17 +454,18 @@ uint16_t TezioWallet_API::read_packet() {
 }
 
 uint16_t TezioWallet_API::validate_packet(uint16_t packetLength) {
-	// packet must be at least 4 bytes: length, opcode, two crc bytes
-	if (buffer == NULL || packetLength < 4) {
+	// packet must be at least 5 bytes: length (2 bytes), opcode, two crc bytes
+	if (buffer == NULL || packetLength < 5) {
     	return 0;
   	}
 	// packet crc bytes must check out
-  	uint16_t crc = buffer[packetLength - 2] | (uint16_t)(buffer[packetLength -1]) << 8;
+  	uint16_t crc = (uint16_t)buffer[packetLength - 2] | (uint16_t)(buffer[packetLength -1]) << 8;
   	if (crc != api_crc16(buffer, packetLength - 2)) {
     	return 0;
   	}
 	// packet buffer length must match length byte
-  	if (buffer[0] != packetLength) {
+	uint16_t declaredPacketLength = (uint16_t)buffer[0] | (uint16_t)(buffer[1]) << 8;
+  	if (declaredPacketLength != packetLength) {
     	return 0; 
   }
   return 1;
@@ -461,20 +476,20 @@ uint16_t TezioWallet_API::parse_message(uint16_t packetLength) {
 	if(!reset_packet()) {
 		return 0; 
 	}
-	packet.opCode = buffer[1];
-	if (packetLength > 4) {  // param1 present
-		packet.param1 = buffer[2];
+	packet.opCode = buffer[2];
+	if (packetLength > 5) {  // param1 present
+		packet.param1 = buffer[3];
 	}
-	if (packetLength > 5) { // param2 present
-		packet.param2 = buffer[3];
+	if (packetLength > 6) { // param2 present
+		packet.param2 = buffer[4];
 	}
-	if (packetLength > 7) { // param3 present and appears in the buffer LSB first
-		packet.param3 = (uint16_t)buffer[4] | (uint16_t)(buffer[5]) << 8 ;
+	if (packetLength > 8) { // param3 present and appears in the buffer LSB first
+		packet.param3 = (uint16_t)buffer[5] | (uint16_t)(buffer[6]) << 8 ;
 	}
-	if (packetLength > 8) { // data present
-		packet.data = (uint8_t*) malloc((packetLength-8)*sizeof(uint8_t));
-    	memcpy(packet.data, &buffer[6], packetLength - 8);
-    	packet.dataLength = packetLength - 8;
+	if (packetLength > 9) { // data present
+		packet.data = (uint8_t*) malloc((packetLength-9)*sizeof(uint8_t));
+    	memcpy(packet.data, &buffer[7], packetLength - 9);
+    	packet.dataLength = packetLength - 9;
 	}
 	return 1;
 }
@@ -497,7 +512,7 @@ uint16_t TezioWallet_API::execute_op() {
 		case(VERIFY):
 			{
 				valid = op_verify();
-				replyLength = 1; // reply is always on byte
+				replyLength = 1; // reply is always one byte
 				buffer[0] = valid; // store result in buffer
 				break;
 			}
@@ -512,12 +527,14 @@ uint16_t TezioWallet_API::execute_op() {
 
 uint16_t TezioWallet_API::send_reply(uint16_t replyLength) {
 	// shift buffer to make room for message length byte
-	memmove(&buffer[1], &buffer[0], replyLength);
-	buffer[0] = replyLength + 3; // length byte and two crc bytes
-	uint16_t crc = api_crc16(buffer, replyLength+1);
-	buffer[replyLength + 1] = (uint8_t)(crc); // LSB
-	buffer[replyLength + 2] = (uint8_t)(crc >> 8); // MSB
-	send_bytes(buffer, replyLength+3);
+	memmove(&buffer[2], &buffer[0], replyLength);
+	uint16_t totalBytes = replyLength + 4; // length byte and two crc bytes
+	buffer[0] = (uint8_t)totalBytes & 0xFF;
+	buffer[1] = (uint8_t)(totalBytes >> 8) & 0xFF;
+	uint16_t crc = api_crc16(buffer, replyLength+2);
+	buffer[replyLength + 2] = (uint8_t)(crc); // LSB
+	buffer[replyLength + 3] = (uint8_t)(crc >> 8); // MSB
+	send_bytes(buffer, totalBytes);
 	return 1;
 }
 

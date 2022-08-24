@@ -29,5 +29,7 @@ bool ed25519_verify(uint8_t *hash, uint8_t *pk, uint8_t *signature);
 int RNG(uint8_t *dest, unsigned int size);
 uint16_t base58_encode_prefix_checksum(uint8_t *prefix, uint16_t prefixLength, uint8_t *data, uint16_t dataLength, uint8_t *b58str); 
 uint16_t base58_decode_prefix_checksum(uint16_t prefixLength, char *b58str, uint16_t b58strLength, uint8_t *data);
+uint8_t big_int_greater_than_n(uint8_t *s, const uint8_t *n, uint16_t n_bytes);
+uint8_t big_int_subtraction(uint8_t *a, uint8_t *b, uint8_t *r, uint16_t n_bytes);
 
 #endif

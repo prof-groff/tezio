@@ -116,53 +116,5 @@ void run_op_sign_and_verify_test(TezioWallet_API myWallet, uint8_t curve, uint8_
     else if (verified == 1) {
       Serial.println("Valid");
     }
-
-    
-
-    
-  //  print_hex_data(myWallet.buffer, opResultLength); Serial.println();
-  //
-
-  //  char str[] = "5468697320697320616e206578616d706c65206f662061207369676e6564206d6573736167652e";
-  //  uint8_t message[(sizeof(str)-1)/2];
-  //  hex_chars_to_byte_array(str, sizeof(str), message, sizeof(message));
-  //
-  //  // Serial.println("Message");
-  //  // print_hex_data(message, sizeof(message));
-  //
-  //  // load data packet
-  //  myWallet.packet.opCode = 0x11; // SIGN
-  //  myWallet.packet.param1 = 0x01; // curve
-  //  myWallet.packet.param2 = 0x01;
-  //  myWallet.packet.param3 = 0x0101; // LSB, message not hashed yet, MSB raw sig
-  //
-  //  myWallet.packet.data = (uint8_t*) malloc(sizeof(message)*sizeof(uint8_t));
-  //  memcpy(myWallet.packet.data, message, sizeof(message));
-  //
-  //  myWallet.packet.dataLength = sizeof(message);
-  //  uint16_t signatureLength = myWallet.execute_op();
-  //
-  //  Serial.println("SIGNATURE RETURNED");
-  //  uint8_t signature[64];
-  //  memcpy(signature, myWallet.buffer, signatureLength);
-  //  print_hex_data(signature, signatureLength);
-  //
-  //  // signature[10] = 99;
-  //
-  //  // set up for signature validation
-  //  myWallet.packet.opCode = 0x22;
-  //  myWallet.packet.data = (uint8_t*) malloc((sizeof(message)+sizeof(signature))*sizeof(uint8_t));
-  //  memcpy(myWallet.packet.data, signature, 64);
-  //  memcpy(&myWallet.packet.data[64], message, sizeof(message));
-  //  // mess with signature
-  //  // myWallet.packet.data[10] = 0;
-  //  myWallet.packet.dataLength = 64 + sizeof(message);
-  //  Serial.println("PACKET DATA");
-  //  print_hex_data(myWallet.packet.data, 64+sizeof(message));
-  //  uint16_t valid = myWallet.execute_op();
-  //  Serial.println(valid);
-
-  
-
   
 }

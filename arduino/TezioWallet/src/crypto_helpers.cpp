@@ -264,6 +264,19 @@ uint16_t secp256k1_sign(uint8_t *hash, uint8_t *sk, uint8_t *signature) {
     if (!uECC_sign(sk, hash, 32, signature, curve)) {
 		return 0;
 	}
+	
+	// extract s from signature - (r, s) 
+	uint8_t s[32];
+	memcpy(s, &signature[32], 32); 
+	
+	// find lower-s if s is not already so
+	if (big_int_greater_than_n(s, n_sp_div2, sizeof(s)) == 1) { // s is greater than n >> 1
+		// replace s in signature with its additive inverse on the finite field
+		uint8_t n[32]; // make copy of curve order because curve order is a constant variable
+		memcpy(n, n_sp, 32);
+		big_int_subtraction(s, n, &signature[32], sizeof(s));
+	}
+		
 	return 1;
  }
 
@@ -340,8 +353,58 @@ uint16_t base58_encode_prefix_checksum(uint8_t *prefix, uint16_t prefixLength, u
 uint16_t base58_decode_prefix_checksum(uint16_t prefixLength, char *b58str, uint16_t b58strLength, uint8_t *data) {
 	
 	uint8_t _buffer[128]; // probably more than needed, sigs are at most 100 including the \0 char
-	uint16_t dataLength = base58_decode_func(b58str, b58strLength - 1, _buffer); // subtract one because the last character is the null character
+	uint16_t dataLength = base58_decode_func(b58str, b58strLength, _buffer); // subtract one because the last character is the null character
 	// the result has a prefix and four checksum bytes to be removed
 	memcpy(data, &_buffer[prefixLength], dataLength - prefixLength - 4);
 	return dataLength - prefixLength - 4;
+}
+
+
+uint8_t big_int_greater_than_n(uint8_t *s, const uint8_t *n, uint16_t n_bytes) {
+    
+    uint8_t greater_than_n = 0;
+    
+    // check each byte to see if s is less than n
+    for (uint16_t i = 0; i < n_bytes; i++) {
+        
+        if (s[i] > n[i]) {
+            greater_than_n = 1;
+            break;
+        }
+        else if (s[i] < n[i]) {
+            break;
+        }
+        else {
+            // check next byte because equal condition on one byte is uncertain
+        }
+    }
+ 
+    return greater_than_n; 
+    
+}
+
+uint8_t big_int_subtraction(uint8_t *a, uint8_t *b, uint8_t *r, uint16_t n_bytes) {
+	// calculates b minus a where both are large numbers represented as byte arrays
+	// no checking is done but it is assumed that a is less than b
+	// this will be used to find the additive inverse (in finite field) of signature values
+	// that is, it will find lower-s for signatures using the secp256k1 curve
+	
+	// r = b - a where b > a
+	uint16_t temp; // to hold currenty byte of b and borrow from next byte if necessary
+	int i, j;
+	for (i = n_bytes - 1; i >=0; i--) { // work through arrays right to left
+		j = i;
+		temp = b[i];
+		if (a[i] > temp) { // need to borrow to subtract current bytes
+			j--;
+            while(b[j] == 0) { // next byte is zero so continue to next highest byte value
+            	b[j] = 0xFF; // result of borrow
+                j--;   
+        	}
+            b[j] = b[j] - 1; // borrow
+            temp += 256; // and add here
+		}
+		r[i] = temp - a[i];
+	}
+	return 1;
 }
