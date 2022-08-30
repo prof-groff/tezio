@@ -24,13 +24,17 @@ Setting up Tezio Wallet on your Arduino is a three step process. First, the Ardu
 
 The Arduino Integrated Development Environment (IDE) is useful for writing Arduino programs, called sketches, and uploading them to your Arduino board. It is available for Windows, macOS, and Linux under the software tab at [Arduino.cc](http://www.arduino.cc). The steps below are specific to the macOS version, but should be very similar if using other versions of the IDE. 
 
+### Install Support for Arduino SAMD Boards
+
+Open the Arduino IDE, navigate to Tools > Board > Boards Manager..., and search for and install the Arduino SAMD Boards by Arduino, Version 1.8.13+ package. 
+
 #### Install Tezio Wallet Library and Dependencies
 
 Download the TezioWallet.zip file from the [Tezio GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino). Open the Arduino IDE and use Sketch > Include Library > Add .ZIP Library... to install the library from the .zip file. Alternatively, the TezioWallet folder and its contents can be added manually to the Arduino libraries folder, which is usually My Documents\Arduino\libraries on Windows or Documents\Arduino\libraries on macOS. Next,  search for and install the following dependencies using Tools > Manage Libraries....
 
-- ArduinoECCX08
-- Crypto
-- micro-ecc
+- ArduinoECCX08 by Arduino, Version 1.3.6+ 
+- Crypto by Dr. Brandon Wiley, Version 0.4.0+
+- micro-ecc by Kenneth MacKay, Version 1.0.0+
 
 Once the libraries are installed, restart the Arduino IDE before proceeding.
 
@@ -38,7 +42,7 @@ Once the libraries are installed, restart the Arduino IDE before proceeding.
 
 #### Open and Prepare the Setup Sketch
 
-The Tezio Wallet library includes several example sketches. Open the Arduino IDE and navigate to File > Examples > TezioWallet and open the TezioWallet_Setup.ino sketch. This will open three tabs in the IDE: the sketch, a configuration.h file, and a secrets.h file. The configuration.h file contains default configuration data for the cryptochip. Do not modify it. As the name suggests, the secrets.h file contains secrets, specifically a mnemonic phrase, a key derivation path, and a key derivation password. Keep your secrets secret. By default, a password is not used and the derivation path defaults to the standard path for the Tezos blockchain. If your aim is to set up your Tezio Wallet to use a already existing Tezos account, enter your 12, 15, 18, 21, or 24 word phrase, password, and derivation path in secrets.h. Otherwise a new 24 word menmonic phrase will be generated when the sketch is run. Near the top of the sketch is a read/write key used by the system later to allow the device to perform encrypted reads and writes to certain data slots of the cryptochip after it is locked. This can be changed to any 32 bytes value, so long as the same value is also used in the TezioWallet_API.ino sketch later. Save any changes before proceeding.
+The Tezio Wallet library includes several example sketches. Open the Arduino IDE and navigate to File > Examples > TezioWallet and open the Tezio_Wallet_Setup sketch. This will open three tabs in the IDE: the sketch, a configuration.h file, and a secrets.h file. These example files are read only. In order to make changes, click the save button and make a copy. The configuration.h file contains default configuration data for the cryptochip. Do not modify it. As the name suggests, the secrets.h file contains secrets, specifically a mnemonic phrase, a key derivation path, and a key derivation password. Keep your secrets secret. By default, a password is not used and the derivation path defaults to the standard path for the Tezos blockchain. If your aim is to set up your Tezio Wallet to use a already existing Tezos account, enter your 12, 15, 18, 21, or 24 word phrase, password, and derivation path in secrets.h. Otherwise a new 24 word menmonic phrase will be generated when the sketch is run. Near the top of the sketch is a read/write key used by the system later to allow the device to perform encrypted reads and writes to certain data slots of the cryptochip after it is locked. This can be changed to any 32 bytes value, so long as the same value is also used in the Tezio_Wallet_API sketch. Save any changes before proceeding.
 
 #### Upload and Run the Setup Sketch
 

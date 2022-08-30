@@ -18,7 +18,7 @@ uint16_t byte_array_to_hex_chars(uint8_t *ba, uint16_t ba_length, char *s, uint1
 void chars_to_bytes(const char *c, uint16_t n_chars, uint8_t *b);
 void derive_public_key(uint8_t *sk, uint8_t curve, uint8_t *pk); // doesn't use ATECCX08
 void generate_entropy(uint8_t *entropy, uint16_t entropy_length); // doesn't use ATECCX08
-void compress_public_key(uint8_t *pk, uint curve, uint8_t *cpk);
+void compress_public_key(uint8_t *pk, uint8_t curve, uint8_t *cpk);
 uint16_t public_key_base58(uint8_t *pk, uint8_t curve, char *pkb58);
 void generate_public_key_hash(uint8_t *pk, uint8_t curve, char *pk_hash);
 uint16_t encode_public_key(uint8_t *buffer, uint16_t rawKeyLength, uint8_t pkForm, uint8_t curve);

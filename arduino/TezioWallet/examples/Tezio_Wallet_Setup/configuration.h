@@ -5,7 +5,7 @@ Default ATECCX08A Configuration Zone Data for Tezio Wallet
 SLOTS 0-3: P256 Private Keys, Secret, No Reads, Encrypted Writes
 SLOTS 4-7: Non P256 Private Keys (secp256k1 or ed25519 keys), Secret, Encrypted Reads, Encrypted Writes
 SLOTS 8 and 9: Data, Clear Reads, Clear Writes
-SLOT 10: Read/Write Key, Non P256 Private Key, Secret, Entrypted Reads, Encrypted Writes
+SLOT 10: Read/Write Key, Non P256 Private Key, Secret, Encrypted Writes
 SLOTS 11-14: Data, Clear Reads, Clear Writes, Intended for ECC Public Key Storage
 SLOT 15: Data, Clear Reads, Clear Writes
 
