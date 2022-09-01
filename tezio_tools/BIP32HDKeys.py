@@ -1,7 +1,7 @@
 from pyblake2 import blake2b
 import hashlib as hl
 import hmac
-from tezio.Utils import Utils
+from tezio_tools.Utils import Utils
 import pysodium
 
 class BIP32HDKeys():

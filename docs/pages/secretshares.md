@@ -6,11 +6,11 @@ Each byte of the secret entropy is used to generate a byte of each share using S
 
 ## Usage
 
-Download and copy the <code>tezio</code> directory to the project folder or Python module path. Import the SecretShares class.
+Download the tezio repository and and copy the <code>tezio_tools</code> directory to the project folder or Python module path. Import the SecretShares class.
 
 [Link to Github repository.](https://github.com/prof-groff/tezio)
 
-    from tezio.SecretShares import SecretShares
+    from tezio_tools.SecretShares import SecretShares
 
 Create a SecretShares object.
 

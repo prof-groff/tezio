@@ -32,7 +32,6 @@ Open the Arduino IDE, navigate to Tools > Board > Boards Manager..., and search 
 
 Download the TezioWallet.zip file from the [Tezio GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino). Open the Arduino IDE and use Sketch > Include Library > Add .ZIP Library... to install the library from the .zip file. Alternatively, the TezioWallet folder and its contents can be added manually to the Arduino libraries folder, which is usually My Documents\Arduino\libraries on Windows or Documents\Arduino\libraries on macOS. Next,  search for and install the following dependencies using Tools > Manage Libraries....
 
-- ArduinoECCX08 by Arduino, Version 1.3.6+ 
 - Crypto by Dr. Brandon Wiley, Version 0.4.0+
 - micro-ecc by Kenneth MacKay, Version 1.0.0+
 

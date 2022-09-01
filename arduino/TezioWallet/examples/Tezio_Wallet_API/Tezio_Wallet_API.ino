@@ -7,7 +7,7 @@ const uint8_t RWKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62,
                            0xA4, 0x61, 0x26, 0x63, 0xA3, 0xF0, 0x99, 0xFB
                           };
 
-bool debug = false; // put device in debug (interactive) mode and run tests
+bool debug = true; // put device in debug (interactive) mode and run tests
 
 void setup() {
   TezioWallet_API myWallet(57600, RWKey, debug); // default baud is 9600
