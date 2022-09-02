@@ -123,8 +123,9 @@ class TezioWallet:
         return 1
 
     def query_wallet(self) -> bytearray:  
-        com = self.__find_arduino_port()
-        if (com is None):
+        if (self.__find_arduino_port() == 0):
+            return 0
+        if (self.com is None):
             return 0
         ser = self.__open_serial()
         if (ser is None):
@@ -197,11 +198,13 @@ class TezioRPC:
             self.__branch = None
             self.__chain_id = None
             self.__protocol = None
+            self.__counter = None
             
             self.__min_fee_mutez = 100
-            self.__min_fee_per_byte_mutez = 1
+            self.__min_fee_per_byte_mutez = 1 # number of bytes in forged and signed operation
             self.__min_fee_per_gas_mutez = 0.1
-            self.__gas_buffer = 100
+            self.__origination_size = 257
+            self.__cost_per_byte = 250
             
  
     def __repr__(self):
@@ -258,7 +261,8 @@ class TezioRPC:
         return
     
     def __increment_counter(self, counter):
-        return str(int(counter)+1)
+        self.__counter = str(int(counter)+1)
+        return
     
     
     def __forge_operation(self, operation):
@@ -294,12 +298,12 @@ class TezioRPC:
         result = self.preapply([operation]) # can take a list of operations
         return result
     
-    def __estimate_fee(self, nBytes, consumedGas, multiplier = 1):
-        fee = str(int((100 + self.__min_fee_per_byte_mutez * nBytes + self.__min_fee_per_gas_mutez * consumedGas)*multiplier)) 
+    def __estimate_fee(self, nBytes, consumedGas, buffer = 1):
+        fee = str(int((self.__min_fee_mutez + self.__min_fee_per_byte_mutez * nBytes + self.__min_fee_per_gas_mutez * consumedGas)*buffer))
         return fee
     
-    def __estimate_storage_limit(self, nBytes, multiplier = 1):
-        storage_limit = str(int(250*nBytes*multiplier))
+    def __estimate_storage_limit(self, nBytes, buffer = 1):
+        storage_limit = str(int(self.__cost_per_byte*nBytes*buffer))
         return storage_limit
     
     def counter(self):
@@ -340,19 +344,19 @@ class TezioRPC:
         return self.__post_request(URL, data, params)
     
     
-    def reveal(self, fee, storageLimit):
+    def reveal(self):
         
-        # get public key (base58)
+        # get public key (base58, mode 3)
         publicKey = self.wallet.get_pk(3).decode('utf-8')
         
         # retreive chain_id, protocol, branch (hash)
         self.__update_chain_data()
         
         # retreive and increment counter
-        counter = self.__increment_counter(self.counter())
+        self.__increment_counter(self.counter())
         
         # form operation 
-        contents = [{'kind': 'reveal', 'source': self.account, 'fee': str(fee), 'counter': counter, 'gas_limit': '10000', 'storage_limit': str(storageLimit), 'public_key': publicKey}]
+        contents = [{'kind': 'reveal', 'source': self.account, 'fee': '10000', 'counter': self.__counter, 'gas_limit': '10000', 'storage_limit': '10000', 'public_key': publicKey}]
  
         operation = {'branch': self.__branch, 'contents': contents}
         
@@ -386,8 +390,8 @@ class TezioRPC:
         
         consumedGas = result['contents'][0]['metadata']['operation_result']['consumed_gas']
         
-        fee_estimate = self.__estimate_fee(nBytesOperation, consumedGas, 1.1) # add 10%, multiplier 1.1
-        storage_estimate = self.__estimate_storage_limit(nBytesOperation, 1.1)
+        fee_estimate = self.__estimate_fee(nBytesOperation, consumedGas, 1.1) # buffer 1.1, add 10% to minimum estimated fee
+        storage_estimate = self.__estimate_storage_limit(self.__origination_size, 1.1)
 
         # update gas_limit, storage_limit, and fee
         gas_limit = str(int(int(consumedGas)*1.1)) # add 10% buffer 
@@ -460,22 +464,17 @@ class TezioRPC:
         self.__update_chain_data()
         
         # retreive and increment counter
-        counter = self.__increment_counter(self.counter())
+        self.__increment_counter(self.counter())
         
-        # form operation 
-        contents = [{'kind': 'transaction', 'source': self.account, 'fee': '10000', 'counter': counter, 'gas_limit': '10000', 'storage_limit': '10000', 'amount': str(amount), 'destination': str(destination)}]
+        # compose operation with default values for fee, gas_limit, and storage_limit
+        contents = [{'kind': 'transaction', 'source': self.account, 'fee': '10000', 'counter': self.__counter, 'gas_limit': '10000', 'storage_limit': '10000', 'amount': str(amount), 'destination': str(destination)}]
  
         operation = {'branch': self.__branch, 'contents': contents}
         
         # forge operation
         binaryForgedOperation = self.__forge_operation(operation)
         
-        # the fee (in part) is ostensibly based on the size of operation in binary that will be injected. Storage is related to the amount of bytes written to the blockchain. I don't really know how to estimate these values well. Needs work.
-        nBytesOperation = len(binaryForgedOperation) + 64 # 64 for signature
         
-        # hash then sign the operation, signature returned in base58 (mode4)
-        # and decoded from bytes into a string
-        # signature = self.wallet.sign(4, binaryForgedOperation).decode('utf-8')
         
         # simulate operation
         print('Simulating operation...')
@@ -485,25 +484,38 @@ class TezioRPC:
             print('RPC call for simulation failed...')
             return 0
         
-        print('Results...')
-        print(result)
+        # print('Results...')
+        # print(result)
         
         status = result['contents'][0]['metadata']['operation_result']['status']
         
         if (status != 'applied'):
-            print('Operation not applied...')
+            print('Simulated operation not applied...')
             return 0
         
         
         consumedGas = result['contents'][0]['metadata']['operation_result']['consumed_gas']
         
-        fee_estimate = self.__estimate_fee(nBytesOperation, int(consumedGas), 1.1) # add 10%, multiplier 1.1
-        storage_estimate = self.__estimate_storage_limit(nBytesOperation, 1.1)
+        # the fee (in part) is based on the size of operation in binary that will be injected. Storage is related to the amount of bytes written to the blockchain. 
+        # I will attemp to estimate these values. 
+        nBytesOperation = len(binaryForgedOperation) + 64 # 64 for signature
         
-        print('Consumed Gas, Fee Estimate, Storage Estimate...')
-        print(consumedGas)
-        print(fee_estimate)
-        print(storage_estimate)
+        # estimate fee - buffer = 1.1 to add 10% to minimum estimated fee
+        fee_estimate = self.__estimate_fee(nBytesOperation, int(consumedGas), 1.1) 
+        storage_estimate = '0'
+        
+        # print('Consumed Gas, Fee Estimate, Storage Estimate...')
+        # print(consumedGas)
+        # print(fee_estimate)
+        # print(storage_estimate)
+        
+        print('Fee and storage estimates:')
+        print('Fee: {} tez'.format(int(fee_estimate)/1000000))
+        print('Storage: {} tez'.format(int(storage_estimate)/1000000))
+        
+        if (input("Continue? (Y/N)") != 'Y'):
+            return 0
+        
 
         # update gas_limit, storage_limit, and fee
         gas_limit = str(int(int(consumedGas)*1.1)) # add 10% buffer 
@@ -523,16 +535,6 @@ class TezioRPC:
         print('Preapply operation...')
         result = self.__preapply_operations(operation, signature)
         print(result)
-        
-        # form JSON for preapply operations
-        # json = [{}]
-        # json[0]['protocol'] = protocol
-        # json[0]['branch'] = branch
-        # json[0]['contents'] = contents
-        # json[0]['signature'] = signature
-        
-        
-        # result = self.preapply(json)
   
         if (result is None):
             print('RPC call for preapply failed...')
@@ -547,7 +549,7 @@ class TezioRPC:
             ('Operation not applied...')
             return 0
 
-        # need a binary version of the signature to inject. could decode last signature from base58 (probably best) or get a new signature from wallet in binary (64 bytes, easier)
+        # Need a binary version of the signature to inject. Could decode signature used for preapply (less calculation) but her a new signature is requested from the wallet in binary (64 bytes) because this is easier
         
         # hash then sign (raw 64 bytes) the binary forged operation (mode 3)
         binarySignature = self.wallet.sign(3, binaryForgedOperation)
@@ -573,14 +575,10 @@ class TezioRPC:
 
     def delegation(self, delegate):
         
-        # retreive chain_id, protocol, branch (hash)
         self.__update_chain_data()
+        self.__increment_counter(self.counter())
         
-        # retreive and increment counter
-        counter = self.__increment_counter(self.counter())
-        
-        # form operation 
-        contents = [{'kind': 'delegation','source': self.account, 'fee': '10000', 'counter': counter, 'gas_limit': '10000', 'storage_limit': '0', 'delegate': delegate}]
+        contents = [{'kind': 'delegation','source': self.account, 'fee': '10000', 'counter': self.__counter, 'gas_limit': '10000', 'storage_limit': '10000', 'delegate': delegate}]
         
         
         operation = {'branch': self.__branch, 'contents': contents}
@@ -588,7 +586,7 @@ class TezioRPC:
         # forge operation
         binaryForgedOperation = self.__forge_operation(operation)
         
-        # the fee (in part) is ostensibly based on the size of operation in binary that will be injected. Storage is related to the amount of bytes written to the blockchain. I don't really know how to estimate these values well. Needs work.
+        
         nBytesOperation = len(binaryForgedOperation) + 64 # 64 for signature
         
         # hash then sign the operation, signature returned in base58 (mode4)
@@ -616,7 +614,7 @@ class TezioRPC:
         consumedGas = result['contents'][0]['metadata']['operation_result']['consumed_gas']
         
         fee_estimate = self.__estimate_fee(nBytesOperation, int(consumedGas), 1.1) # add 10%, multiplier 1.1
-        storage_estimate = self.__estimate_storage_limit(nBytesOperation, 1.1)
+        storage_estimate = '0'
         
         print('Consumed Gas, Fee Estimate, Storage Estimate...')
         print(consumedGas)
@@ -624,7 +622,7 @@ class TezioRPC:
         print(storage_estimate)
 
         # update gas_limit, storage_limit, and fee
-        gas_limit = str(int(int(consumedGas) + self.__gas_buffer)) 
+        gas_limit = str(int(int(consumedGas)*1.1)) # add 10% buffer 
         contents[0]['gas_limit'] = gas_limit
         contents[0]['fee'] = fee_estimate
         contents[0]['storage_limit'] = storage_estimate
@@ -642,16 +640,7 @@ class TezioRPC:
         result = self.__preapply_operations(operation, signature)
         print(result)
         
-        # form JSON for preapply operations
-        # json = [{}]
-        # json[0]['protocol'] = protocol
-        # json[0]['branch'] = branch
-        # json[0]['contents'] = contents
-        # json[0]['signature'] = signature
         
-        
-        # result = self.preapply(json)
-  
         if (result is None):
             print('RPC call for preapply failed...')
             return 0
@@ -665,5 +654,27 @@ class TezioRPC:
             ('Operation not applied...')
             return 0
 
+        # Need a binary version of the signature to inject. Could decode signature used for preapply (less calculation) but her a new signature is requested from the wallet in binary (64 bytes) because this is easier
+        
+        # hash then sign (raw 64 bytes) the binary forged operation (mode 3)
+        binarySignature = self.wallet.sign(3, binaryForgedOperation)
+        
+
+        # prepare operation and signature for injection
+        data = binascii.hexlify(binaryForgedOperation[1:] + binarySignature).decode('utf-8') # concatinate (ingore 0x03 prefix) and convert to string
+        data = '"' + data + '"' # add double quotes
+        # print(data)
+
+        
+        print('Injecting operation...')
+        result = self.injection_operation(data)
+        if (result is None):
+            print('RPC call to inject opertion failed...')
+            return 0
+        
+        print('Results...')
+        print(result)
+        
+        
         
         return result
