@@ -100,7 +100,7 @@ void derive_public_key(uint8_t *sk, uint8_t curve, uint8_t *pk) {
  
 }
 
-void compress_public_key(uint8_t *pk, uint curve, uint8_t *cpk) {
+void compress_public_key(uint8_t *pk, uint8_t curve, uint8_t *cpk) {
 	
 	if (curve == ED25519) {
 		memcpy(cpk, pk, 32); // pk is only 32 bytes, no compression needed
