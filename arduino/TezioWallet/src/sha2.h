@@ -25,6 +25,7 @@ SOFTWARE. */
 
 #include <Arduino.h>
 #include <SHA512.h>
+#include "ui.h"
 
 #define SHA512_HASH_SIZE 64
 #define SHA512_BLOCK_SIZE 128

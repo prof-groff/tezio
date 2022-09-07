@@ -26,13 +26,9 @@ SOFTWARE. */
 
 /* Upload and run this sketch to configure Tezio Wallet on an Arduino WiFi 1010 or Arduino Nano 33 IoT.
 
-The readWriteKey below can be set to any 32-byte value but the same key must be used with both the 
-Tezio_Wallet_Setup and the Tezio_Wallet_API sketches.  
+The readWriteKey below can be set to any 32-byte value but the same key must be used with both the Tezio_Wallet_Setup and the Tezio_Wallet_API sketches.  
 
-This key is stored in the cyptographic coprocessor and used by the system to perform encrypted reads and 
-writes into slots on the cryptochip for which this functionality is enabled. Once this key is written to 
-the device it can be changed via an ecrypted write (if the current value is known) but can never be read. 
-It should not be shared. */
+This key is stored in the cyptographic coprocessor and used by the system to perform encrypted reads and writes into slots on the cryptochip for which this functionality is enabled. Once this key is written to the device it can be changed via an ecrypted write (if the current value is known) but can never be read. It should not be shared. */
 
 const uint8_t readWriteKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62, 
                                   0x0B, 0xEA, 0x19, 0x7A, 0x73, 0xAD, 0x10, 0x54, 

@@ -22,8 +22,11 @@ SOFTWARE. */
 
 #include "sha2.h"
 
+
 #if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT)
-#include <ArduinoECCX08.h>
+// #include <ArduinoECCX08.h>
+# include "Cryptochip.h"
+
 #endif
 
 #include <SHA256.h>
@@ -50,9 +53,15 @@ void sha512_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output) {
 }
 
 #if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT)
+// use the hardware SHA256 functionality
 
 void sha256_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output) {
-    ECCX08.beginSHA256();
+    Cryptochip myChip(Wire, 0x60);
+    if(!myChip.begin()) {
+    	Serial.println("ERROR: Cryptochip not detected."); 
+    	wait_forever();
+  	}
+    myChip.beginSHA256();
     uint16_t _cursor = 0;
     uint16_t current_block_length;
     uint8_t chunk[SHA256_BLOCK_SIZE];
@@ -64,13 +73,14 @@ void sha256_func(uint8_t *data, uint16_t data_length, uint8_t *hash_output) {
       current_block_length = min(SHA256_BLOCK_SIZE, data_length - _cursor);
       memcpy(chunk, &data[_cursor], current_block_length);
       if (current_block_length == SHA256_BLOCK_SIZE) { // full block
-        ECCX08.updateSHA256(chunk);
+        myChip.updateSHA256(chunk);
       }
       else { // partial block, end
-        ECCX08.endSHA256(chunk, current_block_length, hash_output);
+        myChip.endSHA256(chunk, current_block_length, hash_output);
       }
       _cursor += current_block_length;
     }
+    myChip.end();
 }
 
 #else
