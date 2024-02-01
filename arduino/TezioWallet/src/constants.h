@@ -1,6 +1,6 @@
 /* MIT License
 
-Copyright (c) 2022 Jeffrey R. Groff
+Copyright (c) 2024 Jeffrey R. Groff
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -82,6 +82,12 @@ const uint8_t TZ3_PK[4] = {0x03, 0xB2, 0x8B, 0x7F}; // p2pk
 const uint8_t TZ1_SIG[5] = {0x09, 0xF5, 0xCD, 0x86, 0x12}; // edsig
 const uint8_t TZ2_SIG[5] = {0x0D, 0x73, 0x65, 0x13, 0x3F}; // spsig
 const uint8_t TZ3_SIG[4] = {0x36, 0xF0, 0x2C, 0x34}; // p2sig
+
+// prefixes for base58 encoded secret keys
+const uint8_t TZ1_SKPK[4] = {0x2B, 0xF6, 0x4E, 0x07}; // edsk
+const uint8_t TZ1_SK[4] = {0x0D, 0x0F, 0x3A, 0x07}; // edsk
+const uint8_t TZ2_SK[4] = {0x11, 0xA2, 0xE0, 0xC9}; // spsk
+const uint8_t TZ3_SK[4] = {0x10, 0x51, 0xEE, 0xBD}; // p2sk
 
 
 #endif

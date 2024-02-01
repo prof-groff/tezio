@@ -1,6 +1,6 @@
 /* MIT License
 
-Copyright (c) 2022 Jeffrey R. Groff
+Copyright (c) 2024 Jeffrey R. Groff
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,8 @@ SOFTWARE. */
 #define GET_PK 0x11
 #define SIGN 0x21
 #define VERIFY 0x22
+#define CLEAR_WRITE 0x31
+#define WRITE_KEYS 0x32
 
 #define PK_RAW 0
 #define PK_COMP 1
@@ -62,6 +64,8 @@ class TezioWallet_API {
 		uint16_t op_get_pk();
 		uint16_t op_sign();
 		uint16_t op_verify(); 
+		uint16_t op_clear_write();
+		uint16_t op_write_keys(); // encrypted write secret key, clear write public key
 		uint8_t readWriteKey[32];
 		bool debugFlag;
 	    

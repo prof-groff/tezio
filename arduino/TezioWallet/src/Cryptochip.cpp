@@ -1,7 +1,7 @@
 /*
   The Cryptochip library is remixed from the ArduinoECCX08 library with added functionality.
   
-  Copyright (c) 2022 Jeff Groff
+  Copyright (c) 2024 Jeff Groff
 
   Like the library on which its based, this library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
 
@@ -966,18 +966,6 @@ int Cryptochip::encryptedWrite(uint16_t slot, uint8_t cyphertext[], uint8_t mac[
  uint8_t data[datalength]; 
  memcpy(&data[0], &cyphertext[0], length);
  memcpy(&data[32], &mac[0], length);
-    Serial.println("data to be sent to command, cyphertext + mac");
-for (int i = 0; i < datalength; i++) {
-    Serial.print(data[i], HEX); Serial.print(' ');
-}
-    Serial.println();
-    Serial.println();
-    
-Serial.println("Datalength");
-    Serial.println(datalength);
-    
-  // uint8_t test_data[datalength-1];
-  // memcpy(&test_data[0], &data[0], sizeof(test_data));
 
   if (!sendCommand(opcode, param1, address, data, sizeof(data))) {
     return 0;
@@ -991,9 +979,8 @@ Serial.println("Datalength");
   }
     
   if (_status !=0) {
-      Serial.println(_status, HEX);
+      // Serial.println(_status, HEX);
       return 0;
-      
   }
 
   delay(1);

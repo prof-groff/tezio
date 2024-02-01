@@ -1,7 +1,7 @@
 /*
   The Cryptochip library is remixed from the ArduinoECCX08 library with added functionality.
   
-  Copyright (c) 2022 Jeff Groff
+  Copyright (c) 2024 Jeff Groff
 
   Like the library on which its based, this library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
 
