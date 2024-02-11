@@ -4,7 +4,7 @@
 /*
  * -- Test Vectors --
  * 
- * Mnemonic: ""
+ * Mnemonic: "mule wise online wear hair sign wife media calm arctic diet tip special quarter season swarm robust apart other whale broken pistol hunt egg"
  * 
  * Password: "" 
  * 
