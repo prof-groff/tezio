@@ -83,7 +83,7 @@ uint16_t TezioWallet_API::op_get_pk() {
 		return 0; 
 	}
 	
-	if (curve == NULL || curve > 3) {
+	if (curve == NULL || curve > 4) {
 		return 0; // invalid curve parameter, don't know which curve to return a key for
 	}
 	
@@ -114,6 +114,13 @@ uint16_t TezioWallet_API::op_get_pk() {
 				rawKeyLength = P2_PK_SIZE;
 				myChip.readSlot(P2_PK_SLOT, buffer, rawKeyLength);
 				replyLength = encode_public_key(buffer, rawKeyLength, mode, NISTP256);
+				break;
+			}
+	case(NISTP256_AUTH):
+			{
+				rawKeyLength = P2_PK_SIZE;
+				myChip.readSlot(P2_AUTH_KEY_PK_SLOT, buffer, rawKeyLength);
+				replyLength = encode_public_key(buffer, rawKeyLength, mode, NISTP256_AUTH);
 				break;
 			}
     default:
@@ -147,15 +154,15 @@ uint16_t TezioWallet_API::op_sign() {
 		0x03		no						raw bytes
 		0x04		no						base58 checksum encoded */
 	
-	if (curve == NULL || curve > 3) { // for variables NULL is 0
+	if (curve == NULL || curve > 4) { // for variables NULL is 0
 		return 0; // don't know which curve to use
 	}
-	if (mode > 5) {
+	if (mode > 4) {
 		return 0; // don't know which mode to use
 	}
 
 	// set prefix for curve
-	if (curve == NISTP256) {
+	if (curve == NISTP256 || curve == NISTP256_AUTH) {
 		prefixLength = 4;
 		memcpy(prefix, TZ3_SIG, prefixLength);
 	}
@@ -206,6 +213,20 @@ uint16_t TezioWallet_API::op_sign() {
 			}
 			myChip.end();
 		}
+		
+		else if (curve == NISTP256_AUTH) {
+
+			Cryptochip myChip(Wire, 0x60);
+			if (!myChip.begin()) {
+				return 0; 
+			}
+			if (!myChip.ecSign(P2_AUTH_KEY_SLOT, buffer, signature)) {
+				return 0;
+			}
+			myChip.end();
+		}
+		
+		
 		else if (curve == SECP256K1) {
 		
 			uint8_t sk[32];
@@ -287,6 +308,7 @@ uint16_t TezioWallet_API::op_verify() {
 		0x01		Ed25519
 		0x02		Secp256k1
 		0x03		NIST P256
+		0x04		NIST P256 Authentication Key
 	
 		mode		message is hashed		signature format
 		0x01		yes						raw bytes
@@ -295,7 +317,7 @@ uint16_t TezioWallet_API::op_verify() {
 		0x04		no						base58 checksum encoded */
 	
 	
-	if (curve == NULL || curve > 3) {
+	if (curve == NULL || curve > 4) {
 		
 		return 0;
 	}
@@ -329,7 +351,7 @@ uint16_t TezioWallet_API::op_verify() {
 		memset(b58_sig, '\0', sizeof(b58_sig));
 		memcpy(b58_sig, &packet.data[messageLength], signatureLength); // signature comes at the end of the data
 		
-		if (curve == NISTP256) {
+		if (curve == NISTP256 || curve == NISTP256_AUTH) {
 			prefixLength = 4;
 		}
 		else {
@@ -375,6 +397,25 @@ uint16_t TezioWallet_API::op_verify() {
 			return 1;
 		}	
 	}
+	else if (curve == NISTP256_AUTH) { // use authentication key on P256 curve
+		Cryptochip myChip(Wire, 0x60);
+		if (!myChip.begin()) {
+			return 0; 
+		}
+		
+		uint8_t pk[P2_PK_SIZE];
+		myChip.readSlot(P2_AUTH_KEY_PK_SLOT, pk, P2_PK_SIZE);
+		
+		if (!myChip.ecdsaVerify(buffer, signature, pk)){
+			myChip.end();
+			return 0;
+		}
+		else {
+			myChip.end();
+			return 1;
+		}	
+	
+	}
 	else if (curve == SECP256K1) {
 		Cryptochip myChip(Wire, 0x60);
 		if (!myChip.begin()) {
@@ -415,6 +456,9 @@ uint16_t TezioWallet_API::op_verify() {
 }
 		
 uint16_t TezioWallet_API::op_write_keys() {
+
+
+// THIS CURRENTLY WON"T WORK WITH NIST P256 KEYS BECAUSE THEY NEED A DIFFERENT MAC AND PRIVWRITES
 
 	uint8_t curve = packet.param1;
 	uint8_t mode = packet.param2;

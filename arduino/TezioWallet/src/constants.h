@@ -28,17 +28,22 @@ SOFTWARE. */
 #define ED25519 1
 #define SECP256K1 2
 #define NISTP256 3
+#define NISTP256_AUTH 4
 
 // memory slots to use for secret/private keys
 #define P2_SK_SLOT 3 // slot for NIST P256 secret key, must be between 0 and 3 using default cryptochip configuration.
 #define SP_SK_SLOT 4 // slot for secp256k1 secret key, must be between 4 and 7 using default cryptochip configuration.
 #define ED_SK_SLOT 5 // slot for ed25519 secret key, must be between 4 and 7 using default cryptochip configuration.
 
+#define P2_AUTH_KEY_SLOT 0 // 0, slot for authentication key
+
 // memory slots to use for public keys (public keys can also be derived from secret/private keys)
 // must be between 11 and 14 using default cryptochip configuration.
 #define P2_PK_SLOT 11
 #define SP_PK_SLOT 12
 #define ED_PK_SLOT 13
+
+#define P2_AUTH_KEY_PK_SLOT 14 // 14, slot for authentication public key
 
 // default memory slot for encrypted read/write key, must be 10 using default cryptochip configuration.
 #define RW_KEY_SLOT 10

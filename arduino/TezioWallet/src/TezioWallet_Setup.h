@@ -43,6 +43,8 @@ class TezioWallet_Setup {
 		uint8_t edsk[32];
 		uint8_t spsk[32];
 		uint8_t p2sk[32];
+		
+		uint16_t write_p256_secret_key(uint8_t slot, uint8_t *p2sk, const uint8_t *RWKey);
 	
 	    
     public:

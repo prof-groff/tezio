@@ -101,6 +101,7 @@ void derive_public_key(uint8_t *sk, uint8_t curve, uint8_t *pk) {
                 return;
             }
         case NISTP256:
+        case NISTP256_AUTH:
             {
                 const struct uECC_Curve_t * c = uECC_secp256r1();
                 uECC_compute_public_key(sk, pk, c);
@@ -157,7 +158,8 @@ void generate_public_key_hash(uint8_t *pk, uint8_t curve, char *pk_hash) {
 				pk_length = 33;
 				break;
 			}
-		case NISTP256: 
+		case NISTP256:
+		case NISTP256_AUTH:
 			{
 				memcpy(prefix, TZ3_PREFIX, 3); // tz3
 				pk_length = 33;
@@ -208,7 +210,8 @@ uint16_t public_key_base58(uint8_t *pk, uint8_t curve, char *pkb58) {
 				pkLength = 33;
 				break;
 			}
-		case NISTP256: 
+		case NISTP256:
+		case NISTP256_AUTH:
 			{
 				memcpy(prefix, TZ3_PK, 4); // tz3
 				pkLength = 33;
@@ -240,6 +243,69 @@ void generate_entropy(uint8_t *entropy, uint16_t entropy_length) {
     }
     
 	return;
+}
+
+uint16_t secret_key_base58(uint8_t *sk, uint8_t curve, char *skb58) {
+	
+	uint16_t skLength;
+	uint16_t pkLength;
+	uint8_t prefix[4];
+	uint8_t pk[32];
+	
+	switch (curve) {
+		case ED25519: 
+			{
+				memcpy(prefix, TZ1_SKPK, 4); // tz1
+				skLength = 32; 
+				pkLength = 32; // customary to append public key to secret key before encoding
+				break;
+			}
+		case SECP256K1: 
+			{
+				memcpy(prefix, TZ2_SK, 4); // tz2
+				skLength = 32;
+				break;
+			}
+		case NISTP256:
+		case NISTP256_AUTH:
+			{
+				memcpy(prefix, TZ3_SK, 4); // tz3
+				skLength = 32;
+				break;
+			}
+	}
+
+    uint8_t skBase58[4 + skLength + pkLength + 4]; // prefix + secret key + public key + checksum , enough space for ed25519 keys
+    memcpy(&skBase58[0], &prefix[0], 4);
+    memcpy(&skBase58[4], &sk[0], skLength);
+    
+    uint8_t sha256a[32];
+    uint8_t sha256b[32]; // apply sha256 twice
+    uint16_t outLength;
+    
+    char _buffer[99]; // will be either 54 or 98 characters plus null terminator
+    
+    if (curve == ED25519) {
+    	derive_public_key(sk, ED25519, pk);
+    	memcpy(&skBase58[4+skLength], &pk[0], 32);
+    	sha256_func_host(&skBase58[0], 4 + skLength + pkLength, sha256a);
+    	sha256_func_host(sha256a, 32, sha256b);
+    	memcpy(&skBase58[4 + skLength + pkLength], &sha256b[0], 4); 
+    	memset(_buffer, '\0', sizeof(_buffer));
+    	outLength = base58_func(skBase58, 4 + skLength + pkLength + 4, _buffer);
+		memcpy(skb58, _buffer, outLength); 
+    }
+    else {
+    	sha256_func_host(&skBase58[0], 4 + skLength, sha256a);
+    	sha256_func_host(sha256a, 32, sha256b);
+    	memcpy(&skBase58[4 + skLength], &sha256b[0], 4); 
+    	memset(_buffer, '\0', sizeof(_buffer));
+    	outLength = base58_func(skBase58, 4 + skLength + 4, _buffer);
+		memcpy(skb58, _buffer, outLength); 
+	}
+	
+	return outLength;
+
 }
 
 uint16_t encode_public_key(uint8_t *buffer, uint16_t rawKeyLength, uint8_t pkForm, uint8_t curve) {

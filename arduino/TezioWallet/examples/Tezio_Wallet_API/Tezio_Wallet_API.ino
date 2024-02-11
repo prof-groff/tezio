@@ -21,18 +21,25 @@ void setup() {
     run_op_get_pk_test(myWallet, ED25519, 0x01);
     run_op_get_pk_test(myWallet, SECP256K1, 0x01);
     run_op_get_pk_test(myWallet, NISTP256, 0x01);
+    run_op_get_pk_test(myWallet, NISTP256_AUTH, 0x01);
+    
     Serial.println(); Serial.println("-- Compressed --"); Serial.println();
     run_op_get_pk_test(myWallet, ED25519, 0x02);
     run_op_get_pk_test(myWallet, SECP256K1, 0x02);
     run_op_get_pk_test(myWallet, NISTP256, 0x02);
+    run_op_get_pk_test(myWallet, NISTP256_AUTH, 0x02);
+    
     Serial.println(); Serial.println("-- Base58 Checksum Encoded --"); Serial.println();
     run_op_get_pk_test(myWallet, ED25519, 0x03);
     run_op_get_pk_test(myWallet, SECP256K1, 0x03);
     run_op_get_pk_test(myWallet, NISTP256, 0x03);
+    run_op_get_pk_test(myWallet, NISTP256_AUTH, 0x03);
+    
     Serial.println(); Serial.println("-- Tezos Public Key Hash (Address) --"); Serial.println();
     run_op_get_pk_test(myWallet, ED25519, 0x04);
     run_op_get_pk_test(myWallet, SECP256K1, 0x04);
     run_op_get_pk_test(myWallet, NISTP256, 0x04);
+    run_op_get_pk_test(myWallet, NISTP256_AUTH, 0x04);
 
     Serial.println();
     Serial.println("-- Testing Message Signing and Signature Verification (op_sign, 0x21; op_verify, 0x22) --"); Serial.println();
@@ -41,21 +48,25 @@ void setup() {
     run_op_sign_and_verify_test(myWallet, ED25519, 0x01);
     run_op_sign_and_verify_test(myWallet, SECP256K1, 0x01);
     run_op_sign_and_verify_test(myWallet, NISTP256, 0x01);
+    run_op_sign_and_verify_test(myWallet, NISTP256_AUTH, 0x01);
 
     Serial.println(); Serial.println("-- Message Hashed, Signature Base58 Checksum Encoded --");
     run_op_sign_and_verify_test(myWallet, ED25519, 0x02);
     run_op_sign_and_verify_test(myWallet, SECP256K1, 0x02);
     run_op_sign_and_verify_test(myWallet, NISTP256, 0x02);
+    run_op_sign_and_verify_test(myWallet, NISTP256_AUTH, 0x02);
 
     Serial.println(); Serial.println("-- Message Unhashed, Signature Raw Bytes --");
     run_op_sign_and_verify_test(myWallet, ED25519, 0x03);
     run_op_sign_and_verify_test(myWallet, SECP256K1, 0x03);
     run_op_sign_and_verify_test(myWallet, NISTP256, 0x03);
+    run_op_sign_and_verify_test(myWallet, NISTP256_AUTH, 0x03);
 
     Serial.println(); Serial.println("-- Message Unhashed, Signature Base58 Checksum Encoded --");
     run_op_sign_and_verify_test(myWallet, ED25519, 0x04);
     run_op_sign_and_verify_test(myWallet, SECP256K1, 0x04);
     run_op_sign_and_verify_test(myWallet, NISTP256, 0x04);
+    run_op_sign_and_verify_test(myWallet, NISTP256_AUTH, 0x04);
   }
 }
   

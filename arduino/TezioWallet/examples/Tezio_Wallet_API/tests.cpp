@@ -2,7 +2,7 @@
 #include "TezioWallet_API.h"
 #include "tests.h"
 
-char *curveNames[] = {"-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --"};
+char *curveNames[] = {"-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --", "-- NIST P256 AUTH --"};
 
 void run_op_get_pk_test(TezioWallet_API myWallet, uint8_t curve, uint8_t mode) {
 
