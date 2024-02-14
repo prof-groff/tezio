@@ -8,12 +8,15 @@ const uint8_t RWKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62,
                           };
 
 bool debug = false; // put device in debug (interactive) mode and run tests
+uint32_t baud = 9600;
+
 
 void setup() {
-  TezioWallet_API myWallet(57600, RWKey, debug); // default baud is 9600
 
   if (debug) { // run some test
     start_serial();
+    
+    TezioWallet_API myWallet(baud, RWKey); 
     
     Serial.println("-- Testing Public Key Retrieval (op_get_pk, 0x11) --"); Serial.println();
     
@@ -71,5 +74,40 @@ void setup() {
 }
   
 void loop() {
-  delay(1); // do nothing
+	
+	if(!debug) {
+		start_serial(baud);
+		
+		TezioWallet_API myWallet(baud, RWKey); 
+		
+		uint16_t packetLength, replyLength;
+		
+		
+		// clear serial buffer 
+		while (Serial.available()) { 
+			Serial.read();
+			}
+
+		myWallet.wait_for_start_byte(START_BYTE);
+		packetLength = myWallet.read_packet();
+      	if (myWallet.validate_packet(packetLength) == 0) {
+        	// fail, send error code and proceed after short wait
+        	myWallet.send_error(INVALID_PACKET);
+        	delay(1);
+      	}
+      	else if (myWallet.parse_message(packetLength) == 0) {
+        	// fail, send error code and proceed after short wait
+        	myWallet.send_error(PARSE_ERROR);
+        	delay(1);
+		}
+      	else if ((replyLength = myWallet.execute_op()) == 0) {
+        	// failed to execute op command
+        	myWallet.send_error(OP_ERROR);
+        	delay(1);
+      	}
+      	else {
+        	myWallet.send_reply(replyLength);
+      	}
+	}
+  delay(1); // short wait
 }

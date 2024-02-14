@@ -22,40 +22,9 @@ SOFTWARE. */
 
 #include "TezioWallet_API.h"
 
-TezioWallet_API::TezioWallet_API(uint32_t baud, const uint8_t *RWKey, bool debug) {
-	debugFlag = debug;
-	if(debugFlag) {
-		// don't go into listening mode
-		start_serial(baud);
-		memcpy(readWriteKey, RWKey, 32); 
-	}
-	else {
-	start_serial(baud);
+TezioWallet_API::TezioWallet_API(uint32_t baud, const uint8_t *RWKey) {
+	// debugFlag = debug;
 	memcpy(readWriteKey, RWKey, 32); 
-	uint16_t packetLength, replyLength;
-  	while (1) {
-		wait_for_start_byte(START_BYTE);
-		packetLength = read_packet();
-      	if (validate_packet(packetLength) == 0) {
-        	// fail, send error code and proceed after short wait
-        	send_error(INVALID_PACKET);
-        	delay(1);
-      	}
-      	else if (parse_message(packetLength) == 0) {
-        	// fail, send error code and proceed after short wait
-        	send_error(PARSE_ERROR);
-        	delay(1);
-		}
-      	else if ((replyLength = execute_op()) == 0) {
-        	// failed to execute op command
-        	send_error(OP_ERROR);
-        	delay(1);
-      	}
-      	else {
-        	send_reply(replyLength);
-      	}
-	}
-	}
 }
 
 uint16_t TezioWallet_API::op_get_pk() {
@@ -129,6 +98,7 @@ uint16_t TezioWallet_API::op_get_pk() {
 			}
   }
 	
+	myChip.end();
 	return replyLength;
  	
 }
@@ -588,6 +558,8 @@ uint16_t TezioWallet_API::op_write_keys() {
 	if (!myChip.writeSlot(pkSlot, publicKey, publicKeyLength)) {
 		return 0;
 	}
+	
+	myChip.end();
 
 	return 1;
 }
@@ -620,24 +592,25 @@ uint16_t TezioWallet_API::api_crc16(uint8_t *data, uint16_t dataLength) {
 
 uint16_t TezioWallet_API::reset_packet() {
 	
-	packet.opCode = NULL;
-	packet.param1 = NULL;
-	packet.param2 = NULL;
-	packet.data = NULL;
-	packet.dataLength = NULL;
+	packet.opCode = 0;
+	packet.param1 = 0;
+	packet.param2 = 0;
+	memset(packet.data, 0, sizeof(packet.data));
+	packet.dataLength = 0;
 	
 	return 1;
 }
 
 uint16_t TezioWallet_API::wait_for_start_byte(uint8_t startByte) {
 	while (1) {
-		while(Serial.available() == 0) {
-			delay(1); // nothing in buffer, short wait to throtle
+		if (Serial.available()>0) {
+
+			if (Serial.read() == startByte) {
+				delay(1); // data incoming, short wait for bytes to arrive
+				break;
+			}
 		}
-		if (Serial.read() == startByte) {
-			delay(1); // data incoming, short wait for bytes to arrive
-			break;
-		}
+		delay(1); // short wait
 	}
 	return 1;
 }
@@ -685,7 +658,7 @@ uint16_t TezioWallet_API::parse_message(uint16_t packetLength) {
 		packet.param3 = (uint16_t)buffer[5] | (uint16_t)(buffer[6]) << 8 ;
 	}
 	if (packetLength > 9) { // data present
-		packet.data = (uint8_t*) malloc((packetLength-9)*sizeof(uint8_t));
+		// packet.data = (uint8_t*) malloc((packetLength-9)*sizeof(uint8_t));
     	memcpy(packet.data, &buffer[7], packetLength - 9);
     	packet.dataLength = packetLength - 9;
 	}

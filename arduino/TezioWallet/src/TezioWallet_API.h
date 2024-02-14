@@ -51,7 +51,7 @@ typedef struct {
   uint8_t param1;
   uint8_t param2;
   uint16_t param3; 
-  uint8_t *data;
+  uint8_t data[1024];
   uint16_t dataLength;
 } tezioPacket;
 
@@ -72,9 +72,9 @@ class TezioWallet_API {
     public:
 	
 		tezioPacket packet;
-		uint8_t buffer[512]; 
+		uint8_t buffer[1024]; 
 	
-		TezioWallet_API(uint32_t baud, const uint8_t *RWKey, bool debug = false);
+		TezioWallet_API(uint32_t baud, const uint8_t *RWKey);
 	
 		uint16_t reset_packet();
 		uint16_t wait_for_start_byte(uint8_t startByte);

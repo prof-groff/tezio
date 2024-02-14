@@ -77,7 +77,7 @@ void run_op_sign_and_verify_test(TezioWallet_API myWallet, uint8_t curve, uint8_
     myWallet.packet.param1 = curve;
     myWallet.packet.param2 = mode;
     myWallet.packet.dataLength = messageLength;
-    myWallet.packet.data = (uint8_t*) malloc(messageLength*sizeof(uint8_t));
+    // myWallet.packet.data = (uint8_t*) malloc(messageLength*sizeof(uint8_t));
     memcpy(myWallet.packet.data, message, messageLength);
     
     // run op
@@ -100,7 +100,7 @@ void run_op_sign_and_verify_test(TezioWallet_API myWallet, uint8_t curve, uint8_
     myWallet.packet.param2 = mode;
     myWallet.packet.param3 = messageLength; // needed if the message is not already hashed.
     myWallet.packet.dataLength = messageLength + signatureLength;
-    myWallet.packet.data = (uint8_t*) malloc((messageLength + signatureLength)*sizeof(uint8_t));
+    // myWallet.packet.data = (uint8_t*) malloc((messageLength + signatureLength)*sizeof(uint8_t));
     memcpy(myWallet.packet.data, message, messageLength);
     if (mode == 1 || mode == 3) { // raw bytes
       memcpy(&myWallet.packet.data[messageLength], signature, signatureLength);
