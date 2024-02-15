@@ -640,15 +640,15 @@ uint16_t TezioWallet_API::read_packet() {
 	// then read in the rest of the packet
 	retries = 0; 
 	while (packetLength < expectedPacketLength && retries < 100) {
-		if (Serial.available() == 0) {
-			retries ++;
-			delay(1); 
-		}
-		else {
+		if (Serial.available() > 0) {
 			buffer[packetLength] = Serial.read();
 			packetLength++;
 		}
-	}
+		else {
+			retries ++;
+			delay(1); 
+		}
+		
 	return packetLength;
 }
 

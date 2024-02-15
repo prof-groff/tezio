@@ -70,6 +70,7 @@ def keys(pkh):
                 # authSig = None
                 # authSig = request.args.get('authentication')
                 # authSigBytes = bytearray(authSig, 'utf-8')
+                # print(authSig)
 
                 # get level and round from data
                 if (magicByte == 0x12 or magicByte == 0x13):
@@ -127,6 +128,7 @@ def authorized_keys():
 
     # no authorized keys for signing incoming queries
     response = jsonify({})
+    # response = make_response(jsonify({'authorized_keys': ['tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j']}))
     response.status_code = 200
     
     return response

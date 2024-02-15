@@ -1,5 +1,17 @@
-addresses:
+pkhs:
     1: "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5"
     2: "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5"
     3: "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j"
-    
+
+magic_bytes:    # 0 - disable, 1 - enable
+    0x01: 0     # legacy block
+    0x02: 0     # legacy endorsement
+    0x03: 0     # generic transaction, trasfer
+    0x04: 1     # authenticated signing request
+    0x05: 0     # Michelson data
+    0x11: 1     # block 
+    0x12: 1     # pre-attestation
+    0x13: 1     # attestation
+
+node_url:
+    "http://localhost:8732"
