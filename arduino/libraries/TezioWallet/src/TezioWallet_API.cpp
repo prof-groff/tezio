@@ -41,6 +41,7 @@ uint16_t TezioWallet_API::op_get_pk() {
     0x01    Ed25519
     0x02    Secp256k1
     0x03    NIST P256
+	0x04 	NIST P256 Authentication Key
   
     mode    pk format
     0x01    raw bytes
@@ -624,7 +625,7 @@ uint16_t TezioWallet_API::read_packet() {
 
 	// wait for first two bytes to arrive (length bytes)
 	while (Serial.available() < 2 && retries < 100) {
-		retries ++;
+		retries++;
 		delay(1); 
 	}
 
@@ -645,7 +646,7 @@ uint16_t TezioWallet_API::read_packet() {
 			packetLength++;
 		}
 		else {
-			retries ++;
+			retries++;
 			delay(1); 
 		}
 	}

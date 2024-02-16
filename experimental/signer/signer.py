@@ -43,20 +43,20 @@ def keys(pkh):
             return response
         elif request.method == 'POST':
             dataStr = request.data.decode('utf-8')
-            # print(dataStr)
+            # print(dataStr)S
             # print(dataStr[1:-2])
             dataBytes = bytearray.fromhex(dataStr[1:-2]) # remove " from beginning and end and extra character too
             
             
             auth_sig = None
-            auth_sig = request.args.get('authentication')
+            # auth_sig = request.args.get('authentication')
             # print(auth_sig)
             
-            if (auth_sig):
-                print("authentication received")
+            # if (auth_sig):
+            #     print("authentication received")
                 
-                authBytes = bytearray(auth_sig, 'utf-8')
-                print(authBytes)
+            #   authBytes = bytearray(auth_sig, 'utf-8')
+                # print(authBytes)
             #    print(len(authBytes))
                 
                 # opCode = 0x22
@@ -120,8 +120,8 @@ def keys(pkh):
 def authorized_keys():
     # authorized keys not implemented yet
     # response = jsonify({'authorized_keys': ['edpkuBsdoxrpMAwPNZSqpgEaFdNz55uqNBrU43pjsBLTE1aM6XecgG']})
-    # response = jsonify({})
-    response = make_response(jsonify({'authorized_keys': ['tz3dSMwtw9nwprnPj7KercgTHXaxy3SzDDJv']}))
+    response = jsonify({})
+    # response = make_response(jsonify({'authorized_keys': ['tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs']}))
     response.status_code = 200
     
     return response

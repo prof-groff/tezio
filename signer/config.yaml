@@ -2,6 +2,7 @@ pkhs:
     1: "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5"
     2: "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5"
     3: "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j"
+    4: "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
 
 magic_bytes:    # 0 - disable, 1 - enable
     0x01: 0     # legacy block
@@ -15,3 +16,26 @@ magic_bytes:    # 0 - disable, 1 - enable
 
 node_url:
     "http://localhost:8732"
+
+# MAGIC BYTES
+# 0x01 - LEGACY BLOCK
+# 0x02 - LEGACY ENDORSEMENT
+# 0x03 - TRANSFER
+# 0x04 - AUTHENTICATED SIGNING REQUEST
+# 0x05 - MICHELSON DATA
+# 0x11 - BLOCK
+# 0x12 - PRE-ATTESTATION
+# 0x13 - ATTESTATION
+
+
+
+policy:
+    signing_keys:
+        "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5":
+            magic_bytes: []
+        "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5":
+            magic_bytes: []
+        "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j":
+            magic_bytes: [0x11, 0x12, 0x13]
+    signed_requests: 
+        "authorized_keys": ["tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"]
