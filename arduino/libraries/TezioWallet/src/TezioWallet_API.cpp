@@ -648,6 +648,7 @@ uint16_t TezioWallet_API::read_packet() {
 			retries ++;
 			delay(1); 
 		}
+	}
 		
 	return packetLength;
 }
