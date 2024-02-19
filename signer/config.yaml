@@ -32,10 +32,23 @@ node_url:
 policy:
     signing_keys:
         "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5":
-            magic_bytes: []
+            curve_alias: 1
+            allowed_ops: []
+            auth_req: True
         "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5":
-            magic_bytes: []
+            curve_alias: 2
+            allowed_ops: []
+            auth_req: True
         "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j":
-            magic_bytes: [0x11, 0x12, 0x13]
+            curve_alias: 3
+            allowed_ops: [0x11, 0x12, 0x13]
+            auth_req: True
+    auth_key:
+        pkh:
+            "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs":
+        pkhBytes:
+            "a79feaea9fb12af20833db1c2467824197c64027"
+        curve_alias:
+            4
     signed_requests: 
         "authorized_keys": ["tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"]

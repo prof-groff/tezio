@@ -27,7 +27,7 @@
  * 
  */
 
-char mnemonic[] = "";
+char mnemonic[] = "verb amateur company wisdom strike elegant solution image system recycle drink desk village truth drop bronze gentle decide east govern guide grain holiday token";
 char path[] = "m/44'/1729'/0'/0'";
 char password[] = "";
 

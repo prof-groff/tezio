@@ -4,7 +4,7 @@ from time import sleep
 import requests
 import binascii
 
-class TezioWallet:
+class TezioHSM:
     
     def __init__(self, curve = None):
         self.__prefix: bytes = 0x03 # wallet listens for this byte to begin parsing commands
@@ -209,10 +209,58 @@ class TezioWallet:
         self.query_wallet()
         
         return self.response
+    
+    def verify(self, mode, message, signature):
+        opCode = 0x22
+        param1 = self.__curve
+        param2 = mode
+        param3 = len(message)
+        
+        if (mode > 4):
+            print('Invalid mode...')
+            return 0 # invalid mode
+        
+        elif (mode > 0 and mode <= 2): 
+            # message is already hashed and should be a bytearray of length 32
+            if (type(message) != bytearray or len(message) != 32):
+                print('Expected hashed message as bytearray...')
+                return 0
+            data = message
+        else:
+            # message is not hashed and could be a str of any length
+            if (type(message) == str):
+                data = bytearray(message, 'utf-8')
+            elif (type(message) == bytearray):
+                data = message
+            else:
+                print('Message type not supported...')
+                return 0
+        
+        # add signature
+        if (mode%2 == 0): # even means signature is base58 checksum encoded and could be str of any length
+            if (type(signature) == str):
+                data = data + bytearray(signature, 'utf-8')
+            elif (type(signature) == bytearray):
+                data = data + signature
+            else:
+                print('Signature type not supported...')
+                return 0
+        if (mode%2 == 1): # odd means the signature is raw bytes of length 64
+            if (type(signature) != bytearray or len(signature) != 64):
+                print('Expected signature to be a bytearray...')
+                return 0
+            else:
+                data = data + signature
+
+
+        self.build_packet(opCode, param1, param2, param3, data)
+        self.query_wallet()
+        
+        return self.response
 
 class TezioRPC:
     
-    def __init__(self, nodeURL: str, myWallet: TezioWallet):
+    def __init__(self, nodeURL: str, myWallet: TezioHSM):
             
             self.wallet = myWallet
             self.nodeURL = nodeURL
