@@ -32,8 +32,6 @@ OP_GET_PK = 0x11
 OP_SIGN = 0x21
 OP_VERIFY = 0x22
 
-last_level = 0
-last_round = 0
 
 with open('config.yaml', 'r') as file:
     config = yaml.safe_load(file)
@@ -57,8 +55,9 @@ nodeURL = config['node_url']
 # the pkh of the authorized key used to sign incoming requests
 # auth_key_pkh = config['policy']['authorized_keys'][0]
 
-lastLevel = 0
-lastRound = 0
+
+watermark_level = dict({0x11: 0, 0x12: 0, 0x13: 0})
+watermark_round = dict({0x11: 0, 0x12: 0, 0x13: 0})
 
 
 app = Flask(__name__)
@@ -132,6 +131,11 @@ def keys(pkh):
         if magicByte in [0x11, 0x12, 0x13]:
             # check level and round are valid
             # level and round should be included in the data to be signed
+            current_level = 0
+            current_round = 0
+            # global watermark_level
+            # global watermark_round
+
             if magicByte in [0x12, 0x13]:
                 current_level = int.from_bytes(dataBytes[40:44], "big")
                 current_round = int.from_bytes(dataBytes[44:48], "big")
@@ -144,6 +148,18 @@ def keys(pkh):
                 print('Baking a Block')
                 print("level: ", current_level)
                 print("round: ", current_round)
+
+            # if current level and round are the same as the those for last baking operation, don't sign
+            if (current_level < watermark_level[magicByte]) or (current_level == watermark_level[magicByte] and current_round <= watermark_round[magicByte]):
+                ERROR_403 = make_response('Forbidden')
+                ERROR_403.status_code = 403
+                return ERROR_403
+            else:
+                watermark_level[magicByte] = current_level
+                watermark_round[magicByte] = current_round
+                print(watermark_level)
+                print(watermark_round)
+                pass 
         else:
             pass
 

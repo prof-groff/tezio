@@ -185,7 +185,7 @@ void generate_public_key_hash(uint8_t *pk, uint8_t curve, char *pk_hash) {
     memcpy(&tzaddress[23], &sha256b[0], 4);
 	char _buffer[60];
     memset(_buffer, '\0', 60);
-    size_t outlength = base58_func(tzaddress, sizeof(tzaddress), _buffer);
+    size_t outlength = base58_encode(tzaddress, sizeof(tzaddress), _buffer);
 	memcpy(pk_hash, _buffer, outlength); 
 	
 	return;
@@ -229,7 +229,7 @@ uint16_t public_key_base58(uint8_t *pk, uint8_t curve, char *pkb58) {
     memcpy(&pkBase58[4 + pkLength], &sha256b[0], 4); 
 	char _buffer[96]; // will be either 54 or 55 characters
     memset(_buffer, '\0', sizeof(_buffer));
-    uint16_t outLength = base58_func(pkBase58, sizeof(pkBase58), _buffer);
+    uint16_t outLength = base58_encode(pkBase58, sizeof(pkBase58), _buffer);
 	memcpy(pkb58, _buffer, outLength); 
 	
 	return outLength;
@@ -292,7 +292,7 @@ uint16_t secret_key_base58(uint8_t *sk, uint8_t curve, char *skb58) {
     	sha256_func_host(sha256a, 32, sha256b);
     	memcpy(&skBase58[4 + skLength + pkLength], &sha256b[0], 4); 
     	memset(_buffer, '\0', sizeof(_buffer));
-    	outLength = base58_func(skBase58, 4 + skLength + pkLength + 4, _buffer);
+    	outLength = base58_encode(skBase58, 4 + skLength + pkLength + 4, _buffer);
 		memcpy(skb58, _buffer, outLength); 
     }
     else {
@@ -300,7 +300,7 @@ uint16_t secret_key_base58(uint8_t *sk, uint8_t curve, char *skb58) {
     	sha256_func_host(sha256a, 32, sha256b);
     	memcpy(&skBase58[4 + skLength], &sha256b[0], 4); 
     	memset(_buffer, '\0', sizeof(_buffer));
-    	outLength = base58_func(skBase58, 4 + skLength + 4, _buffer);
+    	outLength = base58_encode(skBase58, 4 + skLength + 4, _buffer);
 		memcpy(skb58, _buffer, outLength); 
 	}
 	
@@ -431,7 +431,7 @@ uint16_t base58_encode_prefix_checksum(uint8_t *prefix, uint16_t prefixLength, u
     
 	char _buffer[100]; // signatures can have up to 98 or 99 chars with \0 at end
     memset(_buffer, '\0', 100);
-    size_t outlength = base58_func(message, sizeof(message), _buffer);
+    size_t outlength = base58_encode(message, sizeof(message), _buffer);
 	memcpy(b58str, _buffer, outlength); 
 	
 	return outlength;
@@ -440,7 +440,7 @@ uint16_t base58_encode_prefix_checksum(uint8_t *prefix, uint16_t prefixLength, u
 uint16_t base58_decode_prefix_checksum(uint16_t prefixLength, char *b58str, uint16_t b58strLength, uint8_t *data) {
 	
 	uint8_t _buffer[128]; // probably more than needed, sigs are at most 100 including the \0 char
-	uint16_t dataLength = base58_decode_func(b58str, b58strLength, _buffer); // subtract one because the last character is the null character
+	uint16_t dataLength = base58_decode(b58str, b58strLength, _buffer); // subtract one because the last character is the null character
 	// the result has a prefix and four checksum bytes to be removed
 	memcpy(data, &_buffer[prefixLength], dataLength - prefixLength - 4);
 	return dataLength - prefixLength - 4;

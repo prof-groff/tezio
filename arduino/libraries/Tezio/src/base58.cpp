@@ -23,7 +23,7 @@ SOFTWARE. */
 #include <Arduino.h>
 #include "base58.h"
 
-size_t base58_func(uint8_t *data, size_t datalen, char *out)
+size_t base58_encode(uint8_t *data, size_t datalen, char *out)
 {
     
     const size_t buffersize = 1 + (datalen * 138/100);
@@ -57,11 +57,11 @@ size_t base58_func(uint8_t *data, size_t datalen, char *out)
     size_t outlen = zeros + digits + 1;
     int k = 0;
     for (; k < zeros;) {
-        out[k] = '1'; // zeros mapped to base58 1
+        out[k] = '1'; // zeros mapped to base58EncodeVect 1
         k++;
     }
     for (; k < zeros+digits;) {
-        out[k] = base58[buffer[digits-k-1]]; // order of digits reversed
+        out[k] = base58EncodeVect[buffer[digits-k-1]]; // order of digits reversed
         k++;
     }
     out[k] = '\0';
@@ -70,7 +70,7 @@ size_t base58_func(uint8_t *data, size_t datalen, char *out)
 }
 
 
-uint16_t base58_decode_func(char *b58, uint16_t b58Length, uint8_t *data) {
+uint16_t base58_decode(char *b58, uint16_t b58Length, uint8_t *data) {
 	
 	const size_t bufferSize = ((b58Length - 1) * 100)/138; 
 	uint8_t buffer[bufferSize] = {0};
@@ -87,7 +87,7 @@ uint16_t base58_decode_func(char *b58, uint16_t b58Length, uint8_t *data) {
             flag = true;
         }
         if (flag) {
-            uint32_t carry = (uint32_t) base58_decode[b58[i]];
+            uint32_t carry = (uint32_t) base58DecodeVect[b58[i]];
 
             for (int j = 0; j < digits; j++) {
                 carry += ((uint32_t) buffer[j]) * 58;

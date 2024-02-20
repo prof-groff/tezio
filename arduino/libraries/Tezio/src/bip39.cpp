@@ -22,7 +22,7 @@ SOFTWARE. */
 
 #include "bip39.h"
 
-const char* bip39vocab[2048] = {"abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident", "account", "accuse", "achieve", 
+const char* bip39Vocab[2048] = {"abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident", "account", "accuse", "achieve", 
                                 "acid", "acoustic", "acquire", "across", "act", "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit", "adult", 
                                 "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent", "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", 
                                 "album", "alcohol", "alert", "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter", "always", "amateur", "amazing", 
@@ -153,7 +153,7 @@ const char* bip39vocab[2048] = {"abandon", "ability", "able", "about", "above", 
 uint16_t word_to_index(const char* myword) {
     uint16_t j = 0;
     while (j < 2048) {
-        if (strcmp(myword, bip39vocab[j]) == 0) {
+        if (strcmp(myword, bip39Vocab[j]) == 0) {
             break;
         }
         else {
@@ -250,7 +250,7 @@ uint16_t entropy_to_mnemonic(uint8_t entropy[], uint16_t entropy_length, char mn
         if (loaded >= 11) { 
             index = _buffer >> (loaded - 11); // pull off 11 bits
 			n_words++;
-            strcpy(*p++, bip39vocab[index]);
+            strcpy(*p++, bip39Vocab[index]);
             _buffer = ~(mask << (loaded - 11)) & _buffer; // delete 11 used bits
             loaded -= 11;
         }

@@ -64,7 +64,7 @@ void path_to_indeces(char *path, uint16_t path_length, uint32_t *indeces, uint16
   indeces[counter] = index;
 }
 
-void child_skcc_func(uint8_t *parent_skcc, uint32_t index, uint8_t *hmac) {
+void child_skcc(uint8_t *parent_skcc, uint32_t index, uint8_t *hmac) {
 
   uint8_t parent_sk[32];
   uint8_t parent_cc[32];
