@@ -39,6 +39,7 @@ with open('config.yaml', 'r') as file:
 policy = config['policy']
 signing_keys = policy['signing_keys']
 auth_key = policy['auth_key']
+allowed_ips = config['allowed_ips']
 
 knownPkhs = list(policy['signing_keys'].keys())
 # print(knownPkhs)
@@ -74,6 +75,14 @@ def home():
 @app.route('/keys/<pkh>', methods=['GET', 'POST'])
 
 def keys(pkh):
+
+    if request.remote_addr in allowed_ips:
+        pass
+    else:
+        ERROR_403 = make_response('Requests from this address are forbidden.')
+        ERROR_403.status_code = 403
+        return ERROR_403
+
     # Is the request for a signing key stored in the Tezio HSM?
     if pkh in knownPkhs:
         pass

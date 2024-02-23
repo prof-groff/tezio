@@ -117,6 +117,8 @@ uint16_t TezioWallet_API::op_sign() {
 	uint8_t signature[64];
 	uint8_t prefix[5];
 	uint16_t prefixLength;
+
+	uint8_t magicByte = packet.data[0];
 	
 	/* 	curve		ECC curve to use
 		0x01		Ed25519
@@ -180,77 +182,108 @@ uint16_t TezioWallet_API::op_sign() {
 	
 		if (curve == NISTP256) {
 
-			Cryptochip myChip(Wire, 0x60);
-			if (!myChip.begin()) {
-				return 0; 
+			if (policies.tz3.policy[magicByte] == 1) { // signing allowed by policy
+
+				Cryptochip myChip(Wire, 0x60);
+				if (!myChip.begin()) {
+					return 0; 
+				}
+				if (!myChip.ecSign(P2_SK_SLOT, buffer, signature)) {
+					return 0;
+				}
+				myChip.end();
+
+
+
 			}
-			if (!myChip.ecSign(P2_SK_SLOT, buffer, signature)) {
+			else {
 				return 0;
 			}
-			myChip.end();
+
+			
 		}
 		
 		else if (curve == NISTP256_AUTH) {
 
-			Cryptochip myChip(Wire, 0x60);
-			if (!myChip.begin()) {
-				return 0; 
+			if (policies.tz3_auth.policy[magicByte] == 1) {
+
+				Cryptochip myChip(Wire, 0x60);
+				if (!myChip.begin()) {
+					return 0; 
+				}
+				if (!myChip.ecSign(P2_AUTH_KEY_SLOT, buffer, signature)) {
+					return 0;
+				}
+				myChip.end();
 			}
-			if (!myChip.ecSign(P2_AUTH_KEY_SLOT, buffer, signature)) {
+			else {
 				return 0;
 			}
-			myChip.end();
+
+			
 		}
 		
 		
 		else if (curve == SECP256K1) {
+
+			if (policies.tz2.policy[magicByte] == 1) {
 		
-			uint8_t sk[32];
-			uint8_t sessionKey[32];
-			uint8_t cypherText[32];
-			Cryptochip myChip(Wire, 0x60);
-			if (!myChip.begin()) {
-				return 0; 
-			}
-			if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
-				return 0;
-			}
-			if (!myChip.encryptedRead(SP_SK_SLOT, cypherText, 32)) {
-				return 0;
-			}
-			if (!myChip.decryptData(cypherText, sk, 32)){
-				return 0;
-			}
-			myChip.end();
+				uint8_t sk[32];
+				uint8_t sessionKey[32];
+				uint8_t cypherText[32];
+				Cryptochip myChip(Wire, 0x60);
+				if (!myChip.begin()) {
+					return 0; 
+				}
+				if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
+					return 0;
+				}
+				if (!myChip.encryptedRead(SP_SK_SLOT, cypherText, 32)) {
+					return 0;
+				}
+				if (!myChip.decryptData(cypherText, sk, 32)){
+					return 0;
+				}
+				myChip.end();
 		
-			secp256k1_sign(buffer, sk, signature);
+				secp256k1_sign(buffer, sk, signature);
+			}
+			else {
+				return 0;
+			}
 		
 		}
 		else if (curve == ED25519) {
-		
-			uint8_t sk[32];
-			uint8_t sessionKey[32];
-			uint8_t cypherText[32];
-			uint8_t pk[32];
-			Cryptochip myChip(Wire, 0x60);
-			if (!myChip.begin()) {
-				return 0;
-			}
-			if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
-				return 0;
-			}
-			if (!myChip.encryptedRead(ED_SK_SLOT, cypherText, 32)) {
-				return 0;
-			}
-			if (!myChip.decryptData(cypherText, sk, 32)){
-				return 0;
-			}
-			if (!myChip.readSlot(ED_PK_SLOT, pk, 32)) {
-			return 0;
-			}
-			myChip.end();
 
-			ed25519_sign(buffer, sk, pk, signature);
+			if (policies.tz1.policy[magicByte] == 1) {
+					
+				uint8_t sk[32];
+				uint8_t sessionKey[32];
+				uint8_t cypherText[32];
+				uint8_t pk[32];
+				Cryptochip myChip(Wire, 0x60);
+				if (!myChip.begin()) {
+					return 0;
+				}
+				if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey)){
+					return 0;
+				}
+				if (!myChip.encryptedRead(ED_SK_SLOT, cypherText, 32)) {
+					return 0;
+				}
+				if (!myChip.decryptData(cypherText, sk, 32)){
+					return 0;
+				}
+				if (!myChip.readSlot(ED_PK_SLOT, pk, 32)) {
+				return 0;
+				}
+				myChip.end();
+
+				ed25519_sign(buffer, sk, pk, signature);
+			}
+			else {
+				return 0;
+			}
 		
 		}
 		else {

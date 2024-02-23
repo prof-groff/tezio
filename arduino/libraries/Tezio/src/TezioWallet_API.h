@@ -28,6 +28,7 @@ SOFTWARE. */
 #include "constants.h"
 #include "crypto_helpers.h"
 #include "Cryptochip.h"
+#include "Tezio_Config.h"
 
 #define START_BYTE 0x03
 
@@ -56,6 +57,7 @@ typedef struct {
 } tezioPacket;
 
 
+
 class TezioWallet_API {
     
     private:
@@ -68,10 +70,12 @@ class TezioWallet_API {
 		uint16_t op_write_keys(); // encrypted write secret key, clear write public key
 		uint8_t readWriteKey[32];
 		uint32_t myBaud;
+		
 	    
     public:
 	
 		tezioPacket packet;
+		signingPolicies policies; 
 		uint8_t buffer[1024]; 
 	
 		TezioWallet_API(uint32_t baud, const uint8_t *RWKey);

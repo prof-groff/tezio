@@ -17,6 +17,11 @@ magic_bytes:    # 0 - disable, 1 - enable
 node_url:
     "http://localhost:8732"
 
+
+allowed_ips: 
+    ["127.0.0.1"]
+
+
 # MAGIC BYTES
 # 0x01 - LEGACY BLOCK
 # 0x02 - LEGACY ENDORSEMENT
@@ -41,7 +46,7 @@ policy:
             auth_req: True
         "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j":
             curve_alias: 3
-            allowed_ops: [0x11, 0x12, 0x13]
+            allowed_ops: [0x03, 0x11, 0x12, 0x13]
             auth_req: True
     auth_key:
         pkh:

@@ -9,13 +9,18 @@ const uint8_t RWKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62,
 
 bool debug = false; // put device in debug (interactive) mode and run tests
 uint32_t baud = 57600;
+TezioWallet_API myWallet(baud, RWKey); 
 
 
 void setup() {
 
-  if (debug) { // run some test
+  if(!debug) {
+    myWallet.policies = set_signing_policies();
+  }
+
+  else { // run some test
     
-    TezioWallet_API myWallet(baud, RWKey); 
+    // TezioWallet_API myWallet(baud, RWKey); 
     
     Serial.println("-- Testing Public Key Retrieval (op_get_pk, 0x11) --"); Serial.println();
     
@@ -76,7 +81,7 @@ void loop() {
 	
 	if(!debug) {
 		
-		TezioWallet_API myWallet(baud, RWKey); 
+		// TezioWallet_API myWallet(baud, RWKey); 
 		
 		uint16_t packetLength, replyLength;
 
