@@ -53,6 +53,8 @@ SOFTWARE. */
 #define SP_PK_SIZE 64
 #define P2_PK_SIZE 64
 
+#define PKH_SIZE 20
+
 #define SK_SIZE 32
 
 // curve orders n (maximum value allowed for valid key is n-1)
@@ -93,6 +95,8 @@ const uint8_t TZ1_SKPK[4] = {0x2B, 0xF6, 0x4E, 0x07}; // edsk
 const uint8_t TZ1_SK[4] = {0x0D, 0x0F, 0x3A, 0x07}; // edsk
 const uint8_t TZ2_SK[4] = {0x11, 0xA2, 0xE0, 0xC9}; // spsk
 const uint8_t TZ3_SK[4] = {0x10, 0x51, 0xEE, 0xBD}; // p2sk
+
+		
 
 
 #endif

@@ -32,6 +32,65 @@ TezioWallet_API::~TezioWallet_API() {
 	Serial.end();
 }
 
+uint16_t TezioWallet_API::confirm_level_round() {
+
+uint32_t current_level;
+uint32_t current_round;
+
+uint32_t n_fitness_bytes;
+
+uint8_t curve = packet.param1;
+uint8_t magicByte = packet.data[0]; 
+
+
+if (magicByte == 0x12 || magicByte == 0x13) {
+
+	current_level = ((uint32_t)packet.data[40] << 24) | 
+                    ((uint32_t)packet.data[41] << 16) |
+					((uint32_t)packet.data[42] << 8) |
+					((uint32_t)packet.data[43]);
+
+	current_round =  ((uint32_t)packet.data[44] << 24) | 
+                     ((uint32_t)packet.data[45] << 16) |
+					 ((uint32_t)packet.data[46] << 8) |
+					 ((uint32_t)packet.data[47]);
+
+}
+else {
+	current_level = ((uint32_t)packet.data[5] << 24) | 
+                    ((uint32_t)packet.data[6] << 16) |
+				    ((uint32_t)packet.data[7] << 8) |
+					((uint32_t)packet.data[8]);
+
+	n_fitness_bytes = ((uint32_t)packet.data[83] << 24) | 
+                      ((uint32_t)packet.data[84] << 16) |
+				      ((uint32_t)packet.data[85] << 8) |
+					  ((uint32_t)packet.data[86]);
+
+	current_round =  ((uint32_t)packet.data[87 + n_fitness_bytes - 4] << 24) | 
+                     ((uint32_t)packet.data[87 + n_fitness_bytes - 3] << 16) |
+					 ((uint32_t)packet.data[87 + n_fitness_bytes - 2] << 8) |
+					 ((uint32_t)packet.data[87 + n_fitness_bytes - 1]);
+
+} 
+
+if ((current_level < hwm[curve].level[magicByte-0x11]) || 
+    ((current_level == hwm[curve].level[magicByte-0x11]) && (current_round <= hwm[curve].round[magicByte-0x11])))
+	return 0;
+else {
+	hwm[curve].level[magicByte-0x11] = current_level;
+	hwm[curve].round[magicByte-0x11] = current_round;
+	return 1;
+}
+
+}
+
+
+
+
+
+
+
 uint16_t TezioWallet_API::op_get_pk() {
 	
 	uint8_t curve = packet.param1;
@@ -112,7 +171,9 @@ uint16_t TezioWallet_API::op_get_pk() {
 uint16_t TezioWallet_API::op_sign() {
 	
 	uint8_t curve = packet.param1;
-	uint8_t mode = packet.param2; 
+	uint8_t mode = (packet.param2 & 0x0F); // LSN
+
+	uint8_t auth = (packet.param2 & 0xF0);  // MSN
 	
 	uint8_t signature[64];
 	uint8_t prefix[5];
@@ -120,17 +181,27 @@ uint16_t TezioWallet_API::op_sign() {
 
 	uint8_t magicByte = packet.data[0];
 	
-	/* 	curve		ECC curve to use
-		0x01		Ed25519
-		0x02		Secp256k1
-		0x03		NIST P256
+	/* 	curve		Address/ECC curve to use
+		0x01		Ed25519 (tz1)
+		0x02		Secp256k1 (tz2)
+		0x03		NIST P256 (tz3)
+		0x04        NIST P256 AUTH KEY (tz3)
 	
-		mode		message is hashed		signature format
-		0x00		N/A						default (zeros) base58 checksum encoded
-		0x01		yes						raw bytes
-		0x02		yes						base58 checksum encoded
-		0x03		no						raw bytes
-		0x04		no						base58 checksum encoded */
+		mode		message is hashed		return signature format
+		0x*0		N/A						default (zeros) base58 checksum encoded
+		0x*1		yes						raw bytes
+		0x*2		yes						base58 checksum encoded
+		0x*3		no						raw bytes
+		0x*4		no						base58 checksum encoded */
+
+	/*  auth		auth signature format
+	    0x0*        N/A
+		0x1*		raw bytes
+		0x2*	    base58 checksum encoded
+
+		param3		message length
+	
+	*/
 	
 	if (curve == NULL || curve > 4) { // for variables NULL is 0
 		return 0; // don't know which curve to use
@@ -177,12 +248,19 @@ uint16_t TezioWallet_API::op_sign() {
 		else {
 			return 0; // error
 		}
+
+		// if the operation is a baking op, check watermarks
+		if (magicByte == 0x11 || magicByte == 0x12 || magicByte == 0x13) {
+			if(confirm_level_round() == 0) {
+				return 0;
+			}
+		}
 		
 		// sign the message, result is 64 raw bytes but set up prefix in case the base58 encoded sig is requested
 	
 		if (curve == NISTP256) {
 
-			if (policies.tz3.policy[magicByte] == 1) { // signing allowed by policy
+			if (policy[TZ3].operation[magicByte] == 1) { // signing allowed by policy
 
 				Cryptochip myChip(Wire, 0x60);
 				if (!myChip.begin()) {
@@ -205,7 +283,7 @@ uint16_t TezioWallet_API::op_sign() {
 		
 		else if (curve == NISTP256_AUTH) {
 
-			if (policies.tz3_auth.policy[magicByte] == 1) {
+			if (policy[TZ3_AUTH].operation[magicByte] == 1) {
 
 				Cryptochip myChip(Wire, 0x60);
 				if (!myChip.begin()) {
@@ -226,7 +304,7 @@ uint16_t TezioWallet_API::op_sign() {
 		
 		else if (curve == SECP256K1) {
 
-			if (policies.tz2.policy[magicByte] == 1) {
+			if (policy[TZ2].operation[magicByte] == 1) {
 		
 				uint8_t sk[32];
 				uint8_t sessionKey[32];
@@ -255,7 +333,7 @@ uint16_t TezioWallet_API::op_sign() {
 		}
 		else if (curve == ED25519) {
 
-			if (policies.tz1.policy[magicByte] == 1) {
+			if (policy[TZ1].operation[magicByte] == 1) {
 					
 				uint8_t sk[32];
 				uint8_t sessionKey[32];
@@ -596,6 +674,43 @@ uint16_t TezioWallet_API::op_write_keys() {
 	}
 	
 	myChip.end();
+
+	return 1;
+}
+
+
+uint16_t TezioWallet_API::auth_sig_verify(uint8_t *messageBytes, uint16_t messageLength, uint8_t *signatureBytes) {
+		/* const uint8_t P2_AUTH_MESSAGE_PREFIX[3] = {0x04, 0x01, 0x02}; // prefix seems to depend on signing key curve - secp256k1 prefix may be 040101
+		
+		
+		uint8_t fullMessage[sizeof(P2_AUTH_MESSAGE_PREFIX) + PHK_SIZE + messageLength];
+		memcpy(&fullMessage[0], P2_AUTH_MESSAGE_PREFIX, sizeof(P2_AUTH_MESSAGE_PREFIX));
+		memcpy(&fullMessage[sizeof(P2_AUTH_MESSAGE_PREFIX)], authenticationPkh, PKH_SIZE);
+		memcpy(&fullMessage[sizeof(P2_AUTH_MESSAGE_PREFIX) + PKH_SIZE], messageBytes, messageLength);
+
+		// hash the message
+		uint8_t b2bHash[32];
+		BLAKE2b blake2b; 
+    	blake2b.reset(32);
+    	blake2b.update(&fullMessage[0], sizeof(fullMessage));
+    	blake2b.finalize(b2bHash, 32);
+	
+
+		Cryptochip myChip(Wire, 0x60);
+		if (!myChip.begin()) {
+			return 0; 
+		}
+		
+		
+		if (!myChip.ecdsaVerify(b2bHash, signatureBytes, authenticationPk)){
+			myChip.end();
+			return 0;
+		}
+		else {
+			myChip.end();
+			return 1;
+		}	*/
+	
 
 	return 1;
 }

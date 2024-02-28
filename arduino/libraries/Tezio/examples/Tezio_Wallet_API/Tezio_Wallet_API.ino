@@ -15,7 +15,10 @@ TezioWallet_API myWallet(baud, RWKey);
 void setup() {
 
   if(!debug) {
-    myWallet.policies = set_signing_policies();
+    
+    set_signing_policies(myWallet.policy);
+    set_high_water_marks(myWallet.hwm); 
+
   }
 
   else { // run some test

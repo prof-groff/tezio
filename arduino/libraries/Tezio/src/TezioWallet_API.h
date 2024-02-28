@@ -43,9 +43,18 @@ SOFTWARE. */
 #define PK_BASE58 2
 #define PK_HASH 3
 
+
+// operation execution errors
+
 #define INVALID_PACKET 0xF0
 #define PARSE_ERROR 0xF1
 #define OP_ERROR 0xF2
+
+// signing errors
+
+#define FORBIDDEN_BY_SIGNING_POLICY 0xE0
+#define FORBIDDEN_BY_HIGH_WATERMARKS 0xE1
+#define AUTHENTICATION_REQUIRED 0xE2
 
 typedef struct {
   uint8_t opCode;
@@ -68,14 +77,21 @@ class TezioWallet_API {
 		uint16_t op_verify(); 
 		uint16_t op_clear_write();
 		uint16_t op_write_keys(); // encrypted write secret key, clear write public key
+		
+		uint16_t auth_sig_verify(uint8_t *messageBytes, uint16_t messageLength, uint8_t *signatureBytes);
 		uint8_t readWriteKey[32];
+		uint8_t authenticationPkh[PKH_SIZE]; // need to initialize
+		uint8_t authenticationPk[P2_PK_SIZE]; // need to initialize
 		uint32_t myBaud;
+
+		uint16_t confirm_level_round();
 		
 	    
     public:
 	
 		tezioPacket packet;
-		signingPolicies policies; 
+		hwmStruct hwm[N_CURVES]; // space for all curves and all operations
+		policyStruct policy[N_CURVES]; 
 		uint8_t buffer[1024]; 
 	
 		TezioWallet_API(uint32_t baud, const uint8_t *RWKey);
