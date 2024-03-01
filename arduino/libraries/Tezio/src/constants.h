@@ -25,27 +25,33 @@ SOFTWARE. */
 
 #define SHORTWAIT 1000
 
+// CURVES and PUBLIC KEY HASH ALIASES
+#define NISTP256_AUTH 0
 #define ED25519 1
 #define SECP256K1 2
 #define NISTP256 3
-#define NISTP256_AUTH 4
 
-// memory slots to use for secret/private keys
+#define TZ3_AUTH 0
+#define TZ1 1
+#define TZ2 2
+#define TZ3 3
+
+// MEMORY SLOTS ON THE HSM TO USE FOR SECRET KEYS 
+#define P2_AUTH_KEY_SLOT 0 // 0, slot for authentication key
 #define P2_SK_SLOT 3 // slot for NIST P256 secret key, must be between 0 and 3 using default cryptochip configuration.
 #define SP_SK_SLOT 4 // slot for secp256k1 secret key, must be between 4 and 7 using default cryptochip configuration.
 #define ED_SK_SLOT 5 // slot for ed25519 secret key, must be between 4 and 7 using default cryptochip configuration.
 
-#define P2_AUTH_KEY_SLOT 0 // 0, slot for authentication key
-
-// memory slots to use for public keys (public keys can also be derived from secret/private keys)
+// MEMORY SLOTS ON THE HSM TO STORE PUBLIC KEYS
+// (public keys can also be derived from secret/private keys)
 // must be between 11 and 14 using default cryptochip configuration.
 #define P2_PK_SLOT 11
 #define SP_PK_SLOT 12
 #define ED_PK_SLOT 13
-
 #define P2_AUTH_KEY_PK_SLOT 14 // 14, slot for authentication public key
 
-// default memory slot for encrypted read/write key, must be 10 using default cryptochip configuration.
+// MEMORY SLOT ON THE HSM TO STORE THE KEY FOR ENCRYPTED READS/WRITES
+// must be 10 using default cryptochip configuration.
 #define RW_KEY_SLOT 10
 
 // other stuff
@@ -91,7 +97,7 @@ const uint8_t TZ2_SIG[5] = {0x0D, 0x73, 0x65, 0x13, 0x3F}; // spsig
 const uint8_t TZ3_SIG[4] = {0x36, 0xF0, 0x2C, 0x34}; // p2sig
 
 // prefixes for base58 encoded secret keys
-const uint8_t TZ1_SKPK[4] = {0x2B, 0xF6, 0x4E, 0x07}; // edsk
+const uint8_t TZ1_SKPK[4] = {0x2B, 0xF6, 0x4E, 0x07}; // edsk (version with public key appended)
 const uint8_t TZ1_SK[4] = {0x0D, 0x0F, 0x3A, 0x07}; // edsk
 const uint8_t TZ2_SK[4] = {0x11, 0xA2, 0xE0, 0xC9}; // spsk
 const uint8_t TZ3_SK[4] = {0x10, 0x51, 0xEE, 0xBD}; // p2sk

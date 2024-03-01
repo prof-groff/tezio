@@ -1,10 +1,10 @@
 #include <Arduino.h>
-#include "TezioWallet_API.h"
+#include "TezioHSM_API.h"
 #include "tests.h"
 
 char *curveNames[] = {"-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --", "-- NIST P256 AUTH --"};
 
-void run_op_get_pk_test(TezioWallet_API myWallet, uint8_t curve, uint8_t mode) {
+void run_op_get_pk_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
 
   /*   curve   ECC curve to use
     0x01    Ed25519
@@ -38,7 +38,7 @@ void run_op_get_pk_test(TezioWallet_API myWallet, uint8_t curve, uint8_t mode) {
   return;
 }
 
-void run_op_sign_and_verify_test(TezioWallet_API myWallet, uint8_t curve, uint8_t mode) {
+void run_op_sign_and_verify_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
 
   /*   curve   ECC curve to use
     0x01    Ed25519

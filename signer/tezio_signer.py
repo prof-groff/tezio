@@ -12,7 +12,7 @@ from tezio import TezioHSM
 CURVE_ED25519 = 0x01
 CURVE_SECP256K1 = 0x02
 CURVE_NISTP256 = 0x03
-CURVE_NISTP256_AUTH = 0x04
+CURVE_NISTP256_AUTH = 0x00
 
 # possible formats for retreived public keys
 PK_BYTES = 0x01

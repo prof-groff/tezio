@@ -2,6 +2,7 @@
 #define TEZIO_CONFIG_H
 
 #include <Arduino.h>
+#include "constants.h"
 
 // MAGIC BYTES
 #define LEGACY_BLOCK 0x01
@@ -13,11 +14,7 @@
 #define PRE_ATTESTATION 0x12
 #define ATTESTATION 0x13
 
-// Curves/Pkhs
-#define TZ1 1
-#define TZ2 2
-#define TZ3 3
-#define TZ3_AUTH 4
+
 
 #define N_CURVES 5 // space for all curves
 #define N_OPERATIONS 0x13 // space for all operations

@@ -2,7 +2,7 @@ pkhs:
     1: "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5"
     2: "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5"
     3: "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j"
-    4: "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
+    0: "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
 
 magic_bytes:    # 0 - disable, 1 - enable
     0x01: 0     # legacy block
@@ -54,6 +54,6 @@ policy:
         pkhBytes:
             "a79feaea9fb12af20833db1c2467824197c64027"
         curve_alias:
-            4
+            0
     signed_requests: 
         "authorized_keys": ["tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"]

@@ -495,3 +495,16 @@ uint8_t big_int_subtraction(uint8_t *a, uint8_t *b, uint8_t *r, uint16_t n_bytes
 	}
 	return 1;
 }
+
+uint32_t bigendian_bytes_to_uint32(uint8_t *byteArray) {
+
+	uint32_t bigInt;
+
+	bigInt = ((uint32_t)byteArray[0] << 24) | 
+             ((uint32_t)byteArray[1] << 16) |
+			 ((uint32_t)byteArray[2] << 8) |
+			 ((uint32_t)byteArray[3]);
+
+	return bigInt;
+
+}

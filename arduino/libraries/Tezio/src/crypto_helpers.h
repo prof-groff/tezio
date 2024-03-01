@@ -54,5 +54,6 @@ uint16_t base58_encode_prefix_checksum(uint8_t *prefix, uint16_t prefixLength, u
 uint16_t base58_decode_prefix_checksum(uint16_t prefixLength, char *b58str, uint16_t b58strLength, uint8_t *data);
 uint8_t big_int_greater_than_n(uint8_t *s, const uint8_t *n, uint16_t n_bytes);
 uint8_t big_int_subtraction(uint8_t *a, uint8_t *b, uint8_t *r, uint16_t n_bytes);
+uint32_t bigendian_bytes_to_uint32(uint8_t *byteArray);
 
 #endif

@@ -54,7 +54,7 @@ Navigate to File > Examples > TezioWallet and open the Tezio_Wallet_API.ino sket
 <a name="api_reference"></a> 
 ## API Reference
 
-The API sketch invokes the TezioWallet_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. This hardware support also means that cryptographic functions involving the NIST P256 curve are much faster than those of the other supported curves. See the .ipynb included in the [GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino) for example interactions with a Tezio Wallet using Python.
+The API sketch invokes the TezioHSM_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. This hardware support also means that cryptographic functions involving the NIST P256 curve are much faster than those of the other supported curves. See the .ipynb included in the [GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino) for example interactions with a Tezio Wallet using Python.
 
 ### Communication and Packets
 

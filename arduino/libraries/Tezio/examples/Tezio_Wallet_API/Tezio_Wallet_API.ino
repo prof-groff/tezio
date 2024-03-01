@@ -1,4 +1,4 @@
-#include <TezioWallet_API.h>
+#include <TezioHSM_API.h>
 #include "tests.h"
 
 const uint8_t RWKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62,
@@ -9,7 +9,7 @@ const uint8_t RWKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62,
 
 bool debug = false; // put device in debug (interactive) mode and run tests
 uint32_t baud = 57600;
-TezioWallet_API myWallet(baud, RWKey); 
+TezioHSM_API myWallet(baud, RWKey); 
 
 
 void setup() {
@@ -23,7 +23,7 @@ void setup() {
 
   else { // run some test
     
-    // TezioWallet_API myWallet(baud, RWKey); 
+    // TezioHSM_API myWallet(baud, RWKey); 
     
     Serial.println("-- Testing Public Key Retrieval (op_get_pk, 0x11) --"); Serial.println();
     
@@ -84,18 +84,19 @@ void loop() {
 	
 	if(!debug) {
 		
-		// TezioWallet_API myWallet(baud, RWKey); 
+		// TezioHSM_API myWallet(baud, RWKey); 
 		
 		uint16_t packetLength, replyLength;
 
-		myWallet.wait_for_start_byte(START_BYTE);
-		packetLength = myWallet.read_packet();
-      	if (myWallet.validate_packet(packetLength) == 0) {
+		myWallet.wait_for_start_byte();
+		// packetLength = myWallet.read_packet();
+    myWallet.read_packet();
+      	if (myWallet.validate_packet() == 0) {
         	// fail, send error code and proceed after short wait
         	myWallet.send_error(INVALID_PACKET);
         	delay(1);
       	}
-      	else if (myWallet.parse_message(packetLength) == 0) {
+      	else if (myWallet.parse_message() == 0) {
         	// fail, send error code and proceed after short wait
         	myWallet.send_error(PARSE_ERROR);
         	delay(1);
