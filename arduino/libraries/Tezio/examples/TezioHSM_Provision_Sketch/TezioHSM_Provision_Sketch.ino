@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#include <TezioWallet_Setup.h>
+#include <TezioHSM_Provision.h>
 #include "secrets.h"
 #include "configuration.h"
 
@@ -38,7 +38,7 @@ const uint8_t readWriteKey[32] = {0x93, 0x46, 0x63, 0xE3, 0xD4, 0xB4, 0x24, 0x62
 void setup() {
   start_serial();
 
-  TezioWallet_Setup myWallet;
+  TezioHSM_Provision myWallet;
 
   if (!myWallet.configure(CryptochipConfiguration)) {
     Serial.println("Failed to write configuration data to cryptochip."); wait_forever();

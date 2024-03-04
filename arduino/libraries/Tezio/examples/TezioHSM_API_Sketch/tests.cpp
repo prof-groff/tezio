@@ -2,11 +2,12 @@
 #include "TezioHSM_API.h"
 #include "tests.h"
 
-char *curveNames[] = {"-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --", "-- NIST P256 AUTH --"};
+char *curveNames[] = {"-- NIST P256 Authentication Key --", "-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --"};
 
 void run_op_get_pk_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
 
   /*   curve   ECC curve to use
+    0x00    NIST P256 Authentication Key
     0x01    Ed25519
     0x02    Secp256k1
     0x03    NIST P256
@@ -17,7 +18,6 @@ void run_op_get_pk_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
     0x03    base58 checksum encoded
     0x04    tezos address hash */
 
-    
   uint16_t opResultLength;
   char charStrResult[128]; // to hold base58 encoded results for easy printing
   start_serial();

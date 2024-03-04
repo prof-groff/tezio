@@ -13,8 +13,8 @@ Bits are set so the ATECC608 on the NANO 33 IoT opperate like the ATECC508 on th
 
 */
 
-#ifndef ATECCX08_CONFIGURATION_H
-#define ATECCX08_CONFIGURATION_H
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
 
 const byte CryptochipConfiguration[128] = {
   // Bytes 0 through 15 are read only

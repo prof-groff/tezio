@@ -20,10 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#include "TezioWallet_Setup.h"
+#include "TezioHSM_Provision.h"
 
 
-uint16_t TezioWallet_Setup::write_p256_secret_key(uint8_t slot, uint8_t *p2sk, const uint8_t *RWKey) {
+uint16_t TezioHSM_Provision::write_p256_secret_key(uint8_t slot, uint8_t *p2sk, const uint8_t *RWKey) {
 
 	// received 32 byte key in raw bytes and writes to slot 0 to 4
 	
@@ -90,7 +90,7 @@ uint16_t TezioWallet_Setup::write_p256_secret_key(uint8_t slot, uint8_t *p2sk, c
 
 }
 
-uint16_t TezioWallet_Setup::write_secret_key(uint8_t slot, uint8_t *sk, const uint8_t *RWKey) {
+uint16_t TezioHSM_Provision::write_secret_key(uint8_t slot, uint8_t *sk, const uint8_t *RWKey) {
 
 	Cryptochip myChip(Wire, 0x60);
 	
@@ -150,7 +150,7 @@ uint16_t TezioWallet_Setup::write_secret_key(uint8_t slot, uint8_t *sk, const ui
 
 
 
-uint16_t TezioWallet_Setup::configure(const uint8_t *configData) {
+uint16_t TezioHSM_Provision::configure(const uint8_t *configData) {
 	start_serial();
 	Cryptochip myChip(Wire, 0x60);
 	
@@ -220,7 +220,7 @@ uint16_t TezioWallet_Setup::configure(const uint8_t *configData) {
 	return 1;
 }
 
-uint16_t TezioWallet_Setup::check_mnemonic(char *mnemonic, uint16_t mnemonic_length) {
+uint16_t TezioHSM_Provision::check_mnemonic(char *mnemonic, uint16_t mnemonic_length) {
 	
 	if (strcmp(mnemonic, "") == 0) {
 		Serial.println("No mnemonic was provided so one will be generated."); Serial.println(); delay(SHORTWAIT);
@@ -270,7 +270,7 @@ uint16_t TezioWallet_Setup::check_mnemonic(char *mnemonic, uint16_t mnemonic_len
 	return 1;
 }
 
-uint16_t TezioWallet_Setup::derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length) {
+uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length) {
 	start_serial();
 	Serial.println("-- Deriving Keys from Mnemonic --"); Serial.println(); delay(1000);
 	
@@ -337,7 +337,7 @@ uint16_t TezioWallet_Setup::derive_keys(char *path, uint16_t path_length, char* 
 	
 }
 
-uint16_t TezioWallet_Setup::provision(const uint8_t *RWKey) {
+uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
 	start_serial();
 	Serial.println("-- Provisioning Cryptochip --"); Serial.println(); delay(SHORTWAIT);
 	
@@ -534,7 +534,7 @@ uint16_t TezioWallet_Setup::provision(const uint8_t *RWKey) {
 
 
 
-TezioWallet_Setup::TezioWallet_Setup() {
+TezioHSM_Provision::TezioHSM_Provision() {
 	
 	
 }

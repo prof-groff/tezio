@@ -20,15 +20,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#ifndef TEZIOWALLET_API_H
-#define TEZIOWALLET_API_H
+#ifndef TEZIOHSM_API_H
+#define TEZIOHSM_API_H
 
 #include <Arduino.h>
 #include "ui.h"
 #include "constants.h"
 #include "crypto_helpers.h"
 #include "Cryptochip.h"
-#include "Tezio_Config.h"
+#include "TezioHSM_Config.h"
+
+#define N_KEYS 4 // NISTP256_AUTH, Secp256k1, Ed25519, NISTP256
 
 #define START_BYTE 0x03
 #define N_RETRIES 100
@@ -47,19 +49,12 @@ SOFTWARE. */
 // PASS or FAIL
 #define FAIL 0x00
 #define PASS 0x01
-#define INVALID 0x00
-#define VALID 0x01
-#define INVALID_PACKET 0x00
-#define VALID_PACKET 0x01
-#define NOT_FOUND 0x00
-#define FOUND 0x01
-#define UNFINISHED 0x00
-#define FINISHED 0x01
 
 // STATUS CODES
 #define START_BYTE_FOUND 0xB1
 #define PACKET_OF_EXPECTED_LENGTH_ARRIVED 0xB2
 #define VALID_PACKET_RECEIVED 0xB3
+#define PACKET_PARSED_SUCCESSFULLY 0xB4
 
 // ERRORS STATUS CODES
 #define INVALID_CURVE_ALIAS 0xA0
@@ -71,6 +66,7 @@ SOFTWARE. */
 #define INSUFFICIENT_PACKET_LENGTH 0xA6
 #define INVALID_CRC16 0xA7
 #define INVALID_PACKET_LENGTH 0xA8
+#define FAILED_TO_RESET_PACKET 0xA9
 
 
 // operation execution errors
@@ -94,8 +90,6 @@ typedef struct {
   uint16_t packetLength;
 } tezioPacket;
 
-
-
 class TezioHSM_API {
     
     private:
@@ -107,21 +101,19 @@ class TezioHSM_API {
 		uint16_t op_clear_write();
 		uint16_t op_write_keys(); // encrypted write secret key, clear write public key
 		
-		uint16_t auth_sig_verify(uint8_t *messageBytes, uint16_t messageLength, uint8_t *signatureBytes);
 		uint8_t readWriteKey[32];
-		uint8_t authenticationPkh[PKH_SIZE]; // need to initialize
-		uint8_t authenticationPk[P2_PK_SIZE]; // need to initialize
 		uint32_t myBaud;
 
 		uint16_t validate_level_round();
 		uint16_t check_curve_alias();
+		uint16_t reset_packet();
 		
-	    
     public:
 	
 		tezioPacket packet;
-		hwmStruct hwm[N_CURVES]; // space for all curves and all operations
-		policyStruct policy[N_CURVES]; 
+		uint16_t packetLength;
+		hwmStruct hwm[N_KEYS]; // space for all curves and all operations
+		policyStruct policy[N_KEYS]; 
 		uint8_t buffer[1024]; 
 		uint16_t bufferLength; // number of bytes currently sitting in the buffer
 		uint16_t errorCode;
@@ -130,14 +122,14 @@ class TezioHSM_API {
 		TezioHSM_API(uint32_t baud, const uint8_t *RWKey);
 		~TezioHSM_API();
 	
-		uint16_t reset_packet();
+		
 		uint16_t wait_for_start_byte();
 		uint16_t read_packet();
 		uint16_t validate_packet();
 		uint16_t parse_message();
 		uint16_t execute_op();
-		uint16_t send_reply(uint16_t replyLength);
-		uint16_t send_error(uint8_t errorCode);
+		uint16_t send_reply();
+		uint16_t send_status_code();
 
 };
 

@@ -20,8 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#ifndef TEZIOWALLET_SETUP_H
-#define TEZIOWALLET_SETUP_H
+#ifndef TezioHSM_Provision_H
+#define TezioHSM_Provision_H
 
 #include <Arduino.h>
 #include "Cryptochip.h"
@@ -33,7 +33,7 @@ SOFTWARE. */
 #include <BLAKE2b.h>
 #include <uECC.h>
 
-class TezioWallet_Setup {
+class TezioHSM_Provision {
     
     private:
 	
@@ -59,7 +59,7 @@ class TezioWallet_Setup {
 		uint16_t derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length);
 		uint16_t provision(const uint8_t *RWKey);
 		
-		TezioWallet_Setup();
+		TezioHSM_Provision();
 	
 };
 

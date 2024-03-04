@@ -1,5 +1,5 @@
-#ifndef TEZIO_CONFIG_H
-#define TEZIO_CONFIG_H
+#ifndef TezioHSM_Config_H
+#define TezioHSM_Config_H
 
 #include <Arduino.h>
 #include "constants.h"
@@ -14,43 +14,20 @@
 #define PRE_ATTESTATION 0x12
 #define ATTESTATION 0x13
 
-
-
-#define N_CURVES 5 // space for all curves
-#define N_OPERATIONS 0x13 // space for all operations
-#define N_BAKING_OPERATIONS 3
-
-// tz1.watermark.level[magicByte - 0x11]
-// tz1.watermark.round[magicByte - 0x11]
-
-// tz1.policy.authRequired
-
+// PARAMETERS FOR ALLOCATING MEMORY
+#define N_OPERATIONS 0x13 // this uses more space then needed but is convenient
+#define N_BAKING_OPERATIONS 3 // if indeces are used to access, need to subtract 0x11
 
 typedef struct {
     uint32_t level[N_BAKING_OPERATIONS] = {0};
     uint32_t round[N_BAKING_OPERATIONS] = {0};
 } hwmStruct; 
 
-
 typedef struct {
     uint8_t operation[N_OPERATIONS] = {0};
 } policyStruct; 
 
-
-
-
-/* typedef struct {
-    uint8_t policy[0x13] = {0};
-} magicBytes;
-
-typedef struct {
-    magicBytes tz1, tz2, tz3, tz3_auth;
-} signingPolicies; 
-
-signingPolicies set_signing_policies(); */
-
 void set_signing_policies(policyStruct *policy);
 void set_high_water_marks(hwmStruct *hwm);
-
 
 #endif 

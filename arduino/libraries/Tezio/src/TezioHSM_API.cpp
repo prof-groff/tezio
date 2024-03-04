@@ -40,7 +40,7 @@ uint16_t TezioHSM_API::check_curve_alias()
 	uint8_t curve = packet.param1;
 	if (curve > 4)
 	{
-		errorCode = INVALID_CURVE_ALIAS;
+		statusCode = INVALID_CURVE_ALIAS;
 		return FAIL; // invalid curve parameter, don't know which curve to return a key for
 	}
 	else
@@ -400,13 +400,13 @@ uint16_t TezioHSM_API::op_sign()
 	{ // odd mode, return raw bytes
 		memcpy(buffer, signature, 64);
 		bufferLength = 64;
-		return bufferLength;
+		return 1;
 	}
 	else if (mode % 2 == 0)
 	{ // even mode, return base58 checksum encoding
 		// base58 checksum encode and return length of encoded signature
 		bufferLength = base58_encode_prefix_checksum(prefix, prefixLength, signature, sizeof(signature), buffer) - 1;
-		return bufferLength; // subtract one so null character is not returned
+		return 1; // subtract one so null character is not returned
 	}
 	else
 	{
@@ -520,11 +520,15 @@ uint16_t TezioHSM_API::op_verify()
 		if (!myChip.ecdsaVerify(buffer, signature, pk))
 		{
 			myChip.end();
+			buffer[0] = 0;
+			bufferLength = 1;
 			return 0;
 		}
 		else
 		{
 			myChip.end();
+			buffer[0] = 1;
+			bufferLength = 1;
 			return 1;
 		}
 	}
@@ -542,11 +546,15 @@ uint16_t TezioHSM_API::op_verify()
 		if (!myChip.ecdsaVerify(buffer, signature, pk))
 		{
 			myChip.end();
+			buffer[0] = 0;
+			bufferLength = 1;
 			return 0;
 		}
 		else
 		{
 			myChip.end();
+			buffer[0] = 1;
+			bufferLength = 1;
 			return 1;
 		}
 	}
@@ -564,10 +572,14 @@ uint16_t TezioHSM_API::op_verify()
 
 		if (!secp256k1_verify(buffer, pk, signature))
 		{
+			buffer[0] = 0;
+			bufferLength = 1;
 			return 0;
 		}
 		else
 		{
+			buffer[0] = 1;
+			bufferLength = 1;
 			return 1;
 		}
 	}
@@ -585,10 +597,14 @@ uint16_t TezioHSM_API::op_verify()
 
 		if (!ed25519_verify(buffer, pk, signature))
 		{
+			buffer[0] = 0;
+			bufferLength = 1;
 			return 0;
 		}
 		else
 		{
+			buffer[0] = 0;
+			bufferLength = 1;
 			return 1;
 		}
 	}
@@ -749,42 +765,6 @@ uint16_t TezioHSM_API::op_write_keys()
 	return 1;
 }
 
-uint16_t TezioHSM_API::auth_sig_verify(uint8_t *messageBytes, uint16_t messageLength, uint8_t *signatureBytes)
-{
-	/* const uint8_t P2_AUTH_MESSAGE_PREFIX[3] = {0x04, 0x01, 0x02}; // prefix seems to depend on signing key curve - secp256k1 prefix may be 040101
-
-
-	uint8_t fullMessage[sizeof(P2_AUTH_MESSAGE_PREFIX) + PHK_SIZE + messageLength];
-	memcpy(&fullMessage[0], P2_AUTH_MESSAGE_PREFIX, sizeof(P2_AUTH_MESSAGE_PREFIX));
-	memcpy(&fullMessage[sizeof(P2_AUTH_MESSAGE_PREFIX)], authenticationPkh, PKH_SIZE);
-	memcpy(&fullMessage[sizeof(P2_AUTH_MESSAGE_PREFIX) + PKH_SIZE], messageBytes, messageLength);
-
-	// hash the message
-	uint8_t b2bHash[32];
-	BLAKE2b blake2b;
-	blake2b.reset(32);
-	blake2b.update(&fullMessage[0], sizeof(fullMessage));
-	blake2b.finalize(b2bHash, 32);
-
-
-	Cryptochip myChip(Wire, 0x60);
-	if (!myChip.begin()) {
-		return 0;
-	}
-
-
-	if (!myChip.ecdsaVerify(b2bHash, signatureBytes, authenticationPk)){
-		myChip.end();
-		return 0;
-	}
-	else {
-		myChip.end();
-		return 1;
-	}	*/
-
-	return 1;
-}
-
 uint16_t TezioHSM_API::api_crc16(uint8_t *data, uint16_t dataLength)
 {
 	if (data == NULL || dataLength == 0)
@@ -834,7 +814,6 @@ uint16_t TezioHSM_API::wait_for_start_byte()
 	{
 		if (Serial.available() > 0)
 		{
-
 			if (Serial.read() == START_BYTE)
 			{
 				delay(1); // data incoming, short wait for bytes to arrive
@@ -849,7 +828,7 @@ uint16_t TezioHSM_API::wait_for_start_byte()
 
 uint16_t TezioHSM_API::read_packet()
 {
-	packet.packetLength = 0;
+	packetLength = 0;
 	uint16_t expectedPacketLength = 0;
 	uint8_t retries = 0;
 
@@ -866,20 +845,20 @@ uint16_t TezioHSM_API::read_packet()
 	}
 	else
 	{
-		// read the first two bytes (length bytes)
+		// read the length bytes (first two bytes)
 		buffer[0] = Serial.read(); // message length comes in LSB first
 		buffer[1] = Serial.read();
-		packet.packetLength = 2;
+		packetLength = 2;
 		expectedPacketLength = (uint16_t)buffer[0] | (uint16_t)(buffer[1]) << 8;
 
 		// then read in the rest of the packet
 		retries = 0;
-		while (packet.packetLength < expectedPacketLength && retries < N_RETRIES)
+		while (packetLength < expectedPacketLength && retries < N_RETRIES)
 		{
 			if (Serial.available() > 0)
 			{
-				buffer[packet.packetLength] = Serial.read();
-				packet.packetLength++;
+				buffer[packetLength] = Serial.read();
+				packetLength++;
 			}
 			else
 			{
@@ -896,28 +875,27 @@ uint16_t TezioHSM_API::read_packet()
 			return 1; 
 		}
 
-		// return packet.packetLength;
+		// return packetLength;
 	}
 }
 
-uint16_t TezioHSM_API::validate_packet()
-{
+uint16_t TezioHSM_API::validate_packet() {
 	// packet must be at least 5 bytes: length (2 bytes), opcode, two crc bytes
-	if (buffer == NULL || packet.packetLength < 5)
+	if (buffer == NULL || packetLength < 5)
 	{
 		statusCode = INSUFFICIENT_PACKET_LENGTH;
 		return 0; 
 	}
 	// packet crc bytes must check out
-	uint16_t crc = (uint16_t)buffer[packet.packetLength - 2] | (uint16_t)(buffer[packet.packetLength - 1]) << 8;
-	if (crc != api_crc16(buffer, packet.packetLength - 2))
+	uint16_t crc = (uint16_t)buffer[packetLength - 2] | (uint16_t)(buffer[packetLength - 1]) << 8;
+	if (crc != api_crc16(buffer, packetLength - 2))
 	{
 		statusCode = INVALID_CRC16; 
 		return 0;
 	}
 	// packet buffer length must match length byte
 	uint16_t declaredPacketLength = (uint16_t)buffer[0] | (uint16_t)(buffer[1]) << 8;
-	if (declaredPacketLength != packet.packetLength)
+	if (declaredPacketLength != packetLength)
 	{
 		statusCode = INVALID_PACKET_LENGTH;
 		return 0;
@@ -931,29 +909,31 @@ uint16_t TezioHSM_API::parse_message()
 	// clear data
 	if (!reset_packet())
 	{
+		statusCode = FAILED_TO_RESET_PACKET;
 		return 0;
 	}
 	packet.opCode = buffer[2];
-	if (packet.packetLength > 5)
+	if (packetLength > 5)
 	{ // param1 present
 		packet.param1 = buffer[3];
 	}
-	if (packet.packetLength > 6)
+	if (packetLength > 6)
 	{ // param2 present
 		packet.param2 = buffer[4];
 	}
-	if (packet.packetLength > 8)
+	if (packetLength > 8)
 	{ // param3 present and appears in the buffer LSB first
 		packet.param3 = (uint16_t)buffer[5] | (uint16_t)(buffer[6]) << 8;
 	}
-	if (packet.packetLength > 9)
+	if (packetLength > 9)
 	{	// data present
 		// I'm keeping the following commented line of code as a reminder and a warning; do not use heap memory on microcontrollers!
 		// packet.data = (uint8_t*) malloc((packetLength-9)*sizeof(uint8_t));
-		memcpy(packet.data, &buffer[7], packet.packetLength - 9);
-		packet.dataLength = packet.packetLength - 9;
+		memcpy(packet.data, &buffer[7], packetLength - 9);
+		packet.dataLength = packetLength - 9;
 	}
-	return FINISHED;
+	statusCode = PACKET_PARSED_SUCCESSFULLY; 
+	return 1;
 }
 
 uint16_t TezioHSM_API::execute_op()
@@ -965,19 +945,17 @@ uint16_t TezioHSM_API::execute_op()
 	{
 	case (GET_PK):
 	{
-		replyLength = op_get_pk();
+		op_get_pk();
 		break;
 	}
 	case (SIGN):
 	{
-		replyLength = op_sign();
+		op_sign();
 		break;
 	}
 	case (VERIFY):
 	{
-		status = op_verify(); // success or failure
-		replyLength = 1;	  // reply is always one byte
-		buffer[0] = status;	  // store result in buffer
+		op_verify(); // success or failure
 		break;
 	}
 	case (WRITE_KEYS):
@@ -992,27 +970,28 @@ uint16_t TezioHSM_API::execute_op()
 		return 0;
 	}
 	}
-	return replyLength;
+	return 1;
 }
 
-uint16_t TezioHSM_API::send_reply(uint16_t replyLength)
+uint16_t TezioHSM_API::send_reply()
 {
 	// shift buffer to make room for message length byte
-	memmove(&buffer[2], &buffer[0], replyLength);
-	uint16_t totalBytes = replyLength + 4;	// two length bytes and two crc bytes
+	memmove(&buffer[2], &buffer[0], bufferLength);
+	uint16_t totalBytes = bufferLength + 4;	// two length bytes and two crc bytes
 	buffer[0] = (uint8_t)totalBytes & 0xFF; // LSB first
 	buffer[1] = (uint8_t)(totalBytes >> 8) & 0xFF;
-	uint16_t crc = api_crc16(buffer, replyLength + 2);
-	buffer[replyLength + 2] = (uint8_t)(crc);	   // LSB
-	buffer[replyLength + 3] = (uint8_t)(crc >> 8); // MSB
+	uint16_t crc = api_crc16(buffer, bufferLength + 2);
+	buffer[bufferLength + 2] = (uint8_t)(crc);	   // LSB
+	buffer[bufferLength + 3] = (uint8_t)(crc >> 8); // MSB
 	Serial.write(buffer, totalBytes);
 	// send_bytes(buffer, totalBytes);
 	return 1;
 }
 
-uint16_t TezioHSM_API::send_error(uint8_t errorCode)
+uint16_t TezioHSM_API::send_status_code()
 {
-	buffer[0] = errorCode;
-	send_reply(1);
+	buffer[0] = statusCode;
+	bufferLength = 1;
+	send_reply();
 	return 1;
 }
