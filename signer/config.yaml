@@ -4,10 +4,15 @@ security:
     signing_policy_check: True
     high_water_mark_check: True
 
-
-
-
-
+high_water_marks:
+    level:
+        0x11: 0
+        0x12: 0
+        0x13: 0
+    round:
+        0x11: 0
+        0x12: 0
+        0x13: 0
 
 pkhs:
     1: "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5"
