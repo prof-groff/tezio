@@ -28,9 +28,13 @@ SOFTWARE. */
 #include "constants.h"
 #include "crypto_helpers.h"
 #include "Cryptochip.h"
-#include "TezioHSM_Config.h"
+// #include "TezioHSM_Config.h"
 
 #define N_KEYS 4 // NISTP256_AUTH, Secp256k1, Ed25519, NISTP256
+
+// PARAMETERS FOR ALLOCATING MEMORY
+#define N_OPERATIONS 0x13 // this uses more space then needed but is convenient
+#define N_BAKING_OPERATIONS 3 // if indeces are used to access, need to subtract 0x11
 
 #define START_BYTE 0x03
 #define N_RETRIES 100
@@ -57,7 +61,7 @@ SOFTWARE. */
 #define PACKET_PARSED_SUCCESSFULLY 0xB4
 
 // ERRORS STATUS CODES
-#define INVALID_CURVE_ALIAS 0xA0
+#define INVALID_KEY_ALIAS 0xA0
 #define CRYPTOCHIP_FAILED_TO_INITIALIZE 0xA1
 #define INVALID_OPERATION_CODE 0xA2
 #define LEVEL_ROUND_HIGHWATERMARK_ERROR 0xA3
@@ -90,6 +94,18 @@ typedef struct {
   uint16_t packetLength;
 } tezioPacket;
 
+typedef struct {
+    uint32_t level[N_BAKING_OPERATIONS] = {0};
+    uint32_t round[N_BAKING_OPERATIONS] = {0};
+} hwmStruct; 
+
+typedef struct {
+    uint8_t operation[N_OPERATIONS] = {0};
+} policyStruct;
+
+// void set_signing_policies(policyStruct *policy);
+// void set_high_water_marks(hwmStruct *hwm);
+
 class TezioHSM_API {
     
     private:
@@ -105,7 +121,7 @@ class TezioHSM_API {
 		uint32_t myBaud;
 
 		uint16_t validate_level_round();
-		uint16_t check_curve_alias();
+		uint16_t check_key_alias();
 		uint16_t reset_packet();
 		
     public:
@@ -130,6 +146,12 @@ class TezioHSM_API {
 		uint16_t execute_op();
 		uint16_t send_reply();
 		uint16_t send_status_code();
+
+		void enable_signing(uint8_t key_alias, uint8_t op);
+		void disable_signing(uint8_t key_alias, uint8_t op);
+
+		void set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
+		void set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
 
 };
 

@@ -1,18 +1,44 @@
 #include <TezioHSM_API.h>
-#include "tests.h"
+#include "api_tests.h"
 #include "secrets.h" // contains key for encrypted read/write operations
+// #include "TezioHSM_Config.h"
+// KEY ALIASES
+#define TZ3_AUTH 0
+#define TZ1 1
+#define TZ2 2
+#define TZ3 3
+
+// MAGIC BYTES
+#define LEGACY_BLOCK 0x01
+#define LEGACY_ENDORSEMENT 0x02
+#define TRANSFER 0x03
+#define AUTHENTICATED_SIGNING_REQUEST 0x04
+#define MICHELSON_DATA 0x05
+#define BLOCK 0x11
+#define PRE_ATTESTATION 0x12
+#define ATTESTATION 0x13
 
 bool debug = false; // put device in debug (interactive) mode and run tests
 uint32_t baud = 57600;
 TezioHSM_API myWallet(baud, RWKey); 
 
-
 void setup() {
 
   if(!debug) {
     
-    set_signing_policies(myWallet.policy);
-    set_high_water_marks(myWallet.hwm); 
+    // set_signing_policies(myWallet.policy);
+    // set_high_water_marks(myWallet.hwm); 
+    myWallet.enable_signing(TZ3, BLOCK);
+    myWallet.enable_signing(TZ3, PRE_ATTESTATION);
+    myWallet.enable_signing(TZ3, ATTESTATION);
+
+    myWallet.set_level_hwm(TZ3, BLOCK, 0);
+    myWallet.set_level_hwm(TZ3, PRE_ATTESTATION, 0);
+    myWallet.set_level_hwm(TZ3, ATTESTATION, 0); 
+    
+    myWallet.set_round_hwm(TZ3, BLOCK, 0);
+    myWallet.set_round_hwm(TZ3, PRE_ATTESTATION, 0);
+    myWallet.set_round_hwm(TZ3, ATTESTATION, 0);
 
   }
 

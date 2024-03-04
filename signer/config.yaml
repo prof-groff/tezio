@@ -1,3 +1,14 @@
+security:
+    remote_ip_check: True
+    auth_check: True
+    signing_policy_check: True
+    high_water_mark_check: True
+
+
+
+
+
+
 pkhs:
     1: "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5"
     2: "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5"
@@ -46,7 +57,7 @@ policy:
             auth_req: True
         "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j":
             curve_alias: 3
-            allowed_ops: [0x03, 0x11, 0x12, 0x13]
+            allowed_ops: [0x11, 0x12, 0x13]
             auth_req: True
     auth_key:
         pkh:

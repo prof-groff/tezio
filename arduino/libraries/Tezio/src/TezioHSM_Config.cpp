@@ -24,9 +24,9 @@ SOFTWARE. */
 
 void set_signing_policies(policyStruct *policy) {
     
-    policy[TZ3].operation[BLOCK]= 1;
-    policy[TZ3].operation[PRE_ATTESTATION] = 1;
-    policy[TZ3].operation[ATTESTATION] = 1; 
+    policy[TZ3].operation[BLOCK-1]= 1;
+    policy[TZ3].operation[PRE_ATTESTATION-1] = 1;
+    policy[TZ3].operation[ATTESTATION-1] = 1; 
 
     return;
 }

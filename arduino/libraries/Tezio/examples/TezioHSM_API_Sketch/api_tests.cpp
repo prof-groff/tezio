@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "TezioHSM_API.h"
-#include "tests.h"
+#include "api_tests.h"
 
 char *curveNames[] = {"-- NIST P256 Authentication Key --", "-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --"};
 
@@ -21,7 +21,7 @@ void run_op_get_pk_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
   uint16_t opResultLength;
   char charStrResult[128]; // to hold base58 encoded results for easy printing
   start_serial();
-  Serial.println(curveNames[curve - 1]); 
+  Serial.println(curveNames[curve]); 
   myWallet.packet.opCode = 0x11; // op_get_pk
   myWallet.packet.param1 = curve;
   myWallet.packet.param2 = mode;

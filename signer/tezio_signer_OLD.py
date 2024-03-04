@@ -32,11 +32,11 @@ OP_GET_PK = 0x11
 OP_SIGN = 0x21
 OP_VERIFY = 0x22
 
+
 with open('config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
 policy = config['policy']
-security = config['security']
 signing_keys = policy['signing_keys']
 auth_key = policy['auth_key']
 allowed_ips = config['allowed_ips']
@@ -56,8 +56,10 @@ nodeURL = config['node_url']
 # the pkh of the authorized key used to sign incoming requests
 # auth_key_pkh = config['policy']['authorized_keys'][0]
 
+
 watermark_level = dict({0x11: 0, 0x12: 0, 0x13: 0})
 watermark_round = dict({0x11: 0, 0x12: 0, 0x13: 0})
+
 
 app = Flask(__name__)
 
@@ -74,13 +76,12 @@ def home():
 
 def keys(pkh):
 
-    if security['remote_ip_check']: # check if requests from remote ip are allowed
-        if request.remote_addr in allowed_ips:
-            pass
-        else:
-            ERROR_403 = make_response('Requests from this address are forbidden.')
-            ERROR_403.status_code = 403
-            return ERROR_403
+    if request.remote_addr in allowed_ips:
+        pass
+    else:
+        ERROR_403 = make_response('Requests from this address are forbidden.')
+        ERROR_403.status_code = 403
+        return ERROR_403
 
     # Is the request for a signing key stored in the Tezio HSM?
     if pkh in knownPkhs:
@@ -110,13 +111,12 @@ def keys(pkh):
         authSig = request.args.get('authentication')
 
          # Does the requested signing key allow the operation type?
-        if security['signing_policy_check']:
-            if magicByte in signing_keys[pkh]['allowed_ops']:
-                pass
-            else:
-                ERROR_405 = make_response('Method Not Allowed')
-                ERROR_405.status_code = 405
-                return ERROR_405
+        if magicByte in signing_keys[pkh]['allowed_ops']:
+            pass
+        else:
+            ERROR_405 = make_response('Method Not Allowed')
+            ERROR_405.status_code = 405
+            return ERROR_405
 
         # Does the requested signing key require authentication?
         if signing_keys[pkh]['auth_req']:

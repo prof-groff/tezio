@@ -35,12 +35,31 @@ TezioHSM_API::~TezioHSM_API()
 	Serial.end();
 }
 
-uint16_t TezioHSM_API::check_curve_alias()
+void TezioHSM_API::enable_signing(uint8_t key_alias, uint8_t op) {
+    policy[key_alias].operation[op-1] = 1;
+    return;
+}
+
+void TezioHSM_API::disable_signing(uint8_t key_alias, uint8_t op) {
+    policy[key_alias].operation[op-1] = 0;
+    return;
+}
+
+void TezioHSM_API::set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue) {
+	hwm[key_alias].level[baking_op-0x11] = hwmValue;
+    return; 
+}
+
+void TezioHSM_API::set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue) {
+	hwm[key_alias].round[baking_op-0x11] = hwmValue;
+	return;
+}
+
+uint16_t TezioHSM_API::check_key_alias()
 {
-	uint8_t curve = packet.param1;
-	if (curve > 4)
+	if (packet.param1 > N_KEYS) // packet.param1 is the kay alias
 	{
-		statusCode = INVALID_CURVE_ALIAS;
+		statusCode = INVALID_KEY_ALIAS;
 		return FAIL; // invalid curve parameter, don't know which curve to return a key for
 	}
 	else
@@ -114,9 +133,9 @@ uint16_t TezioHSM_API::op_get_pk()
 		return FAIL;
 	}
 
-	if (check_curve_alias() != PASS)
+	if (check_key_alias() != PASS)
 	{
-		return errorCode;
+		return FAIL;
 	}
 
 	if (mode == NULL || mode > 4)
@@ -156,7 +175,7 @@ uint16_t TezioHSM_API::op_get_pk()
 	}
 	default:
 	{
-		return INVALID_CURVE_ALIAS;
+		return INVALID_KEY_ALIAS;
 	}
 	}
 
@@ -191,16 +210,8 @@ uint16_t TezioHSM_API::op_sign()
 		0x03		no						raw bytes
 		0x04		no						base58 checksum encoded */
 
-	/*  auth		auth signature format
-		0x0*        N/A
-		0x1*		raw bytes
-		0x2*	    base58 checksum encoded
 
-		param3		message length
-
-	*/
-
-	if (check_curve_alias() == FAIL)
+	if (check_key_alias() == FAIL)
 	{
 		return errorCode;
 	}
@@ -272,7 +283,7 @@ uint16_t TezioHSM_API::op_sign()
 		if (curve == NISTP256)
 		{
 
-			if (policy[TZ3].operation[magicByte] == 1)
+			if (policy[TZ3].operation[magicByte-1] == 1)
 			{ // signing allowed by policy
 
 				Cryptochip myChip(Wire, 0x60);
@@ -295,7 +306,7 @@ uint16_t TezioHSM_API::op_sign()
 		else if (curve == NISTP256_AUTH)
 		{
 
-			if (policy[TZ3_AUTH].operation[magicByte] == 1)
+			if (policy[TZ3_AUTH].operation[magicByte-1] == 1)
 			{
 
 				Cryptochip myChip(Wire, 0x60);
@@ -318,7 +329,7 @@ uint16_t TezioHSM_API::op_sign()
 		else if (curve == SECP256K1)
 		{
 
-			if (policy[TZ2].operation[magicByte] == 1)
+			if (policy[TZ2].operation[magicByte-1] == 1)
 			{
 
 				uint8_t sk[32];
@@ -353,7 +364,7 @@ uint16_t TezioHSM_API::op_sign()
 		else if (curve == ED25519)
 		{
 
-			if (policy[TZ1].operation[magicByte] == 1)
+			if (policy[TZ1].operation[magicByte-1] == 1)
 			{
 
 				uint8_t sk[32];
@@ -432,7 +443,7 @@ uint16_t TezioHSM_API::op_verify()
 	0x03		no						raw bytes
 	0x04		no						base58 checksum encoded */
 
-	if (check_curve_alias() == FAIL)
+	if (check_key_alias() == FAIL)
 	{
 		return errorCode;
 	}
@@ -633,7 +644,7 @@ uint16_t TezioHSM_API::op_write_keys()
 	uint8_t sessionKey[32];
 	uint8_t cypherText[32];
 
-	/* if (check_curve_alias()==FAIL) {
+	/* if (check_key_alias()==FAIL) {
 		return status;
 	}*/
 
