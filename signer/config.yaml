@@ -4,6 +4,8 @@ security:
     signing_policy_check: True
     high_water_mark_check: True
 
+verbose: False
+
 high_water_marks:
     level:
         0x11: 0
@@ -14,29 +16,8 @@ high_water_marks:
         0x12: 0
         0x13: 0
 
-pkhs:
-    1: "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5"
-    2: "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5"
-    3: "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j"
-    0: "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
-
-magic_bytes:    # 0 - disable, 1 - enable
-    0x01: 0     # legacy block
-    0x02: 0     # legacy endorsement
-    0x03: 0     # generic transaction, trasfer
-    0x04: 1     # authenticated signing request
-    0x05: 0     # Michelson data
-    0x11: 1     # block 
-    0x12: 1     # pre-attestation
-    0x13: 1     # attestation
-
-node_url:
-    "http://localhost:8732"
-
-
 allowed_ips: 
     ["127.0.0.1"]
-
 
 # MAGIC BYTES
 # 0x01 - LEGACY BLOCK
@@ -47,8 +28,6 @@ allowed_ips:
 # 0x11 - BLOCK
 # 0x12 - PRE-ATTESTATION
 # 0x13 - ATTESTATION
-
-
 
 policy:
     signing_keys:
@@ -66,10 +45,8 @@ policy:
             auth_req: True
     auth_key:
         pkh:
-            "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs":
+            "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
         pkhBytes:
             "a79feaea9fb12af20833db1c2467824197c64027"
         curve_alias:
             0
-    signed_requests: 
-        "authorized_keys": ["tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"]
