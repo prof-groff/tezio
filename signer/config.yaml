@@ -4,7 +4,7 @@ security:
     signing_policy_check: True
     high_water_mark_check: True
 
-verbose: False
+verbose: True
 
 high_water_marks:
     level:

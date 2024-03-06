@@ -46,6 +46,9 @@ def keys(pkh):
         
     # Is the request method GET or POST?
     if request.method == 'GET':
+        if (config['verbose']):
+            print('GET request received...')
+            print(request.url)
         wallet = TezioHSM(signing_keys[pkh]['curve_alias'])
         pk = wallet.get_pk(PK_BASE58_CHECKSUM).decode('utf-8')
         response = jsonify({'public_key': pk})
@@ -53,6 +56,10 @@ def keys(pkh):
         return response
         
     elif request.method == 'POST':
+        if (config['verbose']):
+            print('POST request received...')
+            print(request.url)
+            print(request.json)
         # data to sign sent with the request
         dataBytes = bytearray.fromhex(request.json)
         # first byte is the magic_byte specifying the opration type
@@ -98,19 +105,15 @@ def keys(pkh):
                 current_level = int.from_bytes(dataBytes[40:44], "big")
                 current_round = int.from_bytes(dataBytes[44:48], "big")
             else:
-                print("data: ", dataBytes.hex())
                 current_level = int.from_bytes(dataBytes[5:9], "big")
                 nFitnessBytes = int.from_bytes(dataBytes[83:87], "big")
-                print("n fitness bytes: ", nFitnessBytes)
                 current_round = int.from_bytes(dataBytes[87 + nFitnessBytes - 4: 87 + nFitnessBytes], "big")
-                print('Baking a Block')
-                print("level: ", current_level)
-                print("round: ", current_round)
 
             # if current level and round are the same as the those for last baking operation, don't sign
             if (current_level < hwms['level'][magicByte]) or (current_level == hwms['level'][magicByte] and current_round <= hwms['round'][magicByte]):
                 ERROR_403 = make_response('Forbidden')
                 ERROR_403.status_code = 403
+                print("Level Round Error")
                 return ERROR_403
             else:
                 hwms['level'][magicByte] = current_level
@@ -128,10 +131,12 @@ def keys(pkh):
             print('data: ', dataBytes.hex())
         signature = wallet.sign(4, dataBytes)
         if (signature == 0):
+            print("problem getting signature from HSM")
             ERROR_500 = make_response('Internal Server Error')
             ERROR_500.status_code = 500
             return ERROR_500
         else:
+            print(signature)
             response = make_response(jsonify({'signature': signature.decode('utf-8')}))
             response.status_code = 200
             return response
