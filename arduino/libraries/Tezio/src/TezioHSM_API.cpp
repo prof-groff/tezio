@@ -35,37 +35,53 @@ TezioHSM_API::~TezioHSM_API()
 	Serial.end();
 }
 
-void TezioHSM_API::enable_signing(uint8_t key_alias, uint8_t op) {
-    policy[key_alias].operation[op-1] = 1;
-    return;
-}
-
-void TezioHSM_API::disable_signing(uint8_t key_alias, uint8_t op) {
-    policy[key_alias].operation[op-1] = 0;
-    return;
-}
-
-void TezioHSM_API::set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue) {
-	hwm[key_alias].level[baking_op-0x11] = hwmValue;
-    return; 
-}
-
-void TezioHSM_API::set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue) {
-	hwm[key_alias].round[baking_op-0x11] = hwmValue;
+void TezioHSM_API::enable_signing(uint8_t key_alias, uint8_t op)
+{
+	policy[key_alias].operation[op - 1] = 1;
 	return;
 }
 
-uint16_t TezioHSM_API::check_key_alias()
+void TezioHSM_API::disable_signing(uint8_t key_alias, uint8_t op)
 {
-	if (packet.param1 > N_KEYS) // packet.param1 is the kay alias
-	{
-		statusCode = INVALID_KEY_ALIAS;
-		return FAIL; // invalid curve parameter, don't know which curve to return a key for
-	}
-	else
+	policy[key_alias].operation[op - 1] = 0;
+	return;
+}
+
+void TezioHSM_API::set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue)
+{
+	hwm[key_alias].level[baking_op - 0x11] = hwmValue;
+	return;
+}
+
+void TezioHSM_API::set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue)
+{
+	hwm[key_alias].round[baking_op - 0x11] = hwmValue;
+	return;
+}
+
+uint16_t TezioHSM_API::validate_param_1_2(uint8_t param, uint8_t minVal, uint8_t maxVal)
+{
+	if (param >= minVal && param <= maxVal) // parameter in valid range
 	{
 		return PASS;
 	}
+	else
+	{
+		return FAIL;
+	}
+}
+
+uint16_t TezioHSM_API::validate_data(uint8_t *data, uint16_t dataLength, uint16_t minLength, uint16_t maxLength) {
+	if (data == NULL) {
+		return FAIL;
+	}
+	else if (dataLength >= minLength && dataLength <= maxLength) {
+		return PASS;
+	}
+	else {
+		return FAIL;
+	}
+
 }
 
 uint16_t TezioHSM_API::validate_level_round()
@@ -80,7 +96,6 @@ uint16_t TezioHSM_API::validate_level_round()
 
 	if (magicByte == 0x12 || magicByte == 0x13)
 	{
-
 		current_level = bigendian_bytes_to_uint32(&packet.data[40]);
 		current_round = bigendian_bytes_to_uint32(&packet.data[44]);
 	}
@@ -94,7 +109,6 @@ uint16_t TezioHSM_API::validate_level_round()
 	if ((current_level < hwm[curve].level[magicByte - 0x11]) ||
 		((current_level == hwm[curve].level[magicByte - 0x11]) && (current_round <= hwm[curve].round[magicByte - 0x11])))
 	{
-		errorCode = LEVEL_ROUND_HIGHWATERMARK_ERROR;
 		return FAIL;
 	}
 	else
@@ -107,266 +121,244 @@ uint16_t TezioHSM_API::validate_level_round()
 
 uint16_t TezioHSM_API::op_get_pk()
 {
+	/*  packet.param1 is curve/address/slot alias
+		0x00	NIST P256 Authentication Key (not used to sign operations)
+		0x01    Ed25519
+		0x02    Secp256k1
+		0x03    NIST P256
 
-	uint8_t curve = packet.param1;
-	uint8_t mode = packet.param2;
+		packet.param2 is public key format to return
+		0x01    raw bytes
+		0x02    compressed bytes
+		0x03    base58 checksum encoded
+		0x04    tezos address/public key hash */
 
-	/*   curve   ECC curve to use
-	0x00	NIST P256 Authentication Key (not used to sign operations)
-	0x01    Ed25519
-	0x02    Secp256k1
-	0x03    NIST P256
+	if (validate_param_1_2(packet.param1, 0x00, 0x03) != PASS)
+	{
+		statusCode = PARAM_1_INVALID;
+		return FAIL; // don't know which curve to use
+	}
 
-	mode    pk format
-	0x01    raw bytes
-	0x02    compressed bytes
-	0x03    base58 checksum encoded
-	0x04    tezos address hash */
+	if (validate_param_1_2(packet.param2, 0x01, 0x04) != PASS)
+	{
+		statusCode = PARAM_2_INVALID;
+		return FAIL; // don't know which key format to return
+	}
 
-	// uint16_t replyLength;
-	uint16_t rawKeyLength;
-	uint8_t pkForm;
+	// initialize coms with cryptographic co-processor/HSM
 	Cryptochip myChip(Wire, 0x60);
 	if (!myChip.begin())
 	{
-		errorCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
+		statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
 		return FAIL;
 	}
 
-	if (check_key_alias() != PASS)
+	switch (packet.param1) // this is curve/address/slot alias
 	{
-		return FAIL;
-	}
-
-	if (mode == NULL || mode > 4)
-	{
-		return 0; // don't know which form of the pk to return
-	}
-
-	switch (curve)
-	{ // this is the curve
 	case (ED25519):
 	{
-		rawKeyLength = ED_PK_SIZE;
-		myChip.readSlot(ED_PK_SLOT, buffer, rawKeyLength);
-		bufferLength = encode_public_key(buffer, rawKeyLength, mode, ED25519);
+		myChip.readSlot(ED_PK_SLOT, buffer, ED_PK_SIZE);
+		bufferLength = encode_public_key(buffer, ED_PK_SIZE, packet.param2, ED25519);
 		break;
 	}
 	case (SECP256K1):
 	{
-		rawKeyLength = SP_PK_SIZE;
-		myChip.readSlot(SP_PK_SLOT, buffer, rawKeyLength);
-		bufferLength = encode_public_key(buffer, rawKeyLength, mode, SECP256K1);
+		myChip.readSlot(SP_PK_SLOT, buffer, SP_PK_SIZE);
+		bufferLength = encode_public_key(buffer, SP_PK_SIZE, packet.param2, SECP256K1);
 		break;
 	}
 	case (NISTP256):
 	{
-		rawKeyLength = P2_PK_SIZE;
-		myChip.readSlot(P2_PK_SLOT, buffer, rawKeyLength);
-		bufferLength = encode_public_key(buffer, rawKeyLength, mode, NISTP256);
+		myChip.readSlot(P2_PK_SLOT, buffer, P2_PK_SIZE);
+		bufferLength = encode_public_key(buffer, P2_PK_SIZE, packet.param2, NISTP256);
 		break;
 	}
 	case (NISTP256_AUTH):
 	{
-		rawKeyLength = P2_PK_SIZE;
-		myChip.readSlot(P2_AUTH_KEY_PK_SLOT, buffer, rawKeyLength);
-		bufferLength = encode_public_key(buffer, rawKeyLength, mode, NISTP256_AUTH);
+		myChip.readSlot(P2_AUTH_KEY_PK_SLOT, buffer, P2_PK_SIZE);
+		bufferLength = encode_public_key(buffer, P2_PK_SIZE, packet.param2, NISTP256_AUTH);
 		break;
 	}
 	default:
 	{
-		return INVALID_KEY_ALIAS;
+		return FAIL;
 	}
 	}
 
 	myChip.end();
-	return 1;
+	return SUCCESS;
 }
 
 uint16_t TezioHSM_API::op_sign()
 {
-
-	uint8_t curve = packet.param1;
-	uint8_t mode = (packet.param2 & 0x0F); // LSNibble
-
-	// uint8_t auth = (packet.param2 & 0xF0);  // MSNibble
-
-	uint8_t signature[64];
-	uint8_t prefix[5];
-	uint16_t prefixLength;
-
-	uint8_t magicByte = packet.data[0];
-
-	/* 	curve		Address/ECC curve to use
+	/* 	packet.param1 is curve/address/slot alias
 		0x00		NIST P256 Authentication Key
 		0x01		Ed25519 (tz1)
 		0x02		Secp256k1 (tz2)
 		0x03		NIST P256 (tz3)
 
-		mode		message is hashed		return signature format
+		packet.param2 is message/signature mode
+					message is hashed		return signature format
 		0x00		N/A						default (zeros) base58 checksum encoded
 		0x01		yes						raw bytes
 		0x02		yes						base58 checksum encoded
 		0x03		no						raw bytes
 		0x04		no						base58 checksum encoded */
 
-
-	if (check_key_alias() == FAIL)
+	if (validate_param_1_2(packet.param1, 0x00, 0x03) != PASS)
 	{
-		return errorCode;
+		statusCode = PARAM_1_INVALID;
+		return FAIL;
+	}
+	if (validate_param_1_2(packet.param2, 0x00, 0x04) != PASS)
+	{
+		statusCode = PARAM_2_INVALID;
+		return FAIL;
 	}
 
-	if (mode > 4)
-	{
-		return 0; // don't know which mode to use
-	}
+	uint16_t prefixLength;
+	uint8_t prefix[5]; 
+	uint8_t signature[64];
+	uint8_t magicByte = packet.data[0];
 
-	// set prefix for curve
-	if (curve == NISTP256 || curve == NISTP256_AUTH)
-	{
-		prefixLength = 4;
-		memcpy(prefix, TZ3_SIG, prefixLength);
-	}
-	else if (curve == SECP256K1)
-	{
-		prefixLength = 5;
-		memcpy(prefix, TZ2_SIG, prefixLength);
-	}
-	else if (curve == ED25519)
-	{
-		prefixLength = 5;
-		memcpy(prefix, TZ1_SIG, prefixLength);
-	}
-	else
-	{
-		return 0;
-	}
-
-	if (mode == NULL || mode == 0)
-	{ // return default signature (base58 checksum of zeros)
+	if (packet.param2 == 0) // return default signature (zeros or base58 checksum of zeros)
+	{ 
 		memset(signature, 0, 64);
+		prefixLength = 3;
+		memcpy(prefix, DEF_SIG, prefixLength);
 	}
 	else
 	{
-		if (packet.data == NULL || packet.dataLength == 0)
-		{
-			return 0; // no data to sign
+		if (validate_data(packet.data, packet.dataLength, 1, MAX_DATA_LENGTH) != PASS) {
+			statusCode = DATA_OR_DATA_LENGTH_INVALID;
+			return FAIL;
 		}
-		// hash the message if necessary - store result in the buffer
-		if (mode > 2)
-		{ // message must be hashed first
+		if (packet.param2 > 2) // hash the message if necessary - store result in the buffer
+		{ 
 			BLAKE2b blake2b;
 			blake2b.reset(32);
 			blake2b.update(packet.data, packet.dataLength);
 			blake2b.finalize(buffer, 32);
 		}
-		else if (mode <= 2 && packet.dataLength == 32)
-		{ // message already hashed
-			memcpy(buffer, packet.data, packet.dataLength);
+		else if (packet.param2 <= 2 && packet.dataLength == 32)
+		{ 
+			memcpy(buffer, packet.data, packet.dataLength); // message already hashed
 		}
 		else
 		{
-			return 0; // error
+			statusCode = MESSAGE_HASH_STATUS_INDETERMINANT;
+			return FAIL; // error
 		}
 
 		// if the operation is a baking op, check watermarks
 		if (magicByte == 0x11 || magicByte == 0x12 || magicByte == 0x13)
 		{
-			if (validate_level_round() == 0)
+			if (validate_level_round() != PASS)
 			{
-				return 0;
+				errorCode = LEVEL_ROUND_HIGHWATERMARK_ERROR;
+				return FAIL;
 			}
 		}
 
-		// sign the message, result is 64 raw bytes but set up prefix in case the base58 encoded sig is requested
-
-		if (curve == NISTP256)
+		// check if requested signiture is for an allowed operation
+		// then sign the message.
+		// the result is 64 raw bytes but base58 encoded sig may be requested
+		if (packet.param1 == NISTP256)
 		{
-
-			if (policy[TZ3].operation[magicByte-1] == 1)
+			if (policy[TZ3].operation[magicByte - 1] != ALLOWED) {
+				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				return FAIL;
+			}
+			else 
 			{ // signing allowed by policy
 
+				// initialize coms with cryptographic co-processor/HSM
 				Cryptochip myChip(Wire, 0x60);
 				if (!myChip.begin())
 				{
-					return 0;
+					statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
+					return FAIL;
 				}
 				if (!myChip.ecSign(P2_SK_SLOT, buffer, signature))
 				{
-					return 0;
+					statusCode = HSM_FAILED_TO_SIGN;
+					return FAIL;
 				}
 				myChip.end();
 			}
-			else
-			{
-				return 0;
-			}
 		}
 
-		else if (curve == NISTP256_AUTH)
+		else if (packet.param1 == NISTP256_AUTH)
 		{
-
-			if (policy[TZ3_AUTH].operation[magicByte-1] == 1)
+			if (policy[TZ3_AUTH].operation[magicByte - 1] != ALLOWED)
 			{
-
+				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				return FAIL;
+			}
+			else {
 				Cryptochip myChip(Wire, 0x60);
 				if (!myChip.begin())
 				{
-					return 0;
+					statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
+					return FAIL;
 				}
 				if (!myChip.ecSign(P2_AUTH_KEY_SLOT, buffer, signature))
 				{
-					return 0;
+					statusCode = HSM_FAILED_TO_SIGN;
+					return FAIL;
 				}
 				myChip.end();
 			}
-			else
-			{
-				return 0;
-			}
 		}
 
-		else if (curve == SECP256K1)
+		else if (packet.param1 == SECP256K1)
 		{
-
-			if (policy[TZ2].operation[magicByte-1] == 1)
+			if (policy[TZ2].operation[magicByte - 1] != ALLOWED)
 			{
-
+				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				return FAIL;
+			}
+			else {
 				uint8_t sk[32];
 				uint8_t sessionKey[32];
 				uint8_t cypherText[32];
 				Cryptochip myChip(Wire, 0x60);
 				if (!myChip.begin())
 				{
-					return 0;
+					statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
+					return FAIL;
 				}
 				if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey))
 				{
-					return 0;
+					statusCode = FAILED_TO_GENERATE_SESSION_KEY;
+					return FAIL;
 				}
 				if (!myChip.encryptedRead(SP_SK_SLOT, cypherText, 32))
 				{
-					return 0;
+					statusCode = ENCRYPTED_READ_FAILED;
+					return FAIL;
 				}
 				if (!myChip.decryptData(cypherText, sk, 32))
 				{
-					return 0;
+					statusCode = FAILED_TO_DECRYPT_DATA;
+					return FAIL;
 				}
 				myChip.end();
 
-				secp256k1_sign(buffer, sk, signature);
+				secp256k1_sign(buffer, sk, signature); // signed in software
+				// overwrite secret key for security
+				memset(sk, 0, 32);
 			}
-			else
-			{
-				return 0;
-			}
+			
 		}
-		else if (curve == ED25519)
+		else if (packet.param1 == ED25519)
 		{
-
-			if (policy[TZ1].operation[magicByte-1] == 1)
+			if (policy[TZ1].operation[magicByte - 1] != ALLOWED)
 			{
-
+				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				return FAIL;
+			}
+			else {
 				uint8_t sk[32];
 				uint8_t sessionKey[32];
 				uint8_t cypherText[32];
@@ -374,54 +366,80 @@ uint16_t TezioHSM_API::op_sign()
 				Cryptochip myChip(Wire, 0x60);
 				if (!myChip.begin())
 				{
-					return 0;
+					statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
+					return FAIL;
 				}
 				if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey))
 				{
-					return 0;
+					statusCode = FAILED_TO_GENERATE_SESSION_KEY;
+					return FAIL;
 				}
 				if (!myChip.encryptedRead(ED_SK_SLOT, cypherText, 32))
 				{
-					return 0;
+					statusCode = ENCRYPTED_READ_FAILED;
+					return FAIL;
 				}
 				if (!myChip.decryptData(cypherText, sk, 32))
 				{
-					return 0;
+					statusCode = FAILED_TO_DECRYPT_DATA;
+					return FAIL;
 				}
 				if (!myChip.readSlot(ED_PK_SLOT, pk, 32))
 				{
-					return 0;
+					statusCode = FAILED_TO_READ_PK_SLOT;
+					return FAIL;
 				}
 				myChip.end();
 
 				ed25519_sign(buffer, sk, pk, signature);
-			}
-			else
-			{
-				return 0;
+				memset(sk, 0, 32); // overwrite sk for security
 			}
 		}
 		else
 		{
-			return 0;
+			statusCode = INVALID_KEY_ALIAS;
+			return FAIL;
 		}
 	}
 
-	if (mode % 2 == 1)
-	{ // odd mode, return raw bytes
-		memcpy(buffer, signature, 64);
-		bufferLength = 64;
-		return 1;
+	// set prefix for curve
+	if (packet.param1 == NISTP256 || packet.param1 == NISTP256_AUTH)
+	{
+		prefixLength = 4;
+		memcpy(prefix, TZ3_SIG, P2_SIG_PREFIX_LENGTH);
 	}
-	else if (mode % 2 == 0)
-	{ // even mode, return base58 checksum encoding
-		// base58 checksum encode and return length of encoded signature
-		bufferLength = base58_encode_prefix_checksum(prefix, prefixLength, signature, sizeof(signature), buffer) - 1;
-		return 1; // subtract one so null character is not returned
+	else if (packet.param1 == SECP256K1)
+	{
+		prefixLength = 5;
+		memcpy(prefix, TZ2_SIG, SP_SIG_PREFIX_LENGTH);
+	}
+	else if (packet.param1 == ED25519)
+	{
+		prefixLength = 5;
+		memcpy(prefix, TZ1_SIG, ED_SIG_PREFIX_LENGTH);
 	}
 	else
 	{
-		return 0;
+		statusCode = INVALID_KEY_ALIAS;
+		return FAIL;
+	}
+
+	if (packet.param2 % 2 == 1) // param2 is odd, return raw bytes
+	{ 
+		memcpy(buffer, signature, 64);
+		bufferLength = 64;
+		return SUCCESS;
+	}
+	else if (packet.param2 % 2 == 0) // param2 is even, return base58 checksum encoded signature
+	{ 
+		// base58 checksum encode and return length of encoded signature
+		bufferLength = base58_encode_prefix_checksum(prefix, prefixLength, signature, sizeof(signature), buffer) - 1;
+		return SUCCESS; // subtract one so null character is not returned
+	}
+	else
+	{
+		statusCode = PARAM_2_INVALID;
+		return FAIL;
 	}
 }
 
@@ -443,9 +461,10 @@ uint16_t TezioHSM_API::op_verify()
 	0x03		no						raw bytes
 	0x04		no						base58 checksum encoded */
 
-	if (check_key_alias() == FAIL)
+	if (validate_param_1_2(packet.param1, 0x00, 0x03) != PASS)
 	{
-		return errorCode;
+		statusCode = PARAM_1_INVALID;
+		return FAIL;
 	}
 
 	if (mode == NULL || mode > 4)
@@ -644,7 +663,7 @@ uint16_t TezioHSM_API::op_write_keys()
 	uint8_t sessionKey[32];
 	uint8_t cypherText[32];
 
-	/* if (check_key_alias()==FAIL) {
+	/* if (validate_param_1_2()==FAIL) {
 		return status;
 	}*/
 
@@ -877,31 +896,34 @@ uint16_t TezioHSM_API::read_packet()
 				delay(1);
 			}
 		}
-		if (retries == N_RETRIES) {
+		if (retries == N_RETRIES)
+		{
 			statusCode = UNEXPECTED_PACKET_LENGTH;
 			return 0;
 		}
-		else {
+		else
+		{
 			statusCode = PACKET_OF_EXPECTED_LENGTH_ARRIVED;
-			return 1; 
+			return 1;
 		}
 
 		// return packetLength;
 	}
 }
 
-uint16_t TezioHSM_API::validate_packet() {
+uint16_t TezioHSM_API::validate_packet()
+{
 	// packet must be at least 5 bytes: length (2 bytes), opcode, two crc bytes
 	if (buffer == NULL || packetLength < 5)
 	{
 		statusCode = INSUFFICIENT_PACKET_LENGTH;
-		return 0; 
+		return 0;
 	}
 	// packet crc bytes must check out
 	uint16_t crc = (uint16_t)buffer[packetLength - 2] | (uint16_t)(buffer[packetLength - 1]) << 8;
 	if (crc != api_crc16(buffer, packetLength - 2))
 	{
-		statusCode = INVALID_CRC16; 
+		statusCode = INVALID_CRC16;
 		return 0;
 	}
 	// packet buffer length must match length byte
@@ -937,13 +959,13 @@ uint16_t TezioHSM_API::parse_message()
 		packet.param3 = (uint16_t)buffer[5] | (uint16_t)(buffer[6]) << 8;
 	}
 	if (packetLength > 9)
-	{	// data present
+	{ // data present
 		// I'm keeping the following commented line of code as a reminder and a warning; do not use heap memory on microcontrollers!
 		// packet.data = (uint8_t*) malloc((packetLength-9)*sizeof(uint8_t));
 		memcpy(packet.data, &buffer[7], packetLength - 9);
 		packet.dataLength = packetLength - 9;
 	}
-	statusCode = PACKET_PARSED_SUCCESSFULLY; 
+	statusCode = PACKET_PARSED_SUCCESSFULLY;
 	return 1;
 }
 
@@ -988,11 +1010,11 @@ uint16_t TezioHSM_API::send_reply()
 {
 	// shift buffer to make room for message length byte
 	memmove(&buffer[2], &buffer[0], bufferLength);
-	uint16_t totalBytes = bufferLength + 4;	// two length bytes and two crc bytes
+	uint16_t totalBytes = bufferLength + 4; // two length bytes and two crc bytes
 	buffer[0] = (uint8_t)totalBytes & 0xFF; // LSB first
 	buffer[1] = (uint8_t)(totalBytes >> 8) & 0xFF;
 	uint16_t crc = api_crc16(buffer, bufferLength + 2);
-	buffer[bufferLength + 2] = (uint8_t)(crc);	   // LSB
+	buffer[bufferLength + 2] = (uint8_t)(crc);		// LSB
 	buffer[bufferLength + 3] = (uint8_t)(crc >> 8); // MSB
 	Serial.write(buffer, totalBytes);
 	// send_bytes(buffer, totalBytes);

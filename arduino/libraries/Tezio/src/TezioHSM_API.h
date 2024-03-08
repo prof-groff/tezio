@@ -31,6 +31,7 @@ SOFTWARE. */
 // #include "TezioHSM_Config.h"
 
 #define N_KEYS 4 // NISTP256_AUTH, Secp256k1, Ed25519, NISTP256
+#define MAX_DATA_LENGTH 1024
 
 // PARAMETERS FOR ALLOCATING MEMORY
 #define N_OPERATIONS 0x13 // this uses more space then needed but is convenient
@@ -50,17 +51,37 @@ SOFTWARE. */
 #define PK_BASE58 2
 #define PK_HASH 3
 
+// prefix lengths
+#define P2_SIG_PREFIX_LENGTH 4
+#define SP_SIG_PREFIX_LENGTH 5
+#define ED_SIG_PREFIX_LENGTH 5
+
 // PASS or FAIL
 #define FAIL 0x00
+#define FORBIDDEN 0x00
 #define PASS 0x01
+#define SUCCESS 0x01
+#define ALLOWED 0x01
 
 // STATUS CODES
-#define START_BYTE_FOUND 0xB1
-#define PACKET_OF_EXPECTED_LENGTH_ARRIVED 0xB2
-#define VALID_PACKET_RECEIVED 0xB3
-#define PACKET_PARSED_SUCCESSFULLY 0xB4
+#define START_BYTE_FOUND 0xD1
+#define PACKET_OF_EXPECTED_LENGTH_ARRIVED 0xD2
+#define VALID_PACKET_RECEIVED 0xD3
+#define PACKET_PARSED_SUCCESSFULLY 0xD4
 
 // ERRORS STATUS CODES
+#define PARAM_1_INVALID 0xAA
+#define PARAM_2_INVALID 0xAB
+#define PARAM_3_INVALID 0xAC
+#define DATA_OR_DATA_LENGTH_INVALID 0xAD
+#define MESSAGE_HASH_STATUS_INDETERMINANT 0xAE
+#define HSM_FAILED_TO_SIGN 0xAF
+#define OPERATION_FORBIDDEN_BY_POLICY 0xB0
+#define FAILED_TO_GENERATE_SESSION_KEY 0xB1
+#define ENCRYPTED_READ_FAILED 0xB2
+#define FAILED_TO_DECRYPT_DATA 0xB3
+#define FAILED_TO_READ_PK_SLOT 0xB4
+
 #define INVALID_KEY_ALIAS 0xA0
 #define CRYPTOCHIP_FAILED_TO_INITIALIZE 0xA1
 #define INVALID_OPERATION_CODE 0xA2
@@ -89,7 +110,7 @@ typedef struct {
   uint8_t param1;
   uint8_t param2;
   uint16_t param3; 
-  uint8_t data[1024];
+  uint8_t data[MAX_DATA_LENGTH];
   uint16_t dataLength;
   uint16_t packetLength;
 } tezioPacket;
@@ -121,7 +142,9 @@ class TezioHSM_API {
 		uint32_t myBaud;
 
 		uint16_t validate_level_round();
-		uint16_t check_key_alias();
+		uint16_t validate_param_1_2(uint8_t param, uint8_t minVal, uint8_t maxVal);
+		uint16_t validate_param_3(uint16_t param, uint16_t minVal, uint16_t maxVal);
+		uint16_t validate_data(uint8_t *data, uint16_t dataLength, uint16_t minLength, uint16_t maxLength);
 		uint16_t reset_packet();
 		
     public:
