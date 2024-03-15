@@ -32,9 +32,11 @@ SOFTWARE. */
 
 #define N_KEYS 4 // NISTP256_AUTH, Secp256k1, Ed25519, NISTP256
 #define MAX_DATA_LENGTH 1024
+#define N_SK_PREFIX_BYTES 4
 
 // PARAMETERS FOR ALLOCATING MEMORY
-#define N_OPERATIONS 0x13 // this uses more space then needed but is convenient
+#define N_TEZOS_OPS 0x13 // this uses more space then needed but is convenient
+#define N_HSM_OPS 0x31 // same
 #define N_BAKING_OPERATIONS 3 // if indeces are used to access, need to subtract 0x11
 
 #define START_BYTE 0x03
@@ -43,8 +45,7 @@ SOFTWARE. */
 #define GET_PK 0x11
 #define SIGN 0x21
 #define VERIFY 0x22
-#define CLEAR_WRITE 0x31
-#define WRITE_KEYS 0x32
+#define WRITE_KEYS 0x31
 
 #define PK_RAW 0
 #define PK_COMP 1
@@ -81,6 +82,9 @@ SOFTWARE. */
 #define ENCRYPTED_READ_FAILED 0xB2
 #define FAILED_TO_DECRYPT_DATA 0xB3
 #define FAILED_TO_READ_PK_SLOT 0xB4
+#define FAILED_TO_ENCRYPT_DATA 0xB5
+#define FAILED_ENCRYPTED_WRITE 0xB6
+#define FAILED_CLEAR_WRITE 0xB7
 
 #define INVALID_KEY_ALIAS 0xA0
 #define CRYPTOCHIP_FAILED_TO_INITIALIZE 0xA1
@@ -121,7 +125,8 @@ typedef struct {
 } hwmStruct; 
 
 typedef struct {
-    uint8_t operation[N_OPERATIONS] = {0};
+    uint8_t tezos_ops[N_TEZOS_OPS] = {0}; // no ops allowed by default
+	uint8_t hsm_ops[N_HSM_OPS] = {1}; // all ops allowed by default
 } policyStruct;
 
 // void set_signing_policies(policyStruct *policy);
@@ -135,7 +140,6 @@ class TezioHSM_API {
 		uint16_t op_get_pk();
 		uint16_t op_sign();
 		uint16_t op_verify(); 
-		uint16_t op_clear_write();
 		uint16_t op_write_keys(); // encrypted write secret key, clear write public key
 		
 		uint8_t readWriteKey[32];
@@ -171,7 +175,8 @@ class TezioHSM_API {
 		uint16_t send_status_code();
 
 		void enable_signing(uint8_t key_alias, uint8_t op);
-		void disable_signing(uint8_t key_alias, uint8_t op);
+		void disable_operation(uint8_t key_alias, uint8_t op);
+
 
 		void set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
 		void set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
