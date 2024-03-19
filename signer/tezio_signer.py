@@ -50,10 +50,16 @@ def keys(pkh):
             print('GET request received...')
             print(request.url)
         wallet = TezioHSM(signing_keys[pkh]['curve_alias'])
-        pk = wallet.get_pk(PK_BASE58_CHECKSUM).decode('utf-8')
-        response = jsonify({'public_key': pk})
-        response.status_code = 200
-        return response
+        reply = wallet.get_pk(PK_BASE58_CHECKSUM)
+        if len(reply) == 1: # error occured, status code returned
+            response = jsonify(hex(reply[0]))
+            response.status_code = 500 # server error
+            return response
+        else:
+            pk = reply.decode('utf-8')
+            response = jsonify({'public_key': pk})
+            response.status_code = 200
+            return response
         
     elif request.method == 'POST':
         if (config['verbose']):

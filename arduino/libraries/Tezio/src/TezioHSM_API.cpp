@@ -28,6 +28,13 @@ TezioHSM_API::TezioHSM_API(uint32_t baud, const uint8_t *RWKey)
 	memcpy(readWriteKey, RWKey, 32);
 	myBaud = baud;
 	Serial.begin(myBaud);
+
+	// want to set all policy[KEY].hsm_ops[HSM_OP] to 1 (enabled)
+	memset(policy[TZ1].hsm_ops, 1, N_HSM_OPS);
+	memset(policy[TZ2].hsm_ops, 1, N_HSM_OPS);
+	memset(policy[TZ3].hsm_ops, 1, N_HSM_OPS);
+	memset(policy[TZ3_AUTH].hsm_ops, 1, N_HSM_OPS);
+
 }
 
 TezioHSM_API::~TezioHSM_API()
@@ -41,9 +48,9 @@ void TezioHSM_API::enable_signing(uint8_t key_alias, uint8_t op)
 	return;
 }
 
-void TezioHSM_API::disable_operation(uint8_t key_alias, uint8_t op)
+void TezioHSM_API::enable_operation(uint8_t key_alias, uint8_t op)
 {
-	policy[key_alias].hsm_ops[op - 1] = 0;
+	policy[key_alias].hsm_ops[op - 1] = 1;
 	return;
 }
 
@@ -144,7 +151,7 @@ uint16_t TezioHSM_API::op_get_pk()
 
 	// check to see if HSM op is disabled for this key
 	if (policy[packet.param1].hsm_ops[GET_PK-1]== 0) {
-		statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+		statusCode = HSM_OPERATION_FORBIDDEN_BY_POLICY;
 		return FAIL;
 	}
 
@@ -222,7 +229,7 @@ uint16_t TezioHSM_API::op_sign()
 
 	// check to see if HSM op is disabled for this key
 	if (policy[packet.param1].hsm_ops[SIGN-1]== 0) {
-		statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+		statusCode = HSM_OPERATION_FORBIDDEN_BY_POLICY;
 		return FAIL;
 	}
 
@@ -285,7 +292,7 @@ uint16_t TezioHSM_API::op_sign()
 		{
 			if (policy[TZ3].tezos_ops[magicByte - 1] != ALLOWED)
 			{
-				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				statusCode = SIGNING_OPERATION_FORBIDDEN_BY_POLICY;
 				return FAIL;
 			}
 			else
@@ -311,7 +318,7 @@ uint16_t TezioHSM_API::op_sign()
 		{
 			if (policy[TZ3_AUTH].tezos_ops[magicByte - 1] != ALLOWED)
 			{
-				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				statusCode = SIGNING_OPERATION_FORBIDDEN_BY_POLICY;
 				return FAIL;
 			}
 			else
@@ -335,7 +342,7 @@ uint16_t TezioHSM_API::op_sign()
 		{
 			if (policy[TZ2].tezos_ops[magicByte - 1] != ALLOWED)
 			{
-				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				statusCode = SIGNING_OPERATION_FORBIDDEN_BY_POLICY;
 				return FAIL;
 			}
 			else
@@ -375,7 +382,7 @@ uint16_t TezioHSM_API::op_sign()
 		{
 			if (policy[TZ1].tezos_ops[magicByte - 1] != ALLOWED)
 			{
-				statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+				statusCode = SIGNING_OPERATION_FORBIDDEN_BY_POLICY;
 				return FAIL;
 			}
 			else
@@ -486,7 +493,7 @@ uint16_t TezioHSM_API::op_verify()
 	}
 	// check to see if HSM op is disabled for this key
 	if (policy[packet.param1].hsm_ops[VERIFY-1]== 0) {
-		statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+		statusCode = HSM_OPERATION_FORBIDDEN_BY_POLICY;
 		return FAIL;
 	}
 	if (validate_param_1_2(packet.param2, 0x01, 0x04) != PASS)
@@ -706,7 +713,7 @@ uint16_t TezioHSM_API::op_write_keys()
 	}
 	// check to see if HSM op is disabled for this key
 	if (policy[packet.param1].hsm_ops[WRITE_KEYS-1]== 0) {
-		statusCode = OPERATION_FORBIDDEN_BY_POLICY;
+		statusCode = HSM_OPERATION_FORBIDDEN_BY_POLICY;
 		return FAIL;
 	}
 	if (validate_param_1_2(packet.param2, 0x01, 0x03) != PASS)

@@ -48,10 +48,8 @@ void setup() {
     myHSM.enable_signing(TZ3, PRE_ATTESTATION);
     myHSM.enable_signing(TZ3, ATTESTATION);
 
-    myHSM.disable_operation(TZ1, OP_WRITE_KEYS);
-    myHSM.disable_operation(TZ2, OP_WRITE_KEYS);
-    myHSM.disable_operation(TZ3, OP_WRITE_KEYS);
-    myHSM.disable_operation(TZ3_AUTH, OP_WRITE_KEYS); 
+    myHSM.enable_operation(TZ3_AUTH, OP_VERIFY);
+    myHSM.enable_operation(TZ3, OP_SIGN);
 
     myHSM.set_level_hwm(TZ3, BLOCK, 0);
     myHSM.set_level_hwm(TZ3, PRE_ATTESTATION, 0);

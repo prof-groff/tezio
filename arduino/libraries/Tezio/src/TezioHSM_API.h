@@ -77,7 +77,7 @@ SOFTWARE. */
 #define DATA_OR_DATA_LENGTH_INVALID 0xAD
 #define MESSAGE_HASH_STATUS_INDETERMINANT 0xAE
 #define HSM_FAILED_TO_SIGN 0xAF
-#define OPERATION_FORBIDDEN_BY_POLICY 0xB0
+#define HSM_OPERATION_FORBIDDEN_BY_POLICY 0xB0
 #define FAILED_TO_GENERATE_SESSION_KEY 0xB1
 #define ENCRYPTED_READ_FAILED 0xB2
 #define FAILED_TO_DECRYPT_DATA 0xB3
@@ -85,6 +85,7 @@ SOFTWARE. */
 #define FAILED_TO_ENCRYPT_DATA 0xB5
 #define FAILED_ENCRYPTED_WRITE 0xB6
 #define FAILED_CLEAR_WRITE 0xB7
+#define SIGNING_OPERATION_FORBIDDEN_BY_POLICY 0xB8
 
 #define INVALID_KEY_ALIAS 0xA0
 #define CRYPTOCHIP_FAILED_TO_INITIALIZE 0xA1
@@ -126,7 +127,7 @@ typedef struct {
 
 typedef struct {
     uint8_t tezos_ops[N_TEZOS_OPS] = {0}; // no ops allowed by default
-	uint8_t hsm_ops[N_HSM_OPS] = {1}; // all ops allowed by default
+	uint8_t hsm_ops[N_HSM_OPS] = {0}; // no ops allowed by default
 } policyStruct;
 
 // void set_signing_policies(policyStruct *policy);
@@ -175,7 +176,7 @@ class TezioHSM_API {
 		uint16_t send_status_code();
 
 		void enable_signing(uint8_t key_alias, uint8_t op);
-		void disable_operation(uint8_t key_alias, uint8_t op);
+		void enable_operation(uint8_t key_alias, uint8_t op);
 
 
 		void set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
