@@ -37,7 +37,7 @@ SOFTWARE. */
 // PARAMETERS FOR ALLOCATING MEMORY
 #define N_TEZOS_OPS 0x13 // this uses more space then needed but is convenient
 #define N_HSM_OPS 0x31 // same
-#define N_BAKING_OPERATIONS 3 // if indeces are used to access, need to subtract 0x11
+#define N_BAKING_OPERATIONS 3 // when baking op prefix bytes are used to access, need to subtract 0x11
 
 #define START_BYTE 0x03
 #define N_RETRIES 100
@@ -130,9 +130,6 @@ typedef struct {
 	uint8_t hsm_ops[N_HSM_OPS] = {0}; // no ops allowed by default
 } policyStruct;
 
-// void set_signing_policies(policyStruct *policy);
-// void set_high_water_marks(hwmStruct *hwm);
-
 class TezioHSM_API {
     
     private:
@@ -175,9 +172,8 @@ class TezioHSM_API {
 		uint16_t send_reply();
 		uint16_t send_status_code();
 
-		void enable_signing(uint8_t key_alias, uint8_t op);
-		void enable_operation(uint8_t key_alias, uint8_t op);
-
+		void enable_tezos_op(uint8_t key_alias, uint8_t op);
+		void disable_hsm_op(uint8_t key_alias, uint8_t op);
 
 		void set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
 		void set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);

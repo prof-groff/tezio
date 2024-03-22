@@ -42,15 +42,15 @@ TezioHSM_API::~TezioHSM_API()
 	Serial.end();
 }
 
-void TezioHSM_API::enable_signing(uint8_t key_alias, uint8_t op)
+void TezioHSM_API::enable_tezos_op(uint8_t key_alias, uint8_t op)
 {
 	policy[key_alias].tezos_ops[op - 1] = 1;
 	return;
 }
 
-void TezioHSM_API::enable_operation(uint8_t key_alias, uint8_t op)
+void TezioHSM_API::disable_hsm_op(uint8_t key_alias, uint8_t op)
 {
-	policy[key_alias].hsm_ops[op - 1] = 1;
+	policy[key_alias].hsm_ops[op - 1] = 0;
 	return;
 }
 

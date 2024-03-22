@@ -14,7 +14,7 @@
 #define OP_VERIFY 0x22
 #define OP_WRITE_KEYS 0x31
 
-// MAGIC BYTES
+// TEZOS OPERATIONS MAGIC BYTES
 #define LEGACY_BLOCK 0x01
 #define LEGACY_ENDORSEMENT 0x02
 #define TRANSFER 0x03
@@ -44,12 +44,18 @@ void setup() {
 
   if(!debug) {
     
-    myHSM.enable_signing(TZ3, BLOCK);
-    myHSM.enable_signing(TZ3, PRE_ATTESTATION);
-    myHSM.enable_signing(TZ3, ATTESTATION);
+    myHSM.enable_tezos_op(TZ3, BLOCK);
+    myHSM.enable_tezos_op(TZ3, PRE_ATTESTATION);
+    myHSM.enable_tezos_op(TZ3, ATTESTATION);
 
-    myHSM.enable_operation(TZ3_AUTH, OP_VERIFY);
-    myHSM.enable_operation(TZ3, OP_SIGN);
+    myHSM.disable_hsm_op(TZ3_AUTH, OP_SIGN);
+    myHSM.disable_hsm_op(TZ1, OP_SIGN);
+    myHSM.disable_hsm_op(TZ2, OP_SIGN);
+
+    myHSM.disable_hsm_op(TZ3_AUTH, OP_WRITE_KEYS);
+    myHSM.disable_hsm_op(TZ1, OP_WRITE_KEYS);
+    myHSM.disable_hsm_op(TZ2, OP_WRITE_KEYS);
+    myHSM.disable_hsm_op(TZ3, OP_WRITE_KEYS);
 
     myHSM.set_level_hwm(TZ3, BLOCK, 0);
     myHSM.set_level_hwm(TZ3, PRE_ATTESTATION, 0);
