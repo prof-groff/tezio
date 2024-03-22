@@ -40,7 +40,7 @@ def keys(pkh):
     if pkh in pkhs:
         pass
     else:
-        ERROR_404 = make_response('Not Found')
+        ERROR_404 = make_response('Requested public key was not found.')
         ERROR_404.status_code = 404
         return ERROR_404
         
@@ -50,10 +50,16 @@ def keys(pkh):
             print('GET request received...')
             print(request.url)
         wallet = TezioHSM(signing_keys[pkh]['curve_alias'])
-        pk = wallet.get_pk(PK_BASE58_CHECKSUM).decode('utf-8')
-        response = jsonify({'public_key': pk})
-        response.status_code = 200
-        return response
+        reply = wallet.get_pk(PK_BASE58_CHECKSUM)
+        if len(reply) == 1: # error occured, status code returned
+            response = jsonify(hex(reply[0]))
+            response.status_code = 500 # server error
+            return response
+        else:
+            pk = reply.decode('utf-8')
+            response = jsonify({'public_key': pk})
+            response.status_code = 200
+            return response
         
     elif request.method == 'POST':
         if (config['verbose']):
@@ -71,14 +77,14 @@ def keys(pkh):
             if magicByte in signing_keys[pkh]['allowed_ops']:
                 pass
             else:
-                ERROR_405 = make_response('Method Not Allowed')
+                ERROR_405 = make_response('The request tezos operation is not enabled for this key.')
                 ERROR_405.status_code = 405
                 return ERROR_405
 
         # Does the requested signing key require authentication?
         if security['auth_check'] and signing_keys[pkh]['auth_req']:
             if authSig == None: # authentication is required but no signature was included with request
-                ERROR_401 = make_response('Unauthorized: A signed request is required.')
+                ERROR_401 = make_response('A signed request is required for this key.')
                 ERROR_401.status_code = 401
                 return ERROR_401
             else:
@@ -87,11 +93,15 @@ def keys(pkh):
                     print('authentication signature:', authSig)
                 signed_message = bytearray.fromhex('040102') + bytearray.fromhex('a79feaea9fb12af20833db1c2467824197c64027') + dataBytes
                 wallet = TezioHSM(auth_key['curve_alias'])
-                is_valid = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)                
-                if is_valid[0] != 0x01:
-                    ERROR_401 = make_response('Unauthorized: Included signature is not valid.')
+                reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)                
+                if reply[0] == 0x00:
+                    ERROR_401 = make_response("Authentication signature is not valid.")
                     ERROR_401.status_code = 401
                     return ERROR_401
+                elif reply[0] != 0x01:
+                    response = jsonify(hex(reply[0]))
+                    response.status_code = 500 # server error
+                    return response
                 else:
                     pass
 
@@ -111,9 +121,9 @@ def keys(pkh):
 
             # if current level and round are the same as the those for last baking operation, don't sign
             if (current_level < hwms['level'][magicByte]) or (current_level == hwms['level'][magicByte] and current_round <= hwms['round'][magicByte]):
-                ERROR_403 = make_response('Forbidden')
+                ERROR_403 = make_response('The request is to sign a baking operation but one of this type has already been signed at this level and round.')
                 ERROR_403.status_code = 403
-                print("Level Round Error")
+                # print("Level Round Error")
                 return ERROR_403
             else:
                 hwms['level'][magicByte] = current_level
@@ -129,13 +139,13 @@ def keys(pkh):
         wallet = TezioHSM(signing_keys[pkh]['curve_alias'])
         if config['verbose']:
             print('data: ', dataBytes.hex())
-        signature = wallet.sign(4, dataBytes)
-        if (signature == 0):
-            print("problem getting signature from HSM")
-            ERROR_500 = make_response('Internal Server Error')
-            ERROR_500.status_code = 500
-            return ERROR_500
+        reply = wallet.sign(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, dataBytes)
+        if (len(reply) == 1):
+            response = jsonify(hex(reply[0]))
+            response.status_code = 500 # server error
+            return response
         else:
+            signature = reply
             print(signature)
             response = make_response(jsonify({'signature': signature.decode('utf-8')}))
             response.status_code = 200

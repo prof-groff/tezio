@@ -9,14 +9,14 @@ class TezioHSM:
     def __init__(self, curve = None):
         self.__prefix: bytes = 0x03 # wallet listens for this byte to begin parsing commands
         self.__baud: int = 57600 # serial coms baud rate
-        self.__curve: int = curve # which curve to use 1 - Ed25519, 2 - Secp256k1, 3 - NIST P256
+        self.__curve: int = curve # which curve to use 0 - NIST P256 AUTH, 1 - Ed25519, 2 - Secp256k1, 3 - NIST P256
         self.com: str = None
         self.packet: bytearray = None
         self.response: bytearray = None
         
     def __repr__(self):
-        print('Instance of TezioWallet\n')
-        return 'TezioWallet'
+        print('Instance of TezioHSM\n')
+        return 'TezioHSM'
     
     # some useful functions for interacting with the wallet
     def __crc16(self, _data: bytes, reg: int = 0x0000, poly: int = 0x8005) -> int:
@@ -258,6 +258,8 @@ class TezioHSM:
         
         return self.response
 
+# An experimental class for making tezos RPCs from python
+"""
 class TezioRPC:
     
     def __init__(self, nodeURL: str, myWallet: TezioHSM):
@@ -614,3 +616,4 @@ class TezioRPC:
         result = self.__simulate_preapply_inject(operation)
         
         return result
+"""

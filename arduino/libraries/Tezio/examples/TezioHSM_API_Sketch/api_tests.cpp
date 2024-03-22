@@ -4,7 +4,7 @@
 
 char *curveNames[] = {"-- NIST P256 Authentication Key --", "-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --"};
 
-void run_op_get_pk_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
+void run_op_get_pk_test(TezioHSM_API myHSM, uint8_t keyAlias, uint8_t mode) {
 
   /*   curve   ECC curve to use
     0x00    NIST P256 Authentication Key
@@ -21,24 +21,24 @@ void run_op_get_pk_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
   uint16_t opResultLength;
   char charStrResult[128]; // to hold base58 encoded results for easy printing
   start_serial();
-  Serial.println(curveNames[curve]); 
-  myWallet.packet.opCode = 0x11; // op_get_pk
-  myWallet.packet.param1 = curve;
-  myWallet.packet.param2 = mode;
-  opResultLength = myWallet.execute_op(); // pk is stored in the buffer
+  Serial.println(curveNames[keyAlias]); 
+  myHSM.packet.opCode = 0x11; // op_get_pk
+  myHSM.packet.param1 = keyAlias;
+  myHSM.packet.param2 = mode;
+  opResultLength = myHSM.execute_op(); // pk is stored in the buffer
   if (mode == 3 || mode == 4) {
     // print output as char string
     memset(charStrResult, '\0', sizeof(charStrResult));
-    memcpy(charStrResult, myWallet.buffer, opResultLength);
+    memcpy(charStrResult, myHSM.buffer, opResultLength);
     Serial.println(charStrResult);
   }
   else {
-    print_hex_data(myWallet.buffer, opResultLength);
+    print_hex_data(myHSM.buffer, opResultLength);
   }
   return;
 }
 
-void run_op_sign_and_verify_test(TezioHSM_API myWallet, uint8_t curve, uint8_t mode) {
+void run_op_sign_and_verify_test(TezioHSM_API myHSM, uint8_t keyAlias, uint8_t mode) {
 
   /*   curve   ECC curve to use
     0x01    Ed25519
@@ -58,7 +58,7 @@ void run_op_sign_and_verify_test(TezioHSM_API myWallet, uint8_t curve, uint8_t m
     uint16_t messageLength, signatureLength; 
 
     start_serial(); Serial.println();
-    Serial.println(curveNames[curve-1]);
+    Serial.println(curveNames[keyAlias-1]);
 
     // generate random bytes for message
     if (mode == 3 || mode == 4) {
@@ -73,43 +73,43 @@ void run_op_sign_and_verify_test(TezioHSM_API myWallet, uint8_t curve, uint8_t m
 
     // construct packet
     
-    myWallet.packet.opCode = 0x21; // op_sign
-    myWallet.packet.param1 = curve;
-    myWallet.packet.param2 = mode;
-    myWallet.packet.dataLength = messageLength;
-    // myWallet.packet.data = (uint8_t*) malloc(messageLength*sizeof(uint8_t));
-    memcpy(myWallet.packet.data, message, messageLength);
+    myHSM.packet.opCode = 0x21; // op_sign
+    myHSM.packet.param1 = keyAlias;
+    myHSM.packet.param2 = mode;
+    myHSM.packet.dataLength = messageLength;
+    // myHSM.packet.data = (uint8_t*) malloc(messageLength*sizeof(uint8_t));
+    memcpy(myHSM.packet.data, message, messageLength);
     
     // run op
-    signatureLength = myWallet.execute_op();
+    signatureLength = myHSM.execute_op();
     
     Serial.print("Signature: ");
     if (mode == 1 || mode == 3) { // raw bytes
-      memcpy(signature, myWallet.buffer, signatureLength);
+      memcpy(signature, myHSM.buffer, signatureLength);
       print_hex_data(signature, signatureLength);
     }
     else {
-      memcpy(b58signature, myWallet.buffer, signatureLength);
+      memcpy(b58signature, myHSM.buffer, signatureLength);
       Serial.println(b58signature);
     }
 
     Serial.print("Verifying: ");
 
-    myWallet.packet.opCode = 0x22; // op_verify
-    myWallet.packet.param1 = curve;
-    myWallet.packet.param2 = mode;
-    myWallet.packet.param3 = messageLength; // needed if the message is not already hashed.
-    myWallet.packet.dataLength = messageLength + signatureLength;
-    // myWallet.packet.data = (uint8_t*) malloc((messageLength + signatureLength)*sizeof(uint8_t));
-    memcpy(myWallet.packet.data, message, messageLength);
+    myHSM.packet.opCode = 0x22; // op_verify
+    myHSM.packet.param1 = keyAlias;
+    myHSM.packet.param2 = mode;
+    myHSM.packet.param3 = messageLength; // needed if the message is not already hashed.
+    myHSM.packet.dataLength = messageLength + signatureLength;
+    // myHSM.packet.data = (uint8_t*) malloc((messageLength + signatureLength)*sizeof(uint8_t));
+    memcpy(myHSM.packet.data, message, messageLength);
     if (mode == 1 || mode == 3) { // raw bytes
-      memcpy(&myWallet.packet.data[messageLength], signature, signatureLength);
+      memcpy(&myHSM.packet.data[messageLength], signature, signatureLength);
     }
     else { // base58 checksum encoded signature
-      memcpy(&myWallet.packet.data[messageLength], b58signature, signatureLength);
+      memcpy(&myHSM.packet.data[messageLength], b58signature, signatureLength);
     }
 
-    uint16_t verified = myWallet.execute_op();
+    uint16_t verified = myHSM.execute_op();
     if (verified == 0) {
       Serial.println("Invalid");
     }
