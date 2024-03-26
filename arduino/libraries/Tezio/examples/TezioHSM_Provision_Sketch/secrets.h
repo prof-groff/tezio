@@ -28,6 +28,7 @@
  */
 
 char mnemonic[] = "";
+char auth_key[] = ""; 
 char path[] = "m/44'/1729'/0'/0'";
 char password[] = "";
 

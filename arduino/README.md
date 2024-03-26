@@ -24,3 +24,15 @@ Interestingly, the SLIP10 reference and [others](https://crypto.stackexchange.co
 ### About Public Keys
 
 For the ed25519 curve, public keys are 32 bytes. For secp255k1 and P256, public keys are 64 bytes, 32 for an x coordinate and 32 for a y coordinate. My understanding is that the y coordinate can be found from the x coordinate but occurs as y^2 so it can be positive or negative (above or below the x axis) so while the value doesn't need to be preserved whether it is even or odd needs to be preserved (don't understand what even/odd has to do with pos/neg). In compressed form  the public key is the x coordinate with a prefix of 0x02 if the y coordinate is even and 0x03 if it is odd.
+
+### Installing and Running Octez
+
+Octez is a suite of software that fully implements the Tezos blockchain. There are several fine tutorials out there for installing octez like [this one](https://tezos.gitlab.io/index.html)
+
+### Useful Commands
+
+octez-node run
+
+octez-baker-Proxford run with local node ~/.tezos-node/ tezio_nistp256 --liquidity-baking-toggle-vote pass
+
+gunicorn --bind 127.0.0.1:5000 tezio_signer:app

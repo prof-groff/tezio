@@ -182,7 +182,7 @@ uint16_t TezioHSM_Provision::configure(const uint8_t *configData) {
 	}
 	
 	// a chance to view the configuration data written to the cryptographic co-processor.
-	Serial.println("Do you wish to view the cryptochips current configuration data?"); Serial.println(); delay(1000); 
+	Serial.println("Do you wish to view the cryptochips current configuration data?"); Serial.println(); delay(SHORTWAIT); 
 	if (confirm_entry()) {
 		uint8_t currentConfigData[128];
   		Serial.println(); Serial.println("Reading current configuration data."); Serial.println(); delay(SHORTWAIT);
@@ -272,10 +272,7 @@ uint16_t TezioHSM_Provision::check_mnemonic(char *mnemonic, uint16_t mnemonic_le
 
 uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length) {
 	start_serial();
-	Serial.println("-- Deriving Keys from Mnemonic --"); Serial.println(); delay(1000);
-	
-	Serial.println(mnemonicString);
-	Serial.println();
+	Serial.println("-- Deriving Keys from Mnemonic --"); Serial.println(); delay(SHORTWAIT);
 	
 	// derive secret master seed from mnemonic phrase
 	uint8_t seed[64]; 
@@ -290,7 +287,7 @@ uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char*
 	master_skcc_to_child_sk(master_skcc, path, path_length, edsk, ED25519);
 	derive_public_key(edsk, ED25519, edpk); // Ed25519 public keys are only 32 bytes
 	
-	Serial.println("Ed25519 secret key");
+	/* Serial.println("Ed25519 secret key");
 	for (int i = 0; i<sizeof(edsk); i++) {
 		Serial.print(edsk[i],HEX); Serial.print(" ");
 	}
@@ -300,6 +297,7 @@ uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char*
 		Serial.print(edpk[i],HEX); Serial.print(" ");
 	}
 	Serial.println();
+	*/
 	
 	// secp256k1 curve
 	seed_to_master_skcc(seed, sizeof(seed), master_skcc, SECP256K1);
