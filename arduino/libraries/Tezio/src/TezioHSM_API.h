@@ -32,7 +32,6 @@ SOFTWARE. */
 
 #define N_KEYS 4 // NISTP256_AUTH, Secp256k1, Ed25519, NISTP256
 #define MAX_DATA_LENGTH 1024
-#define N_SK_PREFIX_BYTES 4
 
 // PARAMETERS FOR ALLOCATING MEMORY
 #define N_TEZOS_OPS 0x13 // this uses more space then needed but is convenient

@@ -63,6 +63,9 @@ SOFTWARE. */
 
 #define SK_SIZE 32
 
+#define P2_B58CHECKSUM_SK_SIZE 54
+#define N_SK_PREFIX_BYTES 4
+
 // curve orders n (maximum value allowed for valid key is n-1)
 const uint8_t n_sp[32] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
                            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 

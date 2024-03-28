@@ -22,7 +22,6 @@ SOFTWARE. */
 
 #include "TezioHSM_Provision.h"
 
-
 uint16_t TezioHSM_Provision::write_p256_secret_key(uint8_t slot, uint8_t *p2sk, const uint8_t *RWKey) {
 
 	// received 32 byte key in raw bytes and writes to slot 0 to 4
@@ -335,7 +334,7 @@ uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char*
 	
 }
 
-uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
+uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey, char *authKey) {
 	start_serial();
 	Serial.println("-- Provisioning Cryptochip --"); Serial.println(); delay(SHORTWAIT);
 	
@@ -458,76 +457,60 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
   	}
   	
   	
-  	// last step is to generate a second P256 key and display it. It is stored on slot 0 and can be used to validate messages. It is NOT used for a tz address.
-  	
-	Serial.println("Do you wish to generate a new authenticating key?"); Serial.println(); delay(1000); 
-	if (confirm_entry()) {
+  	// Last step is to write a second P256 key. If none is provided, on is generated and shared. 
+	// It is stored on slot 0 and can be used to validate messages. It is NOT used for a tz address.
+  	Serial.println("Preparing to write authentication key."); Serial.println(); delay(SHORTWAIT);
+	if (strcmp(authKey, "") == 0) {
+		// no authKey was provided so one will be generated and printed.
+		Serial.println("No authentication key was provided. Do you wish to generate a new authenticating key?"); Serial.println(); delay(SHORTWAIT); 
+		if (confirm_entry()) {
 	
-		Serial.println("--Generating Authentication Secret--");
-  		uint8_t entropy[32];
-  		// Cryptochip myChip(Wire, 0x60);
-		// if (!myChip.begin()) {
-		// 	Serial.println("ERROR: Entropy can't be generated because a cryptographic co-processor was not detected on the connected device.");
-		//	wait_forever();
-		// }
-		// uint8_t lock_status[2];
-		if (!myChip.locked(lock_status)) {
-			Serial.println("ERROR: Failed to determine cryptographic co-processor lock status. Entropy can't be generated.");
+			Serial.println("--Generating Authentication Secret--");
+  	
+			if (!myChip.locked(lock_status)) {
+				Serial.println("ERROR: Failed to determine cryptographic co-processor lock status. Entropy can't be generated.");
+				wait_forever();
+			}
+			if (lock_status[1] == 0) {
+    			Serial.println("ERROR: The cryptographic co-processor's configuration zone must be locked before the onboard random number generator can be used."); 
+    			wait_forever();
+  			}
+			else if (lock_status[1] == 1) { 
+				if (!myChip.random(p2sk_auth, SK_SIZE)) {
+					Serial.println("ERROR: Failed to generate entropy.");
+				}
+			}
+  	
+  			char skb58[99];
+  			uint16_t outlength = secret_key_base58(p2sk_auth, NISTP256_AUTH, skb58);
+  			Serial.println('--Secret Auth Key--');
+  			Serial.println(skb58);
+		}
+		else {
+			Serial.println("ERROR: Failed to finish writing authentication key.");
 			wait_forever();
 		}
-		if (lock_status[1] == 0) {
-    		Serial.println("ERROR: The cryptographic co-processor's configuration zone must be locked before the onboard random number generator can be used."); 
-    		wait_forever();
-  		}
-		else if (lock_status[1] == 1) { 
-			if (!myChip.random(entropy, sizeof(entropy))) {
-				Serial.println("ERROR: Failed to generate entropy.");
-			}
-		}
-  	
-  		char skb58[99];
-  		uint16_t outlength = secret_key_base58(entropy, NISTP256_AUTH, skb58);
-  		Serial.println('--Secret Auth Key--');
-  		Serial.println(skb58);
-  	
-  		if (!write_p256_secret_key(P2_AUTH_KEY_SLOT, entropy, RWKey)) {
-  			Serial.println('ERROR: Failed to write authentication key to slot 0');
-  			return 0;
-  		}
-  	
-  		// derive public key
-  		uint8_t auth_pk[64];
-  		// derive public key
-		derive_public_key(entropy, NISTP256_AUTH, auth_pk);
-	
-		// write public key to slot
-		if (!myChip.writeSlot(P2_AUTH_KEY_PK_SLOT, auth_pk, 64)) {
-				Serial.println("ERROR: Failed to write authentication public key."); Serial.println(); delay(SHORTWAIT);
-		}
-	
-		// encode public key and print
-	
-		char charStrResult[128]; // to hold base58 encoded results for easy printing
-		uint8_t buffer[128];
-	
-		memcpy(buffer, auth_pk, 64);
-		uint16_t keyLength = encode_public_key(buffer, 64, 3, NISTP256_AUTH);
-		memset(charStrResult, '\0', sizeof(charStrResult));
-    	memcpy(charStrResult, buffer, keyLength);
-    	Serial.println(charStrResult);
-	
-		memcpy(buffer, auth_pk, 64);
-		keyLength = encode_public_key(buffer, 64, 4, NISTP256_AUTH);
-		memset(charStrResult, '\0', sizeof(charStrResult));
-    	memcpy(charStrResult, buffer, keyLength);
-    	Serial.println(charStrResult);
+	}
+	else { // auth key was provided
+				 
+		base58_decode_prefix_checksum(N_SK_PREFIX_BYTES, authKey, P2_B58CHECKSUM_SK_SIZE+1, p2sk_auth); // sk prefix length is 4 for all curves
+		// add 1 to key size because there is a null character at the end
 	}
 
-	Serial.println("DONE");
+	derive_public_key(p2sk_auth, NISTP256, p2pk_auth);
 
+	if (!write_p256_secret_key(P2_AUTH_KEY_SLOT, p2sk_auth, RWKey)) {
+  		Serial.println('ERROR: Failed to write authentication key to slot 0');
+  		return 0;
+  	}
 	
-	return 1;
+	// write public key to slot
+	if (!myChip.writeSlot(P2_AUTH_KEY_PK_SLOT, p2pk_auth, P2_PK_SIZE)) {
+			Serial.println("ERROR: Failed to write authentication public key."); Serial.println(); delay(SHORTWAIT);
+	}
 
+	Serial.println("Key derivation and provisioning completed succcessfully.");
+	return 1;
 }
 
 

@@ -1,6 +1,6 @@
 #include <TezioHSM_API.h>
 #include "api_tests.h"
-#include "secrets.h" // contains key for encrypted read/write operations
+#include "api_secrets.h" // contains key for encrypted read/write operations
 
 // CURVE/SLOT/KEY ALIASES
 #define TZ3_AUTH 0
@@ -38,7 +38,7 @@
   
 bool debug = false; // true puts device in interactive mode and runs tests
 uint32_t baud = 57600;
-TezioHSM_API myHSM(baud, RWKey); 
+TezioHSM_API myHSM(baud, readWriteKey); 
 
 void setup() {
 
