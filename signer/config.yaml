@@ -4,7 +4,7 @@ security:
     signing_policy_check: True
     high_water_mark_check: True
 
-verbose: True
+verbose: False # Print URL and any data received with request and high water mark data
 
 high_water_marks:
     level:
@@ -46,7 +46,5 @@ policy:
     auth_key:
         pkh:
             "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
-        pkhBytes:
-            "a79feaea9fb12af20833db1c2467824197c64027"
         curve_alias:
             0
