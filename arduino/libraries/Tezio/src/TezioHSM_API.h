@@ -35,7 +35,7 @@ SOFTWARE. */
 
 // PARAMETERS FOR ALLOCATING MEMORY
 #define N_TEZOS_OPS 0x13 // this uses more space then needed but is convenient
-#define N_HSM_OPS 0x31 // same
+#define N_HSM_OPS 0x22 // same
 #define N_BAKING_OPERATIONS 3 // when baking op prefix bytes are used to access, need to subtract 0x11
 
 #define START_BYTE 0x03
@@ -44,7 +44,6 @@ SOFTWARE. */
 #define GET_PK 0x11
 #define SIGN 0x21
 #define VERIFY 0x22
-#define WRITE_KEYS 0x31
 
 #define PK_RAW 0
 #define PK_COMP 1
@@ -137,7 +136,6 @@ class TezioHSM_API {
 		uint16_t op_get_pk();
 		uint16_t op_sign();
 		uint16_t op_verify(); 
-		uint16_t op_write_keys(); // encrypted write secret key, clear write public key
 		
 		uint8_t readWriteKey[32];
 		uint32_t myBaud;
@@ -162,7 +160,6 @@ class TezioHSM_API {
 		TezioHSM_API(uint32_t baud, const uint8_t *RWKey);
 		~TezioHSM_API();
 	
-		
 		uint16_t wait_for_start_byte();
 		uint16_t read_packet();
 		uint16_t validate_packet();
