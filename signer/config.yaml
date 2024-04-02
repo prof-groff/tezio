@@ -1,11 +1,9 @@
 # Tezio Signer Configuration
 
-""" security: remote_ip_check - only allow requests from IPs listed in allowed_ips below
-              auth_check - only accept requests that include a signature that auth_key must validate
-              signing_policy_check - for each signing key, only sign requests for Tezos operations enumerated in allowed_ops
-              high_water_mark_check - for Tezos baking operations, validate level and round to prevent double attestation and baking
-
-"""
+# security: remote_ip_check - only allow requests from IPs listed in allowed_ips below
+#              auth_check - only accept requests that include a signature that auth_key must validate
+#              signing_policy_check - for each signing key, only sign requests for Tezos operations enumerated in allowed_ops
+#              high_water_mark_check - for Tezos baking operations, validate level and round to prevent double attestation and baking
 
 security:
     remote_ip_check: True

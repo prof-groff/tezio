@@ -5,3 +5,383 @@
 [2024-04-02 14:49:49 -0400] [39816] [INFO] Handling signal: term
 [2024-04-02 14:49:49 -0400] [39817] [INFO] Worker exiting (pid: 39817)
 [2024-04-02 14:49:49 -0400] [39816] [INFO] Shutting down: Master
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Listening at: http://127.0.0.1:5000 (57760)
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Using worker: sync
+[2024-04-02 15:01:31 -0400] [57761] [INFO] Booting worker with pid: 57761
+[2024-04-02 15:01:31 -0400] [57761] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:31 -0400] [57761] [INFO] Worker exiting (pid: 57761)
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Shutting down: Master
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:32 -0400] [57762] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:32 -0400] [57762] [INFO] Listening at: http://127.0.0.1:5000 (57762)
+[2024-04-02 15:01:32 -0400] [57762] [INFO] Using worker: sync
+[2024-04-02 15:01:32 -0400] [57763] [INFO] Booting worker with pid: 57763
+[2024-04-02 15:01:33 -0400] [57763] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:33 -0400] [57763] [INFO] Worker exiting (pid: 57763)
+[2024-04-02 15:01:33 -0400] [57762] [INFO] Shutting down: Master
+[2024-04-02 15:01:33 -0400] [57762] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Listening at: http://127.0.0.1:5000 (57764)
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Using worker: sync
+[2024-04-02 15:01:35 -0400] [57765] [INFO] Booting worker with pid: 57765
+[2024-04-02 15:01:35 -0400] [57765] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:35 -0400] [57765] [INFO] Worker exiting (pid: 57765)
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Shutting down: Master
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Listening at: http://127.0.0.1:5000 (57766)
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Using worker: sync
+[2024-04-02 15:01:38 -0400] [57767] [INFO] Booting worker with pid: 57767
+[2024-04-02 15:01:38 -0400] [57767] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:38 -0400] [57767] [INFO] Worker exiting (pid: 57767)
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Shutting down: Master
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:47 -0400] [57789] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:47 -0400] [57789] [INFO] Listening at: http://127.0.0.1:5000 (57789)
+[2024-04-02 15:01:47 -0400] [57789] [INFO] Using worker: sync
+[2024-04-02 15:01:47 -0400] [57790] [INFO] Booting worker with pid: 57790
+[2024-04-02 15:01:48 -0400] [57790] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:48 -0400] [57790] [INFO] Worker exiting (pid: 57790)
+[2024-04-02 15:01:48 -0400] [57789] [INFO] Shutting down: Master
+[2024-04-02 15:01:48 -0400] [57789] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Listening at: http://127.0.0.1:5000 (57791)
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Using worker: sync
+[2024-04-02 15:01:49 -0400] [57792] [INFO] Booting worker with pid: 57792
+[2024-04-02 15:01:49 -0400] [57792] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:49 -0400] [57792] [INFO] Worker exiting (pid: 57792)
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Shutting down: Master
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Listening at: http://127.0.0.1:5000 (57793)
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Using worker: sync
+[2024-04-02 15:01:51 -0400] [57794] [INFO] Booting worker with pid: 57794
+[2024-04-02 15:01:51 -0400] [57794] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:51 -0400] [57794] [INFO] Worker exiting (pid: 57794)
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Shutting down: Master
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Listening at: http://127.0.0.1:5000 (57795)
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Using worker: sync
+[2024-04-02 15:01:55 -0400] [57799] [INFO] Booting worker with pid: 57799
+[2024-04-02 15:01:55 -0400] [57799] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:55 -0400] [57799] [INFO] Worker exiting (pid: 57799)
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Shutting down: Master
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:04:38 -0400] [57909] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:04:38 -0400] [57909] [INFO] Listening at: http://127.0.0.1:5000 (57909)
+[2024-04-02 15:04:38 -0400] [57909] [INFO] Using worker: sync
+[2024-04-02 15:04:38 -0400] [57912] [INFO] Booting worker with pid: 57912
