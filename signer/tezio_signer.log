@@ -2,3 +2,6 @@
 [2024-03-29 13:02:43 -0400] [39816] [INFO] Listening at: http://127.0.0.1:5000 (39816)
 [2024-03-29 13:02:43 -0400] [39816] [INFO] Using worker: sync
 [2024-03-29 13:02:43 -0400] [39817] [INFO] Booting worker with pid: 39817
+[2024-04-02 14:49:49 -0400] [39816] [INFO] Handling signal: term
+[2024-04-02 14:49:49 -0400] [39817] [INFO] Worker exiting (pid: 39817)
+[2024-04-02 14:49:49 -0400] [39816] [INFO] Shutting down: Master
