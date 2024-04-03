@@ -819,3 +819,154 @@ serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: 
 [2024-04-03 09:19:18 -0400] [65213] [INFO] Listening at: http://127.0.0.1:5000 (65213)
 [2024-04-03 09:19:18 -0400] [65213] [INFO] Using worker: sync
 [2024-04-03 09:19:18 -0400] [65214] [INFO] Booting worker with pid: 65214
+[2024-04-03 10:53:58 -0400] [65213] [INFO] Handling signal: term
+[2024-04-03 10:53:58 -0400] [65214] [INFO] Worker exiting (pid: 65214)
+[2024-04-03 10:53:58 -0400] [65213] [INFO] Shutting down: Master
+[2024-04-03 11:00:45 -0400] [67191] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 11:00:45 -0400] [67191] [INFO] Listening at: http://127.0.0.1:5000 (67191)
+[2024-04-03 11:00:45 -0400] [67191] [INFO] Using worker: sync
+[2024-04-03 11:00:45 -0400] [67192] [INFO] Booting worker with pid: 67192
+[2024-04-03 13:03:17 -0400] [67191] [INFO] Handling signal: term
+[2024-04-03 13:03:17 -0400] [67192] [INFO] Worker exiting (pid: 67192)
+[2024-04-03 13:03:17 -0400] [67191] [INFO] Shutting down: Master
+[2024-04-03 13:04:39 -0400] [69039] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 13:04:39 -0400] [69039] [INFO] Listening at: http://127.0.0.1:5000 (69039)
+[2024-04-03 13:04:39 -0400] [69039] [INFO] Using worker: sync
+[2024-04-03 13:04:39 -0400] [69040] [INFO] Booting worker with pid: 69040
+[2024-04-03 13:04:40,269] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:43,118] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:43,561] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:50,965] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:52 -0400] [69039] [INFO] Handling signal: term
+[2024-04-03 13:04:52 -0400] [69040] [INFO] Worker exiting (pid: 69040)
+[2024-04-03 13:04:52 -0400] [69039] [INFO] Shutting down: Master
+[2024-04-03 13:05:25 -0400] [69103] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 13:05:25 -0400] [69103] [INFO] Listening at: http://127.0.0.1:5000 (69103)
+[2024-04-03 13:05:25 -0400] [69103] [INFO] Using worker: sync
+[2024-04-03 13:05:25 -0400] [69104] [INFO] Booting worker with pid: 69104
+[2024-04-03 15:02:43 -0400] [69103] [INFO] Handling signal: term
+[2024-04-03 15:02:43 -0400] [69104] [INFO] Worker exiting (pid: 69104)
+[2024-04-03 15:02:43 -0400] [69103] [INFO] Shutting down: Master
+[2024-04-03 15:06:13 -0400] [70622] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 15:06:13 -0400] [70622] [INFO] Listening at: http://127.0.0.1:5000 (70622)
+[2024-04-03 15:06:13 -0400] [70622] [INFO] Using worker: sync
+[2024-04-03 15:06:13 -0400] [70623] [INFO] Booting worker with pid: 70623
+[2024-04-03 15:10:21 -0400] [70622] [INFO] Handling signal: term
+[2024-04-03 15:10:21 -0400] [70623] [INFO] Worker exiting (pid: 70623)
+[2024-04-03 15:10:21 -0400] [70622] [INFO] Shutting down: Master
