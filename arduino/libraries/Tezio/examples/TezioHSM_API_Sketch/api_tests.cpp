@@ -3,7 +3,7 @@
 #include "api_tests.h"
 
 char *curveNames[] = {"-- NIST P256 Authentication Key --", "-- Ed25519 --", "-- Secp256k1 --", "-- NIST P256 --"};
-uint8_t prefixBytes = {0x01, 0x02, 0x03, 0x04, 0x05, 0x11, 0x12, 0x13}; 
+uint8_t prefixBytes[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x11, 0x12, 0x13}; 
 
 void run_op_get_pk_test(TezioHSM_API myHSM, uint8_t keyAlias, uint8_t mode) {
 

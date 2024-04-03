@@ -385,3 +385,437 @@ yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
 [2024-04-02 15:04:38 -0400] [57909] [INFO] Listening at: http://127.0.0.1:5000 (57909)
 [2024-04-02 15:04:38 -0400] [57909] [INFO] Using worker: sync
 [2024-04-02 15:04:38 -0400] [57912] [INFO] Booting worker with pid: 57912
+[2024-04-03 09:09:20 -0400] [57909] [INFO] Handling signal: term
+[2024-04-03 09:09:20 -0400] [57912] [INFO] Worker exiting (pid: 57912)
+[2024-04-03 09:09:20 -0400] [57909] [INFO] Shutting down: Master
+[2024-04-03 09:13:13 -0400] [62744] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 09:13:13 -0400] [62744] [INFO] Listening at: http://127.0.0.1:5000 (62744)
+[2024-04-03 09:13:13 -0400] [62744] [INFO] Using worker: sync
+[2024-04-03 09:13:13 -0400] [62745] [INFO] Booting worker with pid: 62745
+[2024-04-03 09:13:20,469] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:21,320] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:32,180] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:33,011] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:39,671] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:40,435] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:44,354] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:45,129] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:52,939] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:53,572] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:00,496] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:01,275] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:08,816] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:09,689] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:11 -0400] [62744] [INFO] Handling signal: term
+[2024-04-03 09:14:11 -0400] [62745] [INFO] Worker exiting (pid: 62745)
+[2024-04-03 09:14:11 -0400] [62744] [INFO] Shutting down: Master
+[2024-04-03 09:19:18 -0400] [65213] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 09:19:18 -0400] [65213] [INFO] Listening at: http://127.0.0.1:5000 (65213)
+[2024-04-03 09:19:18 -0400] [65213] [INFO] Using worker: sync
+[2024-04-03 09:19:18 -0400] [65214] [INFO] Booting worker with pid: 65214
