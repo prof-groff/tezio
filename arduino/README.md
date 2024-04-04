@@ -59,3 +59,17 @@ Private Keys
  Ed25519: tz1RecHxwZJmZY4dypq2KmvxKYgUBGJceH1v
  Secp256k1: tz2Dy8HhPZZqmxVK5hE8Unc66fiWvqY8wFXN
  NistP256: tz3MyarJihHrejsze59J2Seita7jYWDCJDPe
+
+ ## Configure UDEV RULES for Arudino
+
+ cd /etc/udev/rules.d/
+ sudo nano 99-arduino.rules
+
+ Add the following to 99-arduino.rules and Save
+
+ SUBSYSTEM=="tty", KERNEL=="ttyACM[0-9]*", GROUP="dialout", MODE:="0666"
+
+Run the following
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
