@@ -1,3 +1,4 @@
 .DS_Store
 arduino/libraries/Tezio/examples/TezioHSM_Provision_Sketch/provision_secrets.h
 arduino/libraries/Tezio/examples/TezioHSM_API_Sketch/api_secrets.h
+signer/tezio_signer.log

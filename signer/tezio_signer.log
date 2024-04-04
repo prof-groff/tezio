@@ -970,3 +970,48 @@ serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: 
 [2024-04-03 15:10:21 -0400] [70622] [INFO] Handling signal: term
 [2024-04-03 15:10:21 -0400] [70623] [INFO] Worker exiting (pid: 70623)
 [2024-04-03 15:10:21 -0400] [70622] [INFO] Shutting down: Master
+[2024-04-03 15:54:22 -0400] [73866] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 15:54:22 -0400] [73866] [INFO] Listening at: http://127.0.0.1:5000 (73866)
+[2024-04-03 15:54:22 -0400] [73866] [INFO] Using worker: sync
+[2024-04-03 15:54:22 -0400] [73867] [INFO] Booting worker with pid: 73867
+[2024-04-04 09:51:48 -0400] [73866] [INFO] Handling signal: term
+[2024-04-04 09:51:48 -0400] [73867] [INFO] Worker exiting (pid: 73867)
+[2024-04-04 09:51:49 -0400] [73866] [INFO] Shutting down: Master
+[2024-04-04 09:54:41 -0400] [81342] [INFO] Starting gunicorn 20.1.0
+[2024-04-04 09:54:41 -0400] [81342] [INFO] Listening at: http://127.0.0.1:5000 (81342)
+[2024-04-04 09:54:41 -0400] [81342] [INFO] Using worker: sync
+[2024-04-04 09:54:41 -0400] [81343] [INFO] Booting worker with pid: 81343
+[2024-04-04 12:28:49 -0400] [81342] [INFO] Handling signal: term
+[2024-04-04 12:28:49 -0400] [81343] [INFO] Worker exiting (pid: 81343)
+[2024-04-04 12:28:49 -0400] [81342] [INFO] Shutting down: Master
+[2024-04-04 12:32:28 -0400] [83349] [INFO] Starting gunicorn 20.1.0
+[2024-04-04 12:32:28 -0400] [83349] [INFO] Listening at: http://127.0.0.1:5000 (83349)
+[2024-04-04 12:32:28 -0400] [83349] [INFO] Using worker: sync
+[2024-04-04 12:32:28 -0400] [83350] [INFO] Booting worker with pid: 83350
+[2024-04-04 12:47:21 -0400] [83349] [INFO] Handling signal: term
+[2024-04-04 12:47:21 -0400] [83350] [INFO] Worker exiting (pid: 83350)
+[2024-04-04 12:47:21 -0400] [83349] [INFO] Shutting down: Master
+[2024-04-04 12:53:33 -0400] [85480] [INFO] Starting gunicorn 20.1.0
+[2024-04-04 12:53:33 -0400] [85480] [INFO] Listening at: http://127.0.0.1:5000 (85480)
+[2024-04-04 12:53:33 -0400] [85480] [INFO] Using worker: sync
+[2024-04-04 12:53:33 -0400] [85481] [INFO] Booting worker with pid: 85481
+[2024-04-04 14:25:52 -0400] [85480] [INFO] Handling signal: term
+[2024-04-04 14:25:52 -0400] [85481] [INFO] Worker exiting (pid: 85481)
+[2024-04-04 14:25:52 -0400] [85480] [INFO] Shutting down: Master
+[2024-04-04 14:26:00 -0400] [87112] [INFO] Starting gunicorn 20.1.0
+[2024-04-04 14:26:00 -0400] [87112] [INFO] Listening at: http://127.0.0.1:5000 (87112)
+[2024-04-04 14:26:00 -0400] [87112] [INFO] Using worker: sync
+[2024-04-04 14:26:00 -0400] [87113] [INFO] Booting worker with pid: 87113
+[2024-04-04 14:29:01,212] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 107, in keys
+    if reply[0] == 0x00:
+TypeError: 'NoneType' object is not subscriptable
