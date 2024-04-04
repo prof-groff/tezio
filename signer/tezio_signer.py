@@ -1,11 +1,18 @@
 from flask import Flask, request, json, jsonify, make_response, Response
 import yaml
 from tezio import TezioHSM
+from base58 import b58decode_check
 
+# TezioHSM_API Parameters
 PK_BASE58_CHECKSUM = 0x03
 SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED = 0x04
-P2_PKH_PREFIX_LENGTH = 3
 
+# Constants
+PKH_B58_PREFIX_LENGTH = 3
+P2_AUTH_SIG_PREFIX = '040102' # I believe the SP prefix (tz2 addresses) is 040101 and don't know the ED (tz1) prefix (040100???)
+
+
+# Load Configuration
 with open('config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
@@ -13,10 +20,14 @@ policy = config['policy']
 security = config['security']
 signing_keys = policy['signing_keys']
 auth_key = policy['auth_key']
-auth_key_pkh = auth_key['pkh']
 allowed_ips = config['allowed_ips']
 hwms = config['high_water_marks']
 pkhs = list(policy['signing_keys'].keys())
+
+# Decode the base58 checksum encoded tezos addresses for the signing keys.
+# This is needed because it is part of the message signed by Octez using the authentification key.
+for pkh in pkhs:
+    signing_keys[pkh]['pkh_bytes'] = b58decode_check(pkh)[PKH_B58_PREFIX_LENGTH:].hex() # remove prefix
 
 app = Flask(__name__)
 
@@ -47,8 +58,8 @@ def keys(pkh):
     # Is the request method GET or POST?
     if request.method == 'GET':
         if (config['verbose']):
-            print('GET request received...')
-            print(request.url)
+            print('GET request received...', '\n')
+            print(request.url, '\n')
         wallet = TezioHSM(signing_keys[pkh]['curve_alias'])
         reply = wallet.get_pk(PK_BASE58_CHECKSUM)
         if len(reply) == 1: # error occured, status code returned
@@ -63,9 +74,10 @@ def keys(pkh):
         
     elif request.method == 'POST':
         if (config['verbose']):
-            print('POST request received...')
-            print(request.url)
-            print(request.json)
+            print('POST request received...', '\n')
+            print(request.url, '\n')
+            print(request.json, '\n')
+
         # data to sign sent with the request
         dataBytes = bytearray.fromhex(request.json)
         # first byte is the magic_byte specifying the opration type
@@ -89,9 +101,7 @@ def keys(pkh):
                 return ERROR_401
             else:
                 # validate the signature
-                if (config['verbose']): 
-                    print('authentication signature:', authSig)
-                signed_message = bytearray.fromhex('040102') + bytearray.fromhex('a79feaea9fb12af20833db1c2467824197c64027') + dataBytes
+                signed_message = bytearray.fromhex(P2_AUTH_SIG_PREFIX) + bytearray.fromhex(signing_keys[pkh]['pkh_bytes']) + dataBytes
                 wallet = TezioHSM(auth_key['curve_alias'])
                 reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)                
                 if reply[0] == 0x00:
@@ -123,13 +133,12 @@ def keys(pkh):
             if (current_level < hwms['level'][magicByte]) or (current_level == hwms['level'][magicByte] and current_round <= hwms['round'][magicByte]):
                 ERROR_403 = make_response('The request is to sign a baking operation but one of this type has already been signed at this level and round.')
                 ERROR_403.status_code = 403
-                # print("Level Round Error")
                 return ERROR_403
             else:
                 hwms['level'][magicByte] = current_level
                 hwms['round'][magicByte] = current_round
                 if config['verbose']:
-                    print('hwms: ', hwms)
+                    print('hwms: ', hwms, '\n')
                 pass 
         
         else:
@@ -137,8 +146,6 @@ def keys(pkh):
 
         # If we have made it this far, sign the data
         wallet = TezioHSM(signing_keys[pkh]['curve_alias'])
-        if config['verbose']:
-            print('data: ', dataBytes.hex())
         reply = wallet.sign(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, dataBytes)
         if (len(reply) == 1):
             response = jsonify(hex(reply[0]))
@@ -146,7 +153,6 @@ def keys(pkh):
             return response
         else:
             signature = reply
-            print(signature)
             response = make_response(jsonify({'signature': signature.decode('utf-8')}))
             response.status_code = 200
             return response
@@ -158,10 +164,10 @@ def keys(pkh):
         
 @app.route('/authorized_keys', methods=['GET'])
 def authorized_keys():
-    if auth_key_pkh == None:
+    if auth_key['pkh'] == None:
         response = jsonify({})
     else:
-        response = make_response(jsonify({'authorized_keys': [auth_key_pkh]}))
+        response = make_response(jsonify({'authorized_keys': [auth_key['pkh']]}))
     
     response.status_code = 200
     return response

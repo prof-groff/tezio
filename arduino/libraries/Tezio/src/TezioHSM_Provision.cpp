@@ -22,7 +22,6 @@ SOFTWARE. */
 
 #include "TezioHSM_Provision.h"
 
-
 uint16_t TezioHSM_Provision::write_p256_secret_key(uint8_t slot, uint8_t *p2sk, const uint8_t *RWKey) {
 
 	// received 32 byte key in raw bytes and writes to slot 0 to 4
@@ -178,11 +177,11 @@ uint16_t TezioHSM_Provision::configure(const uint8_t *configData) {
     	}
   	}
   	else if (lock_status[1] == 1) { // configuration zone is already locked, continue...
-    	Serial.println("The cryptochips's configuration data is already locked and can't be changed."); Serial.println(); delay(1000);
+    	Serial.println("The cryptochips's configuration data is already locked and can't be changed."); Serial.println(); delay(SHORTWAIT);
 	}
 	
 	// a chance to view the configuration data written to the cryptographic co-processor.
-	Serial.println("Do you wish to view the cryptochips current configuration data?"); Serial.println(); delay(1000); 
+	Serial.println("Do you wish to view the cryptochips current configuration data?"); Serial.println(); delay(SHORTWAIT); 
 	if (confirm_entry()) {
 		uint8_t currentConfigData[128];
   		Serial.println(); Serial.println("Reading current configuration data."); Serial.println(); delay(SHORTWAIT);
@@ -200,8 +199,9 @@ uint16_t TezioHSM_Provision::configure(const uint8_t *configData) {
 	
 	// a chance to lock the configuration zone
 	if (lock_status[1] == 0) {
-    	Serial.println("Do you wish to lock the configuration data zone?"); 
+    	Serial.println("Do you wish to lock the configuration data zone?"); Serial.println(); delay(SHORTWAIT);
     	if (confirm_entry()) {
+			Serial.println();
 			if (!myChip.lockConfigZone()) {
         	Serial.println("ERROR: Failed to lock the configuration zone.");
         	wait_forever();
@@ -211,6 +211,7 @@ uint16_t TezioHSM_Provision::configure(const uint8_t *configData) {
 	  		}
 		}
     	else {
+			Serial.println();
       		Serial.println("Configuration zone remains unlocked but must be locked before provisioning.");
       		wait_forever();
     	}
@@ -272,10 +273,7 @@ uint16_t TezioHSM_Provision::check_mnemonic(char *mnemonic, uint16_t mnemonic_le
 
 uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length) {
 	start_serial();
-	Serial.println("-- Deriving Keys from Mnemonic --"); Serial.println(); delay(1000);
-	
-	Serial.println(mnemonicString);
-	Serial.println();
+	Serial.println("-- Deriving Keys from Mnemonic --"); Serial.println(); delay(SHORTWAIT);
 	
 	// derive secret master seed from mnemonic phrase
 	uint8_t seed[64]; 
@@ -290,54 +288,22 @@ uint16_t TezioHSM_Provision::derive_keys(char *path, uint16_t path_length, char*
 	master_skcc_to_child_sk(master_skcc, path, path_length, edsk, ED25519);
 	derive_public_key(edsk, ED25519, edpk); // Ed25519 public keys are only 32 bytes
 	
-	Serial.println("Ed25519 secret key");
-	for (int i = 0; i<sizeof(edsk); i++) {
-		Serial.print(edsk[i],HEX); Serial.print(" ");
-	}
-	Serial.println();
-	Serial.println("Ed25519 public key");
-	for (int i = 0; i<sizeof(edpk); i++) {
-		Serial.print(edpk[i],HEX); Serial.print(" ");
-	}
-	Serial.println();
 	
 	// secp256k1 curve
 	seed_to_master_skcc(seed, sizeof(seed), master_skcc, SECP256K1);
 	master_skcc_to_child_sk(master_skcc, path, path_length, spsk, SECP256K1);
 	derive_public_key(spsk, SECP256K1, sppk);
 	
-	Serial.println("Secp256k1 secret key");
-	for (int i = 0; i<sizeof(spsk); i++) {
-		Serial.print(spsk[i],HEX); Serial.print(" ");
-	}
-	Serial.println();
-	Serial.println("Secp256k1 public key");
-	for (int i = 0; i<sizeof(sppk); i++) {
-		Serial.print(sppk[i],HEX); Serial.print(" ");
-	}
-	Serial.println();
-	
 	// NIST P256 curve
 	seed_to_master_skcc(seed, sizeof(seed), master_skcc, NISTP256);
 	master_skcc_to_child_sk(master_skcc, path, path_length, p2sk, NISTP256);
 	derive_public_key(p2sk, NISTP256, p2pk);
 	
-	Serial.println("NIST P256 secret key");
-	for (int i = 0; i<sizeof(p2sk); i++) {
-		Serial.print(p2sk[i],HEX); Serial.print(" ");
-	}
-	Serial.println();
-	Serial.println("NIST P256 public key");
-	for (int i = 0; i<sizeof(p2pk); i++) {
-		Serial.print(p2pk[i],HEX); Serial.print(" ");
-	}
-	Serial.println();
-	
 	return 1;
 	
 }
 
-uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
+uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey, char *authKey) {
 	start_serial();
 	Serial.println("-- Provisioning Cryptochip --"); Serial.println(); delay(SHORTWAIT);
 	
@@ -355,9 +321,10 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
   	}
 	
 	if (lock_status[0] == 1) {
-		Serial.println("The data/OTP zones are already locked and may already contain keys. Do you wish to continue and overwrite any existing keys?"); Serial.println(); delay(SHORTWAIT);
+		Serial.println("The data/OTP zones are already locked and may already contain keys. Do you wish to continue?"); 
+		Serial.println("NOTE: Continuing will overwrite existing keys and requires the use of the read/write key already saved on the HSM."); 
+		Serial.println("Failure to use the same read/write key will result in failure to write new keys."); Serial.println(); delay(SHORTWAIT);
 		if (confirm_entry()) {
-
 
 			write_p256_secret_key(P2_SK_SLOT, p2sk, RWKey);
 	
@@ -366,12 +333,11 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
 				Serial.println("ERROR: Failed to write NIST P256 public key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
 			}
-			
-		
+
 			// write SP key
 			if (!write_secret_key(SP_SK_SLOT, spsk, RWKey)) {
 				Serial.println("ERROR: Failed to write Secp256k1 secret key."); Serial.println(); delay(SHORTWAIT);
-
+				return 0;
 			}
 	
 			// try clear write of public key
@@ -379,34 +345,25 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
 				Serial.println("ERROR: Failed to write Secp256k2 public key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
 			}
-			
-			// print secret key
-			char skb58_sp[99];
-  			uint16_t outlength = secret_key_base58(spsk, SECP256K1, skb58_sp);
-  			Serial.println('--Secret Secp256k1 Key--');
-  			Serial.println(skb58_sp);
-
-		
-		
 		
 			// write ED key
-
 			if (!write_secret_key(ED_SK_SLOT, edsk, RWKey)) {
 				Serial.println("ERROR: Failed to write Ed25519 secret key."); Serial.println(); delay(SHORTWAIT);
+				return 0;
 			}
 
-	
 			// try clear write of public key
 			if (!myChip.writeSlot(ED_PK_SLOT, edpk, 32)) { // ED public keys are 32 bytes
 				Serial.println("ERROR: Failed to write Ed25519 public key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
 			}
+
 		}
 		else {
 			Serial.println("New keys will not be written to the device."); Serial.println(); delay(SHORTWAIT);
 			wait_forever();
 		}
-	Serial.println("New keys successfully written to the device."); Serial.println(); delay(SHORTWAIT);
+	Serial.println(); Serial.println("New keys successfully written to the device."); Serial.println(); delay(SHORTWAIT);
 		
 	}
 		
@@ -418,29 +375,36 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
 		memcpy(&padded_p2sk[4], p2sk, 32); // pad with 4 leading bytes of zeros so onboard hardware acceleration of cryptographic calculations works correctly
 		if(!myChip.privWriteSlot(P2_SK_SLOT, padded_p2sk, sizeof(padded_p2sk))) {
 			Serial.println("ERROR: Failed to write NistP256 secret key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 		// try writing EDKey and SPKey (Write)
 		if (!myChip.writeSlot(ED_SK_SLOT, edsk, 32)) {
 			Serial.println("ERROR: Failed to write Ed25519 secret key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 		if (!myChip.writeSlot(SP_SK_SLOT, spsk, 32)) {
 			Serial.println("ERROR: Failed to write Secp256K1 secret key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 	
 		// try to write RWKey (write)
 		if (!myChip.writeSlot(RW_KEY_SLOT, RWKey, 32)) {
 			Serial.println("ERROR: Failed to write read/write key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 	
 		// try to write public keys
 		if (!myChip.writeSlot(ED_PK_SLOT, edpk, 32)) {
 			Serial.println("ERROR: Failed to write Ed25519 public key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 		if (!myChip.writeSlot(SP_PK_SLOT, sppk, 64)) {
 			Serial.println("ERROR: Failed to write Secp256K1 public key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 		if (!myChip.writeSlot(P2_PK_SLOT, p2pk, 64)) {
 			Serial.println("ERROR: Failed to write NistP256 public key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
 		}
 	
 		Serial.println("Do you wish to lock the cryptochip data zone? Modifying keys with unencrypted writes will no longer be possible."); Serial.println(); delay(SHORTWAIT);
@@ -460,84 +424,91 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey) {
   	}
   	
   	
-  	// last step is to generate a second P256 key and display it. It is stored on slot 0 and can be used to validate messages. It is NOT used for a tz address.
-  	
-	Serial.println("Do you wish to generate a new authenticating key?"); Serial.println(); delay(1000); 
-	if (confirm_entry()) {
+  	// Last step is to write a second P256 key. If none is provided, one is generated and shared. 
+	// It is stored on slot 0 and can be used to validate messages. It is NOT used for a tz address.
+  	Serial.println("Preparing to write authentication key."); Serial.println(); delay(SHORTWAIT);
+	if (strcmp(authKey, "") == 0) {
+		// no authKey was provided so one will be generated and printed.
+		Serial.println("No authentication key was provided. Do you wish to generate a new authenticating key?"); Serial.println(); delay(SHORTWAIT); 
+		if (confirm_entry()) {
 	
-		Serial.println("--Generating Authentication Secret--");
-  		uint8_t entropy[32];
-  		// Cryptochip myChip(Wire, 0x60);
-		// if (!myChip.begin()) {
-		// 	Serial.println("ERROR: Entropy can't be generated because a cryptographic co-processor was not detected on the connected device.");
-		//	wait_forever();
-		// }
-		// uint8_t lock_status[2];
-		if (!myChip.locked(lock_status)) {
-			Serial.println("ERROR: Failed to determine cryptographic co-processor lock status. Entropy can't be generated.");
+			Serial.println("--Generating Authentication Secret--");
+  	
+			if (!myChip.locked(lock_status)) {
+				Serial.println("ERROR: Failed to determine cryptographic co-processor lock status. Entropy can't be generated.");
+				wait_forever();
+			}
+			if (lock_status[1] == 0) {
+    			Serial.println("ERROR: The cryptographic co-processor's configuration zone must be locked before the onboard random number generator can be used."); 
+    			wait_forever();
+  			}
+			else if (lock_status[1] == 1) { 
+				if (!myChip.random(p2sk_auth, SK_SIZE)) {
+					Serial.println("ERROR: Failed to generate entropy.");
+					return 0;
+				}
+			}
+
+			Serial.println("Authentication secret key created. Please record the following in a safe and secret location."); Serial.println(); delay(SHORTWAIT); 
+  			char skb58[99];
+  			uint16_t outlength = secret_key_base58(p2sk_auth, NISTP256_AUTH, skb58);
+  			Serial.println('--Secret Auth Key--');
+  			Serial.println(skb58);
+		}
+		else {
+			Serial.println("ERROR: Failed to finish writing authentication key.");
 			wait_forever();
 		}
-		if (lock_status[1] == 0) {
-    		Serial.println("ERROR: The cryptographic co-processor's configuration zone must be locked before the onboard random number generator can be used."); 
-    		wait_forever();
-  		}
-		else if (lock_status[1] == 1) { 
-			if (!myChip.random(entropy, sizeof(entropy))) {
-				Serial.println("ERROR: Failed to generate entropy.");
-			}
-		}
-
-		// hijack the process
-		uint8_t entropy_forced[32] = {0x81, 0xfa, 0x5d, 0x61, 0x64, 0x01, 0xae, 0x05,
-                       0x5d, 0x98, 0xff, 0x08, 0x83, 0xef, 0xe3, 0x91,
-                       0x52, 0x74, 0x23, 0x4b, 0x63, 0xc8, 0xe5, 0x99,
-                       0xea, 0xa4, 0x62, 0xc3, 0xfb, 0x76, 0x66, 0xea};
-
-		memcpy(entropy, entropy_forced, 32); 
-  	
-  		char skb58[99];
-  		uint16_t outlength = secret_key_base58(entropy, NISTP256_AUTH, skb58);
-  		Serial.println('--Secret Auth Key--');
-  		Serial.println(skb58);
-  	
-  		if (!write_p256_secret_key(P2_AUTH_KEY_SLOT, entropy, RWKey)) {
-  			Serial.println('ERROR: Failed to write authentication key to slot 0');
-  			return 0;
-  		}
-  	
-  		// derive public key
-  		uint8_t auth_pk[64];
-  		// derive public key
-		derive_public_key(entropy, NISTP256_AUTH, auth_pk);
-	
-		// write public key to slot
-		if (!myChip.writeSlot(P2_AUTH_KEY_PK_SLOT, auth_pk, 64)) {
-				Serial.println("ERROR: Failed to write authentication public key."); Serial.println(); delay(SHORTWAIT);
-		}
-	
-		// encode public key and print
-	
-		char charStrResult[128]; // to hold base58 encoded results for easy printing
-		uint8_t buffer[128];
-	
-		memcpy(buffer, auth_pk, 64);
-		uint16_t keyLength = encode_public_key(buffer, 64, 3, NISTP256_AUTH);
-		memset(charStrResult, '\0', sizeof(charStrResult));
-    	memcpy(charStrResult, buffer, keyLength);
-    	Serial.println(charStrResult);
-	
-		memcpy(buffer, auth_pk, 64);
-		keyLength = encode_public_key(buffer, 64, 4, NISTP256_AUTH);
-		memset(charStrResult, '\0', sizeof(charStrResult));
-    	memcpy(charStrResult, buffer, keyLength);
-    	Serial.println(charStrResult);
+	}
+	else { // auth key was provided
+				 
+		base58_decode_prefix_checksum(N_SK_PREFIX_BYTES, authKey, P2_B58CHECKSUM_SK_SIZE+1, p2sk_auth); // sk prefix length is 4 for all curves
+		// add 1 to key size because there is a null character at the end
 	}
 
-	Serial.println("DONE");
+	derive_public_key(p2sk_auth, NISTP256, p2pk_auth);
 
+	if (!write_p256_secret_key(P2_AUTH_KEY_SLOT, p2sk_auth, RWKey)) {
+  		Serial.println('ERROR: Failed to write authentication key to slot 0');
+  		return 0;
+  	}
+	
+	// write public key to slot
+	if (!myChip.writeSlot(P2_AUTH_KEY_PK_SLOT, p2pk_auth, P2_PK_SIZE)) {
+			Serial.println("ERROR: Failed to write authentication public key."); Serial.println(); delay(SHORTWAIT);
+			return 0;
+	}
+
+	// print PKHs
+	uint8_t pk_pkh_buffer[64]; // to hold pk and pkh
+	char pkh[37]; // extra space for null terminator
+	uint16_t pkhLength;
+
+	Serial.println("Key derivation and provisioning completed succcessfully."); Serial.println(); delay(SHORTWAIT);
+	Serial.println("Stored keys derived from the mnemonic phrase correspond to the following Tezos addresses."); Serial.println(); delay(SHORTWAIT);
+	
+	Serial.println("-- ED25519 Public Key Hash --"); Serial.println(); delay(SHORTWAIT);
+	memcpy(pk_pkh_buffer, edpk, ED_PK_SIZE);
+	pkhLength = encode_public_key(pk_pkh_buffer, ED_PK_SIZE, PKH_BASE58_CHECKSUM, ED25519);
+	memset(pkh, '\0', 37); 
+	memcpy(pkh, pk_pkh_buffer, pkhLength);
+	Serial.println(pkh); Serial.println(); delay(SHORTWAIT);
+
+	Serial.println("-- SECP256K1 Public Key Hash --"); Serial.println(); delay(SHORTWAIT);
+	memcpy(pk_pkh_buffer, sppk, SP_PK_SIZE);
+	pkhLength = encode_public_key(pk_pkh_buffer, SP_PK_SIZE, PKH_BASE58_CHECKSUM, SECP256K1);
+	memset(pkh, '\0', 37); 
+	memcpy(pkh, pk_pkh_buffer, pkhLength);
+	Serial.println(pkh); Serial.println(); delay(SHORTWAIT);
+	
+	Serial.println("-- NIST P256 Public Key Hash --"); Serial.println(); delay(SHORTWAIT);
+	memcpy(pk_pkh_buffer, p2pk, P2_PK_SIZE);
+	pkhLength = encode_public_key(pk_pkh_buffer, P2_PK_SIZE, PKH_BASE58_CHECKSUM, NISTP256);
+	memset(pkh, '\0', 37); 
+	memcpy(pkh, pk_pkh_buffer, pkhLength);
+	Serial.println(pkh); Serial.println(); delay(SHORTWAIT);
 	
 	return 1;
-
 }
 
 

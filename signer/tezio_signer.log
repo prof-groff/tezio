@@ -1,0 +1,972 @@
+[2024-03-29 13:02:43 -0400] [39816] [INFO] Starting gunicorn 20.1.0
+[2024-03-29 13:02:43 -0400] [39816] [INFO] Listening at: http://127.0.0.1:5000 (39816)
+[2024-03-29 13:02:43 -0400] [39816] [INFO] Using worker: sync
+[2024-03-29 13:02:43 -0400] [39817] [INFO] Booting worker with pid: 39817
+[2024-04-02 14:49:49 -0400] [39816] [INFO] Handling signal: term
+[2024-04-02 14:49:49 -0400] [39817] [INFO] Worker exiting (pid: 39817)
+[2024-04-02 14:49:49 -0400] [39816] [INFO] Shutting down: Master
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Listening at: http://127.0.0.1:5000 (57760)
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Using worker: sync
+[2024-04-02 15:01:31 -0400] [57761] [INFO] Booting worker with pid: 57761
+[2024-04-02 15:01:31 -0400] [57761] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:31 -0400] [57761] [INFO] Worker exiting (pid: 57761)
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Shutting down: Master
+[2024-04-02 15:01:31 -0400] [57760] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:32 -0400] [57762] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:32 -0400] [57762] [INFO] Listening at: http://127.0.0.1:5000 (57762)
+[2024-04-02 15:01:32 -0400] [57762] [INFO] Using worker: sync
+[2024-04-02 15:01:32 -0400] [57763] [INFO] Booting worker with pid: 57763
+[2024-04-02 15:01:33 -0400] [57763] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:33 -0400] [57763] [INFO] Worker exiting (pid: 57763)
+[2024-04-02 15:01:33 -0400] [57762] [INFO] Shutting down: Master
+[2024-04-02 15:01:33 -0400] [57762] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Listening at: http://127.0.0.1:5000 (57764)
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Using worker: sync
+[2024-04-02 15:01:35 -0400] [57765] [INFO] Booting worker with pid: 57765
+[2024-04-02 15:01:35 -0400] [57765] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:35 -0400] [57765] [INFO] Worker exiting (pid: 57765)
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Shutting down: Master
+[2024-04-02 15:01:35 -0400] [57764] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Listening at: http://127.0.0.1:5000 (57766)
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Using worker: sync
+[2024-04-02 15:01:38 -0400] [57767] [INFO] Booting worker with pid: 57767
+[2024-04-02 15:01:38 -0400] [57767] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:38 -0400] [57767] [INFO] Worker exiting (pid: 57767)
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Shutting down: Master
+[2024-04-02 15:01:38 -0400] [57766] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:47 -0400] [57789] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:47 -0400] [57789] [INFO] Listening at: http://127.0.0.1:5000 (57789)
+[2024-04-02 15:01:47 -0400] [57789] [INFO] Using worker: sync
+[2024-04-02 15:01:47 -0400] [57790] [INFO] Booting worker with pid: 57790
+[2024-04-02 15:01:48 -0400] [57790] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:48 -0400] [57790] [INFO] Worker exiting (pid: 57790)
+[2024-04-02 15:01:48 -0400] [57789] [INFO] Shutting down: Master
+[2024-04-02 15:01:48 -0400] [57789] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Listening at: http://127.0.0.1:5000 (57791)
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Using worker: sync
+[2024-04-02 15:01:49 -0400] [57792] [INFO] Booting worker with pid: 57792
+[2024-04-02 15:01:49 -0400] [57792] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:49 -0400] [57792] [INFO] Worker exiting (pid: 57792)
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Shutting down: Master
+[2024-04-02 15:01:49 -0400] [57791] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Listening at: http://127.0.0.1:5000 (57793)
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Using worker: sync
+[2024-04-02 15:01:51 -0400] [57794] [INFO] Booting worker with pid: 57794
+[2024-04-02 15:01:51 -0400] [57794] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:51 -0400] [57794] [INFO] Worker exiting (pid: 57794)
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Shutting down: Master
+[2024-04-02 15:01:51 -0400] [57793] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Listening at: http://127.0.0.1:5000 (57795)
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Using worker: sync
+[2024-04-02 15:01:55 -0400] [57799] [INFO] Booting worker with pid: 57799
+[2024-04-02 15:01:55 -0400] [57799] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/usr/lib/python3/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/usr/lib/python3/dist-packages/gunicorn/util.py", line 384, in import_app
+    mod = importlib.import_module(module)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 17, in <module>
+    config = yaml.safe_load(file)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/usr/lib/python3/dist-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/usr/lib/python3/dist-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/usr/lib/python3/dist-packages/yaml/composer.py", line 39, in get_single_node
+    if not self.check_event(StreamEndEvent):
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/usr/lib/python3/dist-packages/yaml/parser.py", line 171, in parse_document_start
+    raise ParserError(None, None,
+yaml.parser.ParserError: expected '<document start>', but found '<scalar>'
+  in "config.yaml", line 3, column 3
+[2024-04-02 15:01:55 -0400] [57799] [INFO] Worker exiting (pid: 57799)
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Shutting down: Master
+[2024-04-02 15:01:55 -0400] [57795] [INFO] Reason: Worker failed to boot.
+[2024-04-02 15:04:38 -0400] [57909] [INFO] Starting gunicorn 20.1.0
+[2024-04-02 15:04:38 -0400] [57909] [INFO] Listening at: http://127.0.0.1:5000 (57909)
+[2024-04-02 15:04:38 -0400] [57909] [INFO] Using worker: sync
+[2024-04-02 15:04:38 -0400] [57912] [INFO] Booting worker with pid: 57912
+[2024-04-03 09:09:20 -0400] [57909] [INFO] Handling signal: term
+[2024-04-03 09:09:20 -0400] [57912] [INFO] Worker exiting (pid: 57912)
+[2024-04-03 09:09:20 -0400] [57909] [INFO] Shutting down: Master
+[2024-04-03 09:13:13 -0400] [62744] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 09:13:13 -0400] [62744] [INFO] Listening at: http://127.0.0.1:5000 (62744)
+[2024-04-03 09:13:13 -0400] [62744] [INFO] Using worker: sync
+[2024-04-03 09:13:13 -0400] [62745] [INFO] Booting worker with pid: 62745
+[2024-04-03 09:13:20,469] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:21,320] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:32,180] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:33,011] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:39,671] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:40,435] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:44,354] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:45,129] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:52,939] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:13:53,572] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:00,496] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:01,275] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:08,816] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:09,689] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 09:14:11 -0400] [62744] [INFO] Handling signal: term
+[2024-04-03 09:14:11 -0400] [62745] [INFO] Worker exiting (pid: 62745)
+[2024-04-03 09:14:11 -0400] [62744] [INFO] Shutting down: Master
+[2024-04-03 09:19:18 -0400] [65213] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 09:19:18 -0400] [65213] [INFO] Listening at: http://127.0.0.1:5000 (65213)
+[2024-04-03 09:19:18 -0400] [65213] [INFO] Using worker: sync
+[2024-04-03 09:19:18 -0400] [65214] [INFO] Booting worker with pid: 65214
+[2024-04-03 10:53:58 -0400] [65213] [INFO] Handling signal: term
+[2024-04-03 10:53:58 -0400] [65214] [INFO] Worker exiting (pid: 65214)
+[2024-04-03 10:53:58 -0400] [65213] [INFO] Shutting down: Master
+[2024-04-03 11:00:45 -0400] [67191] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 11:00:45 -0400] [67191] [INFO] Listening at: http://127.0.0.1:5000 (67191)
+[2024-04-03 11:00:45 -0400] [67191] [INFO] Using worker: sync
+[2024-04-03 11:00:45 -0400] [67192] [INFO] Booting worker with pid: 67192
+[2024-04-03 13:03:17 -0400] [67191] [INFO] Handling signal: term
+[2024-04-03 13:03:17 -0400] [67192] [INFO] Worker exiting (pid: 67192)
+[2024-04-03 13:03:17 -0400] [67191] [INFO] Shutting down: Master
+[2024-04-03 13:04:39 -0400] [69039] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 13:04:39 -0400] [69039] [INFO] Listening at: http://127.0.0.1:5000 (69039)
+[2024-04-03 13:04:39 -0400] [69039] [INFO] Using worker: sync
+[2024-04-03 13:04:39 -0400] [69040] [INFO] Booting worker with pid: 69040
+[2024-04-03 13:04:40,269] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:43,118] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:43,561] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:50,965] ERROR in app: Exception on /keys/tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j [POST]
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+OSError: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/jeff/.local/lib/python3.10/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 106, in keys
+    reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 257, in verify
+    self.query_wallet()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 150, in query_wallet
+    ser = self.__open_serial()
+  File "/home/jeff/Documents/tezio/signer/tezio.py", line 49, in __open_serial
+    ser = serial.Serial(self.com, self.__baud)
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+  File "/home/jeff/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 16] could not open port /dev/ttyACM0: [Errno 16] Device or resource busy: '/dev/ttyACM0'
+[2024-04-03 13:04:52 -0400] [69039] [INFO] Handling signal: term
+[2024-04-03 13:04:52 -0400] [69040] [INFO] Worker exiting (pid: 69040)
+[2024-04-03 13:04:52 -0400] [69039] [INFO] Shutting down: Master
+[2024-04-03 13:05:25 -0400] [69103] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 13:05:25 -0400] [69103] [INFO] Listening at: http://127.0.0.1:5000 (69103)
+[2024-04-03 13:05:25 -0400] [69103] [INFO] Using worker: sync
+[2024-04-03 13:05:25 -0400] [69104] [INFO] Booting worker with pid: 69104
+[2024-04-03 15:02:43 -0400] [69103] [INFO] Handling signal: term
+[2024-04-03 15:02:43 -0400] [69104] [INFO] Worker exiting (pid: 69104)
+[2024-04-03 15:02:43 -0400] [69103] [INFO] Shutting down: Master
+[2024-04-03 15:06:13 -0400] [70622] [INFO] Starting gunicorn 20.1.0
+[2024-04-03 15:06:13 -0400] [70622] [INFO] Listening at: http://127.0.0.1:5000 (70622)
+[2024-04-03 15:06:13 -0400] [70622] [INFO] Using worker: sync
+[2024-04-03 15:06:13 -0400] [70623] [INFO] Booting worker with pid: 70623
+[2024-04-03 15:10:21 -0400] [70622] [INFO] Handling signal: term
+[2024-04-03 15:10:21 -0400] [70623] [INFO] Worker exiting (pid: 70623)
+[2024-04-03 15:10:21 -0400] [70622] [INFO] Shutting down: Master

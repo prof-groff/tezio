@@ -691,179 +691,6 @@ uint16_t TezioHSM_API::op_verify()
 	}
 }
 
-uint16_t TezioHSM_API::op_write_keys()
-{
-	/* 	packet.param1 is key/curve/alias
-					key/curve/alias
-		0x00		NIST P256 AUTH KEY
-		0x01		Ed25519
-		0x02		Secp256k1
-		0x03		NIST P256
-
-		mode		key format
-		0x01		raw bytes
-		0x02		base58 checksum encoded
-		0x03		base58 checksum encoded Ed25519 key w/ public key
-	*/
-
-	if (validate_param_1_2(packet.param1, 0x00, 0x03) != PASS)
-	{
-		statusCode = PARAM_1_INVALID;
-		return FAIL;
-	}
-	// check to see if HSM op is disabled for this key
-	if (policy[packet.param1].hsm_ops[WRITE_KEYS-1]== 0) {
-		statusCode = HSM_OPERATION_FORBIDDEN_BY_POLICY;
-		return FAIL;
-	}
-	if (validate_param_1_2(packet.param2, 0x01, 0x03) != PASS)
-	{
-		statusCode = PARAM_2_INVALID;
-		return FAIL;
-	}
-
-	uint8_t curve = packet.param1;
-	uint8_t mode = packet.param2;
-
-	uint8_t sessionKey[32];
-	uint8_t cypherText[32];
-
-	// extract data containing key to be written
-	uint8_t secretKey[32];
-	uint16_t secretKeyLength = 32;
-	uint8_t publicKey[64]; // ed25519 public keys are only 32 bytes
-	uint16_t publicKeyLength;
-
-	if (validate_data(packet.data, packet.dataLength, 32, MAX_DATA_LENGTH) != SUCCESS) {
-		statusCode = DATA_OR_DATA_LENGTH_INVALID;
-		return FAIL;
-	}
-
-	// determine which slot is being written to
-	uint16_t skSlot;
-	uint16_t pkSlot;
-
-	if (curve == ED25519)
-	{
-		skSlot = ED_SK_SLOT;
-		pkSlot = ED_PK_SLOT;
-		publicKeyLength = ED_PK_SIZE;
-	}
-	else if (curve == SECP256K1)
-	{
-		skSlot = SP_SK_SLOT;
-		pkSlot = SP_PK_SLOT;
-		publicKeyLength = SP_PK_SIZE;
-	}
-	else if (curve == NISTP256)
-	{
-		skSlot = P2_SK_SLOT;
-		pkSlot = P2_PK_SLOT;
-		publicKeyLength = P2_PK_SIZE;
-	}
-	else if (curve == NISTP256_AUTH) 
-	{
-		skSlot = P2_AUTH_KEY_SLOT;
-		pkSlot = P2_AUTH_KEY_PK_SLOT;
-		publicKeyLength = P2_PK_SIZE;
-	}
-	else
-	{
-		statusCode = INVALID_KEY_ALIAS;
-		return FAIL;
-	}
-
-	if (mode == 0x01)
-	{ // key already in raw bytes
-		memcpy(secretKey, &packet.data[0], packet.dataLength);
-	}
-	else if (mode == 0x02 || mode == 0x03)
-	{										 // base58 checksum encoded
-		char b58_key[packet.dataLength + 1]; // will add a '\0' at the end (null terminator to character string)
-		uint8_t decodedKey[64];				 // extra 32 bytes incase it is an ed25519 key with public key appended
-		memset(b58_key, '\0', sizeof(b58_key));
-		memcpy(b58_key, &packet.data[0], packet.dataLength);
-		base58_decode_prefix_checksum(N_SK_PREFIX_BYTES, b58_key, packet.dataLength + 1, decodedKey); // sk prefix length is 4 for all curves
-		memcpy(secretKey, &decodedKey[0], secretKeyLength); // copy first 32 bytes of decodedKey into secretKey
-		if (mode == 0x03) { // public key is also encoded
-			memcpy(publicKey, &decodedKey[secretKeyLength], publicKeyLength);
-		}
-		else 
-		{
-			// derive public key
-			derive_public_key(secretKey, curve, publicKey);
-		}
-	}
-	else
-	{
-		statusCode = PARAM_2_INVALID;
-		return FAIL;
-	}
-
-	// get ready to perform the encrypted write
-	Cryptochip myChip(Wire, 0x60);
-	if (!myChip.begin())
-	{
-		statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
-		return FAIL;
-	}
-
-	// generate sessionKey
-	if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey))
-	{
-		statusCode = FAILED_TO_GENERATE_SESSION_KEY;
-		return FAIL;
-	}
-
-	// use sessionKey to generate cypherText
-	if (!myChip.encryptData(secretKey, cypherText, 32))
-	{
-		statusCode = FAILED_TO_ENCRYPT_DATA;
-		return FAIL;
-	}	
-
-	// compute expected MAC
-	// MAC is SHA256 Hash of message = sessionkey | write opcode 0x12 | param1 0x82 | param2 address | SN[8] | SN[0:1] | Zeros(25) | Plaintext
-	uint16_t messageLength = 32 + 1 + 1 + 2 + 1 + 2 + 25 + 32; // 96
-	uint8_t message[messageLength];
-	memcpy(&message[0], &sessionKey[0], 32);
-	message[32] = 0x12;
-	message[33] = 0x82;
-	uint16_t address = myChip.addressForSlotOffset(skSlot, 0);
-	message[34] = (uint8_t)(address);
-	message[35] = (uint8_t)(address >> 8); // lsb comes first
-	uint8_t sn[12];
-	myChip.serialNumber(sn);
-	message[36] = sn[8];
-	message[37] = sn[0];
-	message[38] = sn[1];
-	uint8_t zeros[25];
-	memset(zeros, 0, 25);
-	memcpy(&message[39], &zeros[0], 25);
-	memcpy(&message[64], &secretKey[0], 32);
-
-	uint8_t mac[32];
-	sha256_func_host(message, messageLength, mac);
-
-	// try encrypted write of secret key
-	if (!myChip.encryptedWrite(skSlot, cypherText, mac, 32))
-	{
-		statusCode = FAILED_ENCRYPTED_WRITE;
-		return FAIL;
-	}
-
-	// try clear write of public key
-	if (!myChip.writeSlot(pkSlot, publicKey, publicKeyLength))
-	{
-		statusCode = FAILED_CLEAR_WRITE;
-		return FAIL;
-	}
-
-	myChip.end();
-
-	return SUCCESS;
-}
-
 uint16_t TezioHSM_API::api_crc16(uint8_t *data, uint16_t dataLength)
 {
 	if (data == NULL || dataLength == 0)
@@ -1058,11 +885,6 @@ uint16_t TezioHSM_API::execute_op()
 		result_of_op = op_verify(); // success or failure
 		break;
 	}
-	case (WRITE_KEYS):
-	{
-		result_of_op = op_write_keys();
-		break;
-	}
 	default:
 	{
 		statusCode = INVALID_OPERATION_CODE;
@@ -1099,3 +921,180 @@ uint16_t TezioHSM_API::send_status_code()
 	send_reply();
 	return 1;
 }
+
+// EXPERIMENTAL
+/* 
+
+uint16_t TezioHSM_API::op_write_keys()
+{
+	// 	packet.param1 is key/curve/alias
+					key/curve/alias
+	//	0x00		NIST P256 AUTH KEY
+	//	0x01		Ed25519
+	//	0x02		Secp256k1
+	//	0x03		NIST P256
+
+	//	mode		key format
+	//	0x01		raw bytes
+	//	0x02		base58 checksum encoded
+	//	0x03		base58 checksum encoded Ed25519 key w/ public key
+
+	if (validate_param_1_2(packet.param1, 0x00, 0x03) != PASS)
+	{
+		statusCode = PARAM_1_INVALID;
+		return FAIL;
+	}
+	// check to see if HSM op is disabled for this key
+	if (policy[packet.param1].hsm_ops[WRITE_KEYS-1]== 0) {
+		statusCode = HSM_OPERATION_FORBIDDEN_BY_POLICY;
+		return FAIL;
+	}
+	if (validate_param_1_2(packet.param2, 0x01, 0x03) != PASS)
+	{
+		statusCode = PARAM_2_INVALID;
+		return FAIL;
+	}
+
+	uint8_t curve = packet.param1;
+	uint8_t mode = packet.param2;
+
+	uint8_t sessionKey[32];
+	uint8_t cypherText[32];
+
+	// extract data containing key to be written
+	uint8_t secretKey[32];
+	uint16_t secretKeyLength = 32;
+	uint8_t publicKey[64]; // ed25519 public keys are only 32 bytes
+	uint16_t publicKeyLength;
+
+	if (validate_data(packet.data, packet.dataLength, 32, MAX_DATA_LENGTH) != SUCCESS) {
+		statusCode = DATA_OR_DATA_LENGTH_INVALID;
+		return FAIL;
+	}
+
+	// determine which slot is being written to
+	uint16_t skSlot;
+	uint16_t pkSlot;
+
+	if (curve == ED25519)
+	{
+		skSlot = ED_SK_SLOT;
+		pkSlot = ED_PK_SLOT;
+		publicKeyLength = ED_PK_SIZE;
+	}
+	else if (curve == SECP256K1)
+	{
+		skSlot = SP_SK_SLOT;
+		pkSlot = SP_PK_SLOT;
+		publicKeyLength = SP_PK_SIZE;
+	}
+	else if (curve == NISTP256)
+	{
+		skSlot = P2_SK_SLOT;
+		pkSlot = P2_PK_SLOT;
+		publicKeyLength = P2_PK_SIZE;
+	}
+	else if (curve == NISTP256_AUTH) 
+	{
+		skSlot = P2_AUTH_KEY_SLOT;
+		pkSlot = P2_AUTH_KEY_PK_SLOT;
+		publicKeyLength = P2_PK_SIZE;
+	}
+	else
+	{
+		statusCode = INVALID_KEY_ALIAS;
+		return FAIL;
+	}
+
+	if (mode == 0x01)
+	{ // key already in raw bytes
+		memcpy(secretKey, &packet.data[0], packet.dataLength);
+	}
+	else if (mode == 0x02 || mode == 0x03)
+	{										 // base58 checksum encoded
+		char b58_key[packet.dataLength + 1]; // will add a '\0' at the end (null terminator to character string)
+		uint8_t decodedKey[64];				 // extra 32 bytes incase it is an ed25519 key with public key appended
+		memset(b58_key, '\0', sizeof(b58_key));
+		memcpy(b58_key, &packet.data[0], packet.dataLength);
+		base58_decode_prefix_checksum(N_SK_PREFIX_BYTES, b58_key, packet.dataLength + 1, decodedKey); // sk prefix length is 4 for all curves
+		memcpy(secretKey, &decodedKey[0], secretKeyLength); // copy first 32 bytes of decodedKey into secretKey
+		if (mode == 0x03) { // public key is also encoded
+			memcpy(publicKey, &decodedKey[secretKeyLength], publicKeyLength);
+		}
+		else 
+		{
+			// derive public key
+			derive_public_key(secretKey, curve, publicKey);
+		}
+	}
+	else
+	{
+		statusCode = PARAM_2_INVALID;
+		return FAIL;
+	}
+
+	// get ready to perform the encrypted write
+	Cryptochip myChip(Wire, 0x60);
+	if (!myChip.begin())
+	{
+		statusCode = CRYPTOCHIP_FAILED_TO_INITIALIZE;
+		return FAIL;
+	}
+
+	// generate sessionKey
+	if (!myChip.generateSessionKey(RW_KEY_SLOT, readWriteKey, sessionKey))
+	{
+		statusCode = FAILED_TO_GENERATE_SESSION_KEY;
+		return FAIL;
+	}
+
+	// use sessionKey to generate cypherText
+	if (!myChip.encryptData(secretKey, cypherText, 32))
+	{
+		statusCode = FAILED_TO_ENCRYPT_DATA;
+		return FAIL;
+	}	
+
+	// compute expected MAC
+	// MAC is SHA256 Hash of message = sessionkey | write opcode 0x12 | param1 0x82 | param2 address | SN[8] | SN[0:1] | Zeros(25) | Plaintext
+	uint16_t messageLength = 32 + 1 + 1 + 2 + 1 + 2 + 25 + 32; // 96
+	uint8_t message[messageLength];
+	memcpy(&message[0], &sessionKey[0], 32);
+	message[32] = 0x12;
+	message[33] = 0x82;
+	uint16_t address = myChip.addressForSlotOffset(skSlot, 0);
+	message[34] = (uint8_t)(address);
+	message[35] = (uint8_t)(address >> 8); // lsb comes first
+	uint8_t sn[12];
+	myChip.serialNumber(sn);
+	message[36] = sn[8];
+	message[37] = sn[0];
+	message[38] = sn[1];
+	uint8_t zeros[25];
+	memset(zeros, 0, 25);
+	memcpy(&message[39], &zeros[0], 25);
+	memcpy(&message[64], &secretKey[0], 32);
+
+	uint8_t mac[32];
+	sha256_func_host(message, messageLength, mac);
+
+	// try encrypted write of secret key
+	if (!myChip.encryptedWrite(skSlot, cypherText, mac, 32))
+	{
+		statusCode = FAILED_ENCRYPTED_WRITE;
+		return FAIL;
+	}
+
+	// try clear write of public key
+	if (!myChip.writeSlot(pkSlot, publicKey, publicKeyLength))
+	{
+		statusCode = FAILED_CLEAR_WRITE;
+		return FAIL;
+	}
+
+	myChip.end();
+
+	return SUCCESS;
+}
+
+*/

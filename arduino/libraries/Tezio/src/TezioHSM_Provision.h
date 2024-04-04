@@ -33,6 +33,8 @@ SOFTWARE. */
 #include <BLAKE2b.h>
 #include <uECC.h>
 
+#define PKH_BASE58_CHECKSUM 0x04
+
 class TezioHSM_Provision {
     
     private:
@@ -43,21 +45,22 @@ class TezioHSM_Provision {
 		uint8_t edsk[32];
 		uint8_t spsk[32];
 		uint8_t p2sk[32];
+		uint8_t p2sk_auth[32]; // NISTP256 key for verifying signatures
 		
 		uint16_t write_p256_secret_key(uint8_t slot, uint8_t *p2sk, const uint8_t *RWKey);
 		uint16_t write_secret_key(uint8_t slot, uint8_t *sk, const uint8_t *RWKey);
-	
 	    
     public:
 	
 		uint8_t edpk[32];
 		uint8_t sppk[64]; // only 33 bytes in compressed format with a prefix 0x02 (y even) or 0x03 (y odd)
 		uint8_t p2pk[64];
+		uint8_t p2pk_auth[64]; // NISTP256 public key for verifying signatures
 	
 		uint16_t configure(const uint8_t *config_data);
 		uint16_t check_mnemonic(char *mnemonic, uint16_t mnemonic_length);
 		uint16_t derive_keys(char *path, uint16_t path_length, char* password, uint16_t password_length);
-		uint16_t provision(const uint8_t *RWKey);
+		uint16_t provision(const uint8_t *RWKey, char *authKey);
 		
 		TezioHSM_Provision();
 	
