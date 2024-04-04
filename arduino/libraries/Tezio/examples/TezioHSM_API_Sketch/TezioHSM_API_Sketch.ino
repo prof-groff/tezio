@@ -26,7 +26,7 @@ TEZOS OPERATIONS:
 */
 
 bool debug = false; // true puts device in interactive mode and runs tests using Arduino serial monitor
-uint32_t baud = 57600;
+uint32_t baud = 57600; // if in debug mode, make this 9600
 TezioHSM_API myHSM(baud, readWriteKey); 
 
 void setup() {
@@ -52,6 +52,8 @@ void setup() {
   }
 
   else { // run tests
+    Serial.begin(baud);
+    delay(1000); // short wait for serial to start up
     set_test_configuration(myHSM); // default is all Tezos and HSM ops are permitted, change in api_tests.cpp
     run_tests(myHSM);
   }

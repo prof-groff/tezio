@@ -333,8 +333,7 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey, char *authKey) {
 				Serial.println("ERROR: Failed to write NIST P256 public key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
 			}
-			
-		
+
 			// write SP key
 			if (!write_secret_key(SP_SK_SLOT, spsk, RWKey)) {
 				Serial.println("ERROR: Failed to write Secp256k1 secret key."); Serial.println(); delay(SHORTWAIT);
@@ -345,21 +344,20 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey, char *authKey) {
 			if (!myChip.writeSlot(SP_PK_SLOT, sppk, 64)) { // SP public keys are 64 bytes (uncompressed)
 				Serial.println("ERROR: Failed to write Secp256k2 public key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
-			}		
+			}
 		
 			// write ED key
-
 			if (!write_secret_key(ED_SK_SLOT, edsk, RWKey)) {
 				Serial.println("ERROR: Failed to write Ed25519 secret key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
 			}
 
-	
 			// try clear write of public key
 			if (!myChip.writeSlot(ED_PK_SLOT, edpk, 32)) { // ED public keys are 32 bytes
 				Serial.println("ERROR: Failed to write Ed25519 public key."); Serial.println(); delay(SHORTWAIT);
 				return 0;
 			}
+
 		}
 		else {
 			Serial.println("New keys will not be written to the device."); Serial.println(); delay(SHORTWAIT);
@@ -481,7 +479,35 @@ uint16_t TezioHSM_Provision::provision(const uint8_t *RWKey, char *authKey) {
 			return 0;
 	}
 
-	Serial.println("Key derivation and provisioning completed succcessfully.");
+	// print PKHs
+	uint8_t pk_pkh_buffer[64]; // to hold pk and pkh
+	char pkh[37]; // extra space for null terminator
+	uint16_t pkhLength;
+
+	Serial.println("Key derivation and provisioning completed succcessfully."); Serial.println(); delay(SHORTWAIT);
+	Serial.println("Stored keys derived from the mnemonic phrase correspond to the following Tezos addresses."); Serial.println(); delay(SHORTWAIT);
+	
+	Serial.println("-- ED25519 Public Key Hash --"); Serial.println(); delay(SHORTWAIT);
+	memcpy(pk_pkh_buffer, edpk, ED_PK_SIZE);
+	pkhLength = encode_public_key(pk_pkh_buffer, ED_PK_SIZE, PKH_BASE58_CHECKSUM, ED25519);
+	memset(pkh, '\0', 37); 
+	memcpy(pkh, pk_pkh_buffer, pkhLength);
+	Serial.println(pkh); Serial.println(); delay(SHORTWAIT);
+
+	Serial.println("-- SECP256K1 Public Key Hash --"); Serial.println(); delay(SHORTWAIT);
+	memcpy(pk_pkh_buffer, sppk, SP_PK_SIZE);
+	pkhLength = encode_public_key(pk_pkh_buffer, SP_PK_SIZE, PKH_BASE58_CHECKSUM, SECP256K1);
+	memset(pkh, '\0', 37); 
+	memcpy(pkh, pk_pkh_buffer, pkhLength);
+	Serial.println(pkh); Serial.println(); delay(SHORTWAIT);
+	
+	Serial.println("-- NIST P256 Public Key Hash --"); Serial.println(); delay(SHORTWAIT);
+	memcpy(pk_pkh_buffer, p2pk, P2_PK_SIZE);
+	pkhLength = encode_public_key(pk_pkh_buffer, P2_PK_SIZE, PKH_BASE58_CHECKSUM, NISTP256);
+	memset(pkh, '\0', 37); 
+	memcpy(pkh, pk_pkh_buffer, pkhLength);
+	Serial.println(pkh); Serial.println(); delay(SHORTWAIT);
+	
 	return 1;
 }
 

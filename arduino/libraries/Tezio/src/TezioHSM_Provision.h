@@ -33,6 +33,8 @@ SOFTWARE. */
 #include <BLAKE2b.h>
 #include <uECC.h>
 
+#define PKH_BASE58_CHECKSUM 0x04
+
 class TezioHSM_Provision {
     
     private:

@@ -21,7 +21,7 @@ void run_op_get_pk_test(TezioHSM_API myHSM, uint8_t keyAlias, uint8_t mode) {
 
   uint16_t opResultLength;
   char charStrResult[128]; // to hold base58 encoded results for easy printing
-  start_serial();
+  // start_serial();
   Serial.println(curveNames[keyAlias]); 
   myHSM.packet.opCode = OP_GET_PK; // op_get_pk
   myHSM.packet.param1 = keyAlias;
@@ -30,11 +30,11 @@ void run_op_get_pk_test(TezioHSM_API myHSM, uint8_t keyAlias, uint8_t mode) {
   if (mode == 3 || mode == 4) {
     // print output as char string
     memset(charStrResult, '\0', sizeof(charStrResult));
-    memcpy(charStrResult, myHSM.buffer, opResultLength);
+    memcpy(charStrResult, myHSM.buffer, myHSM.bufferLength);
     Serial.println(charStrResult);
   }
   else {
-    print_hex_data(myHSM.buffer, opResultLength);
+    print_hex_data(myHSM.buffer, myHSM.bufferLength);
   }
   return;
 }
