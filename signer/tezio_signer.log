@@ -1015,3 +1015,7 @@ Traceback (most recent call last):
   File "/home/jeff/Documents/tezio/signer/tezio_signer.py", line 107, in keys
     if reply[0] == 0x00:
 TypeError: 'NoneType' object is not subscriptable
+[2024-04-05 13:01:41 -0400] [94332] [INFO] Starting gunicorn 20.1.0
+[2024-04-05 13:01:41 -0400] [94332] [INFO] Listening at: http://127.0.0.1:5000 (94332)
+[2024-04-05 13:01:41 -0400] [94332] [INFO] Using worker: sync
+[2024-04-05 13:01:41 -0400] [94333] [INFO] Booting worker with pid: 94333
