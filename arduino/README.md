@@ -73,3 +73,30 @@ Run the following
 
 sudo udevadm control --reload-rules
 sudo udevadm trigger
+
+# Octez Client and Node Setup
+
+Install octez-client and octez-node and octez-baker following instructions [here](https://tezos.gitlab.io/introduction/howtoget.html)
+
+## Configure and Run the Node
+
+octez-node config init --network=ghostnet
+octez-node update --rpc-addr="localhost:8732"
+octez-node snapshot import <FILE>
+octez-node run
+
+# Octez Client Setup
+
+## Import Keys From Tezio Signer
+
+octez-client import secret key <key_alias> http://localhost:5000/<tz_pkh>
+
+## Import Authentification Key for Tezio Signer
+
+octez-client import secret key <key_alias> unencrypted:<sk_b58_check>
+
+octez-client set consensus key for <baker_key_alias> to <baker_consensus_key_alias>
+
+## Run Baker
+
+octez-baker-Proxford run with local node ~/.tezos-node/ tezio_nistp256 --liquidity-baking-toggle-vote pass
