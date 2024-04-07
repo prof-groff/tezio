@@ -81,9 +81,18 @@ Install octez-client and octez-node and octez-baker following instructions [here
 ## Configure and Run the Node
 
 octez-node config init --network=ghostnet
-octez-node update --rpc-addr="localhost:8732"
+octez-node config update --rpc-addr="localhost:8732" --net-addr="[::]:9732" --history-mode=rolling
 octez-node snapshot import <FILE>
 octez-node run
+
+### Check if Node is Bootstrapped
+
+octez-client bootstrapped
+
+### Making the node persistent
+
+systemctl enable octez-node.service
+systemctl start octez-node.service
 
 # Octez Client Setup
 

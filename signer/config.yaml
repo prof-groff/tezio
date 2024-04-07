@@ -42,14 +42,17 @@ policy:
             curve_alias: 1
             allowed_ops: []
             auth_req: True
+            auth_prefix: "040100"
         "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5":
             curve_alias: 2
             allowed_ops: []
             auth_req: True
+            auth_prefix: "040101"
         "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j":
             curve_alias: 3
             allowed_ops: [0x11, 0x12, 0x13]
             auth_req: True
+            auth_prefix: "040102"
     auth_key:
         pkh:
             "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"

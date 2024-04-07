@@ -101,7 +101,7 @@ def keys(pkh):
                 return ERROR_401
             else:
                 # validate the signature
-                signed_message = bytearray.fromhex(P2_AUTH_SIG_PREFIX) + bytearray.fromhex(signing_keys[pkh]['pkh_bytes']) + dataBytes
+                signed_message = bytearray.fromhex(signing_keys[pkh]['auth_prefix']) + bytearray.fromhex(signing_keys[pkh]['pkh_bytes']) + dataBytes
                 wallet = TezioHSM(auth_key['curve_alias'])
                 reply = wallet.verify(SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, signed_message, authSig)                
                 if reply[0] == 0x00:
