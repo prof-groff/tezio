@@ -104,8 +104,10 @@ octez-client import secret key <key_alias> http://localhost:5000/<tz_pkh>
 
 octez-client import secret key <key_alias> unencrypted:<sk_b58_check>
 
-octez-client set consensus key for <baker_key_alias> to <baker_consensus_key_alias>
-
 ## Run Baker
+
+octez-client register key <baker_key_alias> as delegate
+
+octez-client set consensus key for <baker_key_alias> to <baker_consensus_key_alias>
 
 octez-baker-Proxford run with local node ~/.tezos-node/ tezio_nistp256 --liquidity-baking-toggle-vote pass
