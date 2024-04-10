@@ -32,14 +32,19 @@ TezioHSM_API myHSM(baud, readWriteKey);
 void setup() {
 
   if(!debug) {
+
+    myHSM.enable_tezos_op(TZ1, TRANSFER);
+    myHSM.enable_tezos_op(TZ2, TRANSFER);
+    myHSM.enable_tezos_op(TZ3, TRANSFER);
+    myHSM.enable_tezos_op(TZ3_AUTH, TRANSFER);
     
     myHSM.enable_tezos_op(TZ3, BLOCK);
     myHSM.enable_tezos_op(TZ3, PRE_ATTESTATION);
     myHSM.enable_tezos_op(TZ3, ATTESTATION);
 
-    myHSM.disable_hsm_op(TZ3_AUTH, OP_SIGN);
-    myHSM.disable_hsm_op(TZ1, OP_SIGN);
-    myHSM.disable_hsm_op(TZ2, OP_SIGN);
+    // myHSM.disable_hsm_op(TZ3_AUTH, OP_SIGN);
+    // myHSM.disable_hsm_op(TZ1, OP_SIGN);
+    // myHSM.disable_hsm_op(TZ2, OP_SIGN);
 
     myHSM.set_level_hwm(TZ3, BLOCK, 0);
     myHSM.set_level_hwm(TZ3, PRE_ATTESTATION, 0);

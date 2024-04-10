@@ -62,3 +62,7 @@ sudo supervisorctl update
 ## Check Daemon Status
 
 sudo supvervisorctl status
+
+## Requirements
+
+pip install flask, base58, pyserial
