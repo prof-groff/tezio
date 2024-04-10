@@ -1,5 +1,3 @@
 # About 
 
 Tezio (tez-eye-oh) develops open-source software and hardware tools for the Tezos blockchain. In particular, the focus is on development of tools that enable low-cost Arduino or Arduino-compatible devices to interact with Tezos. Arduino is an ecosystem of open-source hardware and software that facilitates the rapid development of embedded electronic devices and physical computers that sense and respond to environmental stimuli. Arduino is an important tool of makers, a technology-centric DIY community that celebrates entrepreneurship and recognizes the capacity of individuals to create and innovate as part of a culture of open collaboration.
-
-[Home](https://tezio.cc)
