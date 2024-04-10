@@ -71,14 +71,14 @@ Connect your Arduino to your computer via USB and navigate to Tools > Port to ve
 
 ## Step 3: Upload the API Sketch
 
-Navigate to File > Examples > Tezio and open the TezioHSM_API.ino sketch. Save a copy of this sketch and edit api_secrets.h to include the same read/write key provisioned to the device earlier. The API sketch can be run in debug (interactive) mode using the Arduino IDE's Serial Monitor. However, the debug flag is set to false by default putting the device into listening mode. In this mode the device can be connected via USB to any host machine and recieve and send data via a serial connection. The API includes three HSM operations. **OP_GET_PK** retreives the public key or public key hash for any of the keys provisioned on the device. **OP_VERIFY** performs signature varification. **OP_SIGN** generates a signature for a message using one of the provisioned secret keys. By default, the API enables all HSM operations for all keys but the API includes the ability to disable specific HSM operations for certain keys. Even if **OP_SIGN** is not disabled for a given key, all Tezos signing requests are refused by the API by default. Requests for specific operations types may be enabled via a separate policy according to the prefix byte (magic byte) that accompanies these operations. Follow the documentation within the TezioHSM_API.ino sketch to configure the HSM, disabling forbidden HSM operations and enabling desired Tezos operation. Once the sketch is uploaded to the device, it will begin running and will restart whenever power is supplied to the device. That's it, your Tezio HSM is ready.
+Navigate to File > Examples > Tezio and open the TezioHSM_API.ino sketch. Save a copy of this sketch and edit api_secrets.h to include the same read/write key provisioned to the device earlier. The API sketch can be run in debug (interactive) mode using the Arduino IDE's Serial Monitor. However, the debug flag is set to false by default putting the device into listening mode. In this mode the device can be connected via USB to any host machine and recieve and send data via a serial connection. The API includes three HSM operations. **OP_GET_PK** retreives the public key or public key hash for any of the keys provisioned on the device. **OP_VERIFY** performs signature varification. **OP_SIGN** generates a signature for a message using one of the provisioned secret keys. By default, the API enables all HSM operations for all keys but the API includes the ability to disable specific HSM operations for certain keys using the **disable_hsm_op** method. Even if **OP_SIGN** is not disabled for a given key, all Tezos signing requests are refused by the API by default. Requests for specific operations types may be enabled via a separate policy according to the prefix byte (magic byte) that accompanies these operations using the **enable_tezos_op** method. Follow the documentation within the TezioHSM_API.ino sketch to configure the HSM, disabling forbidden HSM operations and enabling desired Tezos operation. Then compile and upload the skecth. Once the sketch is uploaded to the device, it will begin running and will restart whenever power is supplied to the device. That's it, your Tezio HSM is ready.
 
 <a name="api_reference"></a> 
-## API Reference
+# API Reference
 
-The API sketch invokes the TezioHSM_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. This hardware support also means that cryptographic functions involving the NIST P256 curve are much faster than those of the other supported curves. See the .ipynb included in the [GitHub repository](https://github.com/prof-groff/tezio/tree/main/arduino) for example interactions with a Tezio Wallet using Python.
+The API sketch invokes the TezioHSM_API class to expose certain cryptographic tools to the host device. Importantly, private (secret) keys never leave the device. In fact, the cryptochip implements hardware support for cryptographic functions using the NIST P256 curve so the NIST P256 secret key never leaves the cryptochip's secure element. The ED25519 and SECP256K1 secret keys may be retreived from the secure element by the microcontroller but all reads are encrypted using the read/write key provided by the user during setup. The hardware support for the NIST P256 key makes cryptographic functions involving this key significantly faster than those of the other supported curves. 
 
-### Communication and Packets
+## Communication and Packets
 
 Communication between the Tezio Wallet and a host computer is via a USB serial connection. Data is sent as packets of bytes. Packets sent from the host computer to the Tezio Wallet have four components, a prefix byte, a length byte, one or more body bytes, and two checksum bytes:
 
@@ -96,79 +96,82 @@ Packets of bytes received by the host from the hardware wallet have the followin
 
 The contents of the body depends on the operation that was called and no prefix is needed since the host expects a prompt reply and doesn't need to listen for a reply to be sent.
 
-### Operations
+## HSM Operations
 
-#### Get Public Key (op_get_pk)
+### Get Public Key (OP_GET_PK)
 
 Returns the public key for a specific curve. The returned key can be be raw bytes, compressed, base58 checksum encoding, or hashed (Tezos Address). 
 
-| Packet Vars | Value |
-|-------------|-------| 
-| opCode      | 0x11  |
-| param1      | curve |
-| param2      | mode  |
-| param3      | -     |
-| data        | -     |
+| packet vars | value             |
+|-------------|-------------------| 
+| opCode      | 0x11              |
+| param1      | curve/key alias   |
+| param2      | public key format |
+| param3      | -                 |
+| data        | -                 |
 
-| curve | ECC curve |
-|-------|-----------|
-| 0x01  | Ed25519   |
-| 0x02  | Secp256k1 |
-| 0x03  | NIST P256 |
+| curve/key alias      | value |
+|----------------------|-------|
+| auth key (NIST P256) | 0x00  |
+| Tezos Ed25519 key    | 0x01  |
+| Tezos Secp256k1 key  | 0x02  |
+| Tezos NIST P256 key  | 0x03  |
 
-| mode | Public Key Format           |
-|------|-----------------------------|
-| 0x01 | Raw (32 or 64 bytes)        |
-| 0x02 | Compressed (32 or 33 bytes) |
-| 0x03 | Base58 Checksum Encoded     |
-| 0x04 | Hashed (Tezos Address)      |
+| public key format           | value |
+|-----------------------------|-------|
+| raw (32 or 64 bytes)        | 0x01  |
+| compressed (32 or 33 bytes) | 0x02  |
+| base58 checksum encoded     | 0x03  |
+| hashed (Tezos address)      | 0x04  |
 
-#### Sign (op_sign)
+### Sign a Message (OP_SIGN)
 
-Signs a message using the secret key for a speciric curve. The message can be prehashed by the host system or sent as raw bytes. The returned signature can be raw bytes or base58 checksum encoded. This operaiton does not use param3 but a value must be included in the packet since data is included. 
+Signs a message using the secret key for a specific curve and returns the signature. The message can be prehashed by the host system or sent as raw bytes. The default buffer size allows messages to be up to 1015 bytes in length. The returned signature can be raw bytes or base58 checksum encoded. This operaiton does not use param3 but a value must be included in the packet since data is included. 
 
-| Packet Vars | Value  |
-|-------------|--------| 
-| opCode      | 0x21   |
-| param1      | curve  |
-| param2      | mode   |
-| param3      | 0x0000 |
-| data        | message|
+| packet vars | value                    |
+|-------------|--------------------------| 
+| opCode      | 0x21                     |
+| param1      | curve/key alias          |
+| param2      | message/signature format |
+| param3      | 0x0000                   |
+| data        | message                  |
 
-| curve | ECC curve |
-|-------|-----------|
-| 0x01  | Ed25519   |
-| 0x02  | Secp256k1 |
-| 0x03  | NIST P256 |
+| curve/key alias      | value |
+|----------------------|-------|
+| auth key (NIST P256) | 0x00  |
+| Tezos Ed25519 key    | 0x01  |
+| Tezos Secp256k1 key  | 0x02  |
+| Tezos NIST P256 key  | 0x03  |
 
-| mode | message hashed | signature format        |
-|------|----------------|-------------------------|
-| 0x01 | yes            | Raw (64 bytes)          |
-| 0x02 | yes            | Base58 Checksum Encoded |
-| 0x03 | no             | Raw (64 bytes)          |
-| 0x04 | no             | Base58 Checksum Encoded |
+| message format | signature format        | value |
+|----------------|-------------------------|-------|
+| hashed         | raw (64 bytes)          | 0x01  |
+| hashed         | base58 checksum encoded | 0x02  |
+| not hashed     | raw (64 bytes)          | 0x03  |
+| not hashed     | base58 checksum encoded | 0x04  |
 
-#### Verify (op_verify)
+### Verify a Signature (OP_VERIFY)
 
-Verifies that a signature is valid for a given message and specific curve. The message can be hashed or unhashed and the signature can be raw bytes or base58 checksum encoded. The data portion of the packet body is the message with the signature appended to it. Parameter 3 gives the message length and is not necessary if the message is pre-hashed because a hashed message is always 32 bytes long. 
+Verifies that a signature is valid for a given message and specific curve. The message can be hashed or unhashed and the signature can be raw bytes or base58 checksum encoded. The data portion of the packet body is the message with the signature appended to it. Parameter 3 gives the message length and is not necessary if the message is pre-hashed because a hashed message is always 32 bytes long. The maximum message size depends on the format of the signature but the default buffer size allows for a message of at least 916 bytes. 
 
-| Packet Vars | Value              |
-|-------------|--------------------| 
-| opCode      | 0x22               |
-| param1      | curve              |
-| param2      | mode               |
-| param3      | message length     |
-| data        | message + signature|
+| packet cars | value                    |
+|-------------|--------------------------| 
+| opCode      | 0x22                     |
+| param1      | curve/key alias          |
+| param2      | message/signature format |
+| param3      | message length           |
+| data        | message + signature      |
 
-| curve | ECC curve |
-|-------|-----------|
-| 0x01  | Ed25519   |
-| 0x02  | Secp256k1 |
-| 0x03  | NIST P256 |
+| curve/key alias      | value |
+|----------------------|-------|
+| auth key (NIST P256) | 0x00  |
+| Tezos Ed25519 key    | 0x01  |
+| Tezos Secp256k1 key  | 0x02  |
+| Tezos NIST P256 key  | 0x03  |
 
-| mode | message hashed | signature format        |
-|------|----------------|-------------------------|
-| 0x01 | yes            | Raw (64 bytes)          |
-| 0x02 | yes            | Base58 Checksum Encoded |
-| 0x03 | no             | Raw (64 bytes)          |
-| 0x04 | no             | Base58 Checksum Encoded |
+| message format | signature format        | value |
+|----------------|-------------------------|-------|
+| hashed         | raw (64 bytes)          | 0x01  |
+| hashed         | vase58 checksum encoded | 0x02  |
+| not hashed     | raw (64 bytes)          | 0x03  |
+| not hashed     | base58 checksum encoded | 0x04  |
