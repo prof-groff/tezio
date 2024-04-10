@@ -102,8 +102,6 @@ The contents of the body depends on the operation that was called and no prefix 
 
 Returns the public key for a specific curve. The returned key can be be raw bytes, compressed, base58 checksum encoding, or hashed (Tezos Address). 
 
-<center>
-
 | packet vars | value             |
 |-------------|-------------------| 
 | opCode      | 0x11              |
@@ -125,8 +123,6 @@ Returns the public key for a specific curve. The returned key can be be raw byte
 | compressed (32 or 33 bytes) | 0x02  |
 | base58 checksum encoded     | 0x03  |
 | hashed (Tezos address)      | 0x04  |
-
-</center>
 
 ### Sign a Message (OP_SIGN)
 
