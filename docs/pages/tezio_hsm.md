@@ -88,17 +88,23 @@ The API sketch invokes the TezioHSM_API class to expose certain cryptographic to
 
 Communication between the Tezio Wallet and a host computer is via a USB serial connection. Data is sent as packets of bytes. Packets sent from the host computer to the Tezio Wallet have four components, a prefix byte, a length byte, one or more body bytes, and two checksum bytes:
 
-`packet = prefix [1 byte] + length [1 byte] + body [1 or more bytes] + checksum [2 bytes]`
+```
+packet = prefix [1 byte] + length [1 byte] + body [1 or more bytes] + checksum [2 bytes]
+```
 
 The contents of the body depends on the command being sent but in general is is composed of an operation code byte (opCode), one or more parameter bytes, and data bytes.
 
-`body = opCode [1 byte] + param1 [1 byte] + param2 [1 byte] + param3 [2 bytes] + data [1 or more bytes]`
+```
+body = opCode [1 byte] + param1 [1 byte] + param2 [1 byte] + param3 [2 bytes] + data [1 or more bytes]
+```
 
 The opCode is always required but some calls may not require data or all parameters. However, if data is sent then values for all parameters must also be included even if 0s are used as placeholders. Parameter 3 is represented in code as a 16-bit variable but is always sent over serial as two bytes with the the LSB first. Packets are constructed as follows: First the body is constructed. The length byte is the length of the body in bytes plus 3 to account for both the length byte itself and the checksum bytes. The length byte is prepended to the body and the checksum is calculated using a 16-bit cyclic redundancy check algorithm. The checksum is appended to the body LSB first. Finally the prefix byte is prepended. The prefix is always 0x03 and serves as a listening byte for the hardware wallet to detect incoming communication. 
 
 Packets of bytes received by the host from the hardware wallet have the following structure:
 
-`packet = length [1 byte] + body [1 or more bytes] + checksum [2 bytes]`
+```
+packet = length [1 byte] + body [1 or more bytes] + checksum [2 bytes]
+```
 
 The contents of the body depends on the operation that was called and no prefix is needed since the host expects a prompt reply and doesn't need to listen for a reply to be sent.
 

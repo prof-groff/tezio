@@ -1,3 +1,5 @@
+# Projects
+
 ## Tezio HSM
 
 Tezio HSM is an Arduino-based hardware security module for the Tezos blockchain. Tezio HSM is currently compatible with the Arduino Nano 33 IoT and the Arduino MKR WiFi 1010, both of which include a cryptographic coprocessor (i.e., secure element) to securely store keys and perform certain crytpographic functions. 
@@ -11,3 +13,5 @@ Tezio Signer is a Python Flask application for handling Tezos signing requests f
 [Learn more ...](tezio_signer.md)
 
 ## Tezio Tools
+
+Tezio Tools are a collection of Python scripts and Tezos smart contracts written in Ligo or SmartPy. 
