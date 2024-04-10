@@ -1,4 +1,4 @@
-## (tez-eye-oh)
+# (tez-eye-oh)
 
 ## [About](pages/about.md)
 
