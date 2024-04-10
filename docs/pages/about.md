@@ -1,8 +1,3 @@
 # About 
 
-The Tezio (tez-eye-oh) Project aims to make blockchain, Tezos specifically, accessible for the maker community. Makers are a technology-centric DIY culture enabled by low-cost open technologies that celebrates (but doesn't necessarily emphasize) entrepreneurship, and recognizes the capacity of individuals to create and innovate, and the power of a community of like-minded individuals to facilitate this process. 
-
-Currently, the Tezio Project has three dimensions. 
-  - To eductate the community about blockchain technology and Tezos. 
-  - To contribute to the Tezos ecosystem by starting a bakery, the Tezos name for a network node that forms and validates new blocks.
-  - To develop open software and hardware tools for the Tezos blockchain.
+Tezio (tez-eye-oh) develops open-source software and hardware tools for the Tezos blockchain. In particular, the focus is on development of tools that enable low-cost Arduino or Arduino-compatible devices to interact with Tezos. Arduino is an ecosystem of open-source hardware and software that facilitates the rapid development of embedded electronic devices and physical computers that sense and respond to environmental stimuli. Arduino is an important tool of makers, a technology-centric DIY community that celebrates entrepreneurship and recognizes the capacity of individuals to create and innovate as part of a culture of open collaboration.
