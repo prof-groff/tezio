@@ -1,3 +1,8 @@
-# Educational Resources
+# Educational
 
-How are Tezos addresses deterministically determined from mnemonic phrases? [Click here to find out.](tezos_hd_wallets.md)
+- How are Tezos addresses deterministically determined from mnemonic phrases? [Learn more...](tezos_hd_wallets.md)
+- What are the domains of the elliptic curves used on Tezos? [Learn more...](crypto_notes.md)
+- What are cryptographic co-processors? [Learn more...](cryptoprocessor.md)
+
+
+

@@ -4,6 +4,6 @@
 
 ## [Projects](pages/projects.md)
 
-## [Educational Resources](pages/educational.md)
+## [Educational](pages/educational.md)
 
 ## [Public Baker](pages/baker.md)

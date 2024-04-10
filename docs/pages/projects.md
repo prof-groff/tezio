@@ -15,3 +15,5 @@ Tezio Signer is a Python Flask application for handling Tezos signing requests f
 ## Tezio Tools
 
 Tezio Tools are a collection of Python scripts and Tezos smart contracts written in Ligo or SmartPy. 
+
+[Learn more ...](tezio_tools.md)
