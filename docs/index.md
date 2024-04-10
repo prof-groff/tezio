@@ -7,3 +7,5 @@
 ## [Educational Resources](pages/educational.md)
 
 ## [Public Baker](pages/baker.md)
+
+## [Home](https://tezio.cc)
