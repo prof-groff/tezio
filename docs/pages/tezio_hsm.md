@@ -1,6 +1,6 @@
 # Tezio HSM
 
-Welcome to Tezio HSM, an Arduino-based hardware security module for the Tezos blockchain. Tezio HSM is currently compatible with the Arduino Nano 33 IoT and the Arduino MKR WiFi 1010, both of which include a cryptographic coprocessor (i.e., secure element) to securely store keys and perform certain crytpographic functions. 
+Tezio HSM is an Arduino-based hardware security module for the Tezos blockchain. Tezio HSM is currently compatible with the Arduino Nano 33 IoT and the Arduino MKR WiFi 1010, both of which include a cryptographic coprocessor (i.e., secure element) to securely store keys and perform certain crytpographic functions. 
 
 ## Contents
 
@@ -16,7 +16,7 @@ Welcome to Tezio HSM, an Arduino-based hardware security module for the Tezos bl
 <a name="getting_started"></a> 
 ## Getting Started
 
-Setting up Tezio HSM on your Arduino is a three step process. First, the Arduino IDE and library files are installed. Next, the cryptographic co-processor is configured, provisioned, and locked. Finally, the Tezio API is installed. 
+Getting started with Tezio HSM requires that you first install the Arduino IDE and library files. Next, the cryptographic co-processor is provisioned. The last step is to configure and install the the Tezio API.
 
 ### Step 1: Installation of the Arduino IDE and Library Files
 
