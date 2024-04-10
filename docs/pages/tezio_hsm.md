@@ -36,17 +36,23 @@ Udev is the Linux subsystem that detects when devices are connected and disconne
 
 **Navigate to the udev rules directory and create a new rules file for Arduino devices.**
 
+```console
  cd /etc/udev/rules.d/
  sudo nano 99-arduino.rules
+ ```
 
  **Add the following line to the new rules file.**
 
+ ```
  SUBSYSTEM=="tty", KERNEL=="ttyACM[0-9]*", GROUP="dialout", MODE:="0666"
+ ```
 
 **Save the edits, exit, and run the following commands.**
 
+```console
 sudo udevadm control --reload-rules
 sudo udevadm trigger
+```
 
 ### Install the Tezio Library and Dependencies
 

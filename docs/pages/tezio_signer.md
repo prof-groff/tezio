@@ -20,14 +20,18 @@ Flask's built in WSGI server is only meant for testing. Therefore, it is advisab
 
 ## Install Gunicorn
 
-<code>sudo apt-get update</code>
-<code>sudo apt-get install gunicorn</code>
+```console
+sudo apt-get update
+sudo apt-get install gunicorn
+```
 
 ## Run the App
 
-<code>cd [PATH_TO_TEZIO_REPO]/signer
+```console
+cd [PATH_TO_TEZIO_REPO]/signer
 chmod u+x tezio_signer.py
-gunicorn --bind 127:0.0.1:[PORT] tezio_signer:app</code>
+gunicorn --bind 127:0.0.1:[PORT] tezio_signer:app
+```
 
 # Running Tezio Signer as a Persistent Daemon 
 
@@ -35,20 +39,27 @@ There are several options to accomplish this. One possibility is to run as a bac
 
 ## Install Supervisor
 
+```console
 sudo apt-get update
 sudo apt-get install supervisor
+```
 
 ## Check Supervisor Status
 
+```console
 sudo systemctl status supervisor
+```
 
 ## Create a Configuration File for Tezio Signer
 
+```console
 cd /etc/supervisor/conf.d
 sudo nano tezio-signer.conf
+```
 
 ## Compose the Configuration File's Content
 
+```
 [program:tezio_signer_flask_app_via_gunicorn]
 user=[USER_NAME]
 directory=[PATH_TO_TEZIO_REPO]/signer
@@ -57,15 +68,20 @@ autostart=true
 autorestart=true
 stdout_logfile=[PATH_TO_TEZIO_REPO]/signer/tezio_signer_out.log
 stderr_logfile=[PATH_TO_TEZIO_REPO]/tezio_signer.log
+```
 
 ## Update Supervisor
 
+```console
 sudo supervisorctl reread
 sudo supervisorctl update
+```
 
 ## Check Daemon Status
 
+```console
 sudo supvervisorctl status
+```
 
 ## Requirements
 
