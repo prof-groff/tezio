@@ -38,23 +38,23 @@ allowed_ips:
 
 policy:
     signing_keys:
-        "tz1MPxCXbc1mNHSDA9fXXRTTdVY1r1yDkjn7":
+        "tz1bUuHY8EPNcMaLoXkeRkfxzzSeVS51Zdd5":
             curve_alias: 1
             allowed_ops: [0x03]
             auth_req: True
             auth_prefix: "040100"
-        "tz2Wk2wpRs3U3Pu2XFdjjqRz84LLynKqv3jd":
+        "tz2UsL2kos6EzKQHynKEdRG5M6JrfDqpXqi5":
             curve_alias: 2
             allowed_ops: [0x03]
             auth_req: True
             auth_prefix: "040101"
-        "tz3WqrfXaNnCckfofeeCGAehhZhZQ6nShz3i":
+        "tz3bcN2yEiHacx1YE6xoVu1CfU26J3rRKB1j":
             curve_alias: 3
             allowed_ops: [0x03, 0x11, 0x12, 0x13]
             auth_req: True
             auth_prefix: "040102"
     auth_key:
         pkh:
-            "tz3RunZg4JQw5Hiy7mDpPCTgVpiCXkP9JMT6"
+            "tz3bhz3h8CXPeUF4gmsGrsyT7sJUcqhrWpVs"
         curve_alias:
             0

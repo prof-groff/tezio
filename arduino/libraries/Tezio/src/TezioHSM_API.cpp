@@ -742,7 +742,6 @@ uint16_t TezioHSM_API::wait_for_start_byte()
 		{
 			if (Serial.read() == START_BYTE)
 			{
-				delay(1); // data incoming, short wait for bytes to arrive
 				statusCode = START_BYTE_FOUND;
 				break;
 			}
