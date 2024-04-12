@@ -9,40 +9,52 @@ import time
 
 # TezioHSM_API Parameters
 PK_BASE58_CHECKSUM = 0x03
+PK_HASH = 0x04
 SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED = 0x04
 SIG_RAW_BYTES_MESSAGE_HASHED = 0x01  # hashed messages will not be signed because of signing policy looking for magic byte
 SIG_BASE58_CHECKSUM_MESSAGE_HASHED = 0x02
 SIG_RAW_BYTES_MESSAGE_UNHASHED = 0x03 
 
+SIGNING_KEY_ALIASES = [1, 2, 3]
+SIGNING_KEY_PREFIXES = {'tz1': {'auth_prefix': "040100", 'sig_prefix': "edsig"}, 
+                      'tz2': {'auth_prefix': "040101", 'sig_prefix': "spsig"},
+                      'tz3': {'auth_prefix': "040102", 'sig_prefix': "p2sig"}}
+AUTH_KEY_ALIAS = 0
+
 # Constants
 PKH_B58_PREFIX_LENGTH = 3
-P2_AUTH_SIG_PREFIX = '040102' # I believe the SP prefix (tz2 addresses) is 040101 and don't know the ED (tz1) prefix (040100???)
 BAUD = 115200
 
 # Load Configuration
 with open('config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
-policy = config['policy']
 security = config['security']
-signing_keys = policy['signing_keys']
-auth_key = policy['auth_key']
 allowed_ips = config['allowed_ips']
-hwms = config['high_water_marks']
-pkhs = list(policy['signing_keys'].keys())
-
-# Decode the base58 checksum encoded tezos addresses for the signing keys.
-# This is needed because it is part of the message signed by Octez using the authentification key.
-for pkh in pkhs:
-    signing_keys[pkh]['pkh_bytes'] = b58decode_check(pkh)[PKH_B58_PREFIX_LENGTH:].hex() # remove prefix
 
 wallet = TezioHSM(BAUD)
 
+# retrieve pkh of signing keys from Tezio HSM
+signing_keys = dict()
+for KEY in SIGNING_KEY_ALIASES:
+    public_key_hash = wallet.get_pk(KEY, PK_HASH).decode('utf-8')
+    pkh_prefix = public_key_hash[0:3]
+    signing_keys[public_key_hash] = SIGNING_KEY_PREFIXES[pkh_prefix]
+    signing_keys[public_key_hash]['curve_alias'] = KEY
+
+pkhs = list(signing_keys.keys())
+
+# Decode the base58 checksum encoded tezos addresses for the signing keys.
+for pkh in pkhs:
+    signing_keys[pkh]['pkh_bytes'] = b58decode_check(pkh)[PKH_B58_PREFIX_LENGTH:].hex() # remove prefix
+
+# retrieve pkh of auth key from Tezio HSM
+auth_key = {}
+auth_key['pkh'] = wallet.get_pk(AUTH_KEY_ALIAS, PK_HASH).decode('utf-8')
+auth_key['curve_alias'] = AUTH_KEY_ALIAS
 # retrieve auth key pk
 auth_pk = wallet.get_pk(auth_key['curve_alias'], PK_BASE58_CHECKSUM).decode('utf-8')
-print(auth_pk)
 auth_pk_obj = key.Key.from_encoded_key(auth_pk)
-print(auth_pk_obj.public_key_hash())
 
 app = Flask(__name__)
 
@@ -54,15 +66,12 @@ def home():
 
 @app.route('/keys/<pkh>', methods=['GET', 'POST'])
 def keys(pkh):
-    start = time.time()
     if security['remote_ip_check']: # check if request is from an allowed remote ip
         if request.remote_addr in allowed_ips:
             pass
         else:
             ERROR_403 = make_response('Requests from this address are forbidden.')
             ERROR_403.status_code = 403
-            end = time.time()
-            print('error: ', end-start)
             return ERROR_403
 
     # Is the request for a signing key stored in the Tezio HSM?
@@ -71,8 +80,6 @@ def keys(pkh):
     else:
         ERROR_404 = make_response('Requested public key was not found.')
         ERROR_404.status_code = 404
-        end = time.time()
-        print('error: ', end-start)
         return ERROR_404
         
     # Is the request method GET or POST?
@@ -85,15 +92,11 @@ def keys(pkh):
         if len(reply) == 1: # error occured, status code returned
             response = jsonify(hex(reply[0]))
             response.status_code = 500 # server error
-            end = time.time()
-            print('error: ', end-start)
             return response
         else:
             pk = reply.decode('utf-8')
             response = jsonify({'public_key': pk})
             response.status_code = 200
-            end = time.time()
-            print('public key: ', end-start)
             return response
         
     elif request.method == 'POST':
@@ -108,24 +111,12 @@ def keys(pkh):
         magicByte = dataBytes[0]
         # authentication signature might be included
         authSig = request.args.get('authentication')
-         # Does the requested signing key allow the operation type?
-        if security['signing_policy_check']:
-            if magicByte in signing_keys[pkh]['allowed_ops']:
-                pass
-            else:
-                ERROR_405 = make_response('The request tezos operation is not enabled for this key.')
-                ERROR_405.status_code = 405
-                end = time.time()
-                print('error: ', end-start)
-                return ERROR_405
-
+       
         # Does the requested signing key require authentication?
-        if security['auth_check'] and signing_keys[pkh]['auth_req']:
+        if security['auth_check']:
             if authSig == None: # authentication is required but no signature was included with request
                 ERROR_401 = make_response('A signed request is required for this key.')
                 ERROR_401.status_code = 401
-                end = time.time()
-                print('error: ', end-start)
                 return ERROR_401
             else:
                 # validate the signature
@@ -140,46 +131,14 @@ def keys(pkh):
                 if not valid:
                     ERROR_401 = make_response("Authentication signature is not valid.")
                     ERROR_401.status_code = 401
-                    end = time.time()
-                    print('error: ', end-start)
                     return ERROR_401
                 # elif reply[0] != 0x01:
                 #    response = jsonify(hex(reply[0]))
                 #    response.status_code = 500 # server error
-                #    end = time.time()
-                #    print('error: ', end-start)
                 #    return response
                 else:
                     pass
 
-        # Is this a baking request?
-        if security['high_water_mark_check'] and magicByte in [0x11, 0x12, 0x13]:
-            # check level and round are valid
-            # level and round should be included in the data to be signed
-            current_level = 0
-            current_round = 0
-            if magicByte in [0x12, 0x13]:
-                current_level = int.from_bytes(dataBytes[40:44], "big")
-                current_round = int.from_bytes(dataBytes[44:48], "big")
-            else:
-                current_level = int.from_bytes(dataBytes[5:9], "big")
-                nFitnessBytes = int.from_bytes(dataBytes[83:87], "big")
-                current_round = int.from_bytes(dataBytes[87 + nFitnessBytes - 4: 87 + nFitnessBytes], "big")
-
-            # if current level and round are the same as the those for last baking operation, don't sign
-            if (current_level < hwms['level'][magicByte]) or (current_level == hwms['level'][magicByte] and current_round <= hwms['round'][magicByte]):
-                ERROR_403 = make_response('The request is to sign a baking operation but one of this type has already been signed at this level and round.')
-                ERROR_403.status_code = 403
-                end = time.time()
-                print('error: ', end-start)
-                return ERROR_403
-            else:
-                hwms['level'][magicByte] = current_level
-                hwms['round'][magicByte] = current_round
-                if config['verbose']:
-                    print('hwms: ', hwms, '\n')
-                pass 
-        
         else:
             pass
 
@@ -189,45 +148,40 @@ def keys(pkh):
         # hashed_message = bytearray.fromhex(key.blake2b_32(bytes(dataBytes)).hexdigest())
         # reply = wallet.sign(signing_keys[pkh]['curve_alias'], SIG_BASE58_CHECKSUM_MESSAGE_HASHED, hashed_message)
         # print(reply)
-
+        start = time.time()
         # reply = wallet.sign(signing_keys[pkh]['curve_alias'], SIG_BASE58_CHECKSUM_MESSAGE_UNHASHED, dataBytes)
         reply = wallet.sign(signing_keys[pkh]['curve_alias'], SIG_RAW_BYTES_MESSAGE_UNHASHED, dataBytes)
-        
+        end = time.time()
+        print("call to HSM time: ", end-start)
 
         if (len(reply) == 1):
             response = jsonify(hex(reply[0]))
             response.status_code = 500 # server error
-            end = time.time()
-            print('error: ', end-start)
             return response
         else:
-            signature = encoding.base58_encode(reply, b"p2sig")
+            start = time.time()
+            signature = encoding.base58_encode(reply, bytes(signing_keys[pkh]['sig_prefix'], 'utf-8'))
             # signature = reply
+            end = time.time()
+            print("post processing: ", end-start)
 
             response = make_response(jsonify({'signature': signature.decode('utf-8')}))
             response.status_code = 200
-            end = time.time()
-            print('signature: ', end-start)
             return response
 
     else:
         response = make_response('Bad Request')
         response.status_code = 400
-        end = time.time()
-        print('signature: ', end-start)
         return response
         
 @app.route('/authorized_keys', methods=['GET'])
 def authorized_keys():
-    start = time.time()
     if auth_key['pkh'] == None:
         response = jsonify({})
     else:
         response = make_response(jsonify({'authorized_keys': [auth_key['pkh']]}))
     
     response.status_code = 200
-    end = time.time()
-    print('auth key retreive: ', end-start)
     return response
                                             
 # main driver function

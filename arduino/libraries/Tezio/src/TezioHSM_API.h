@@ -84,6 +84,7 @@ SOFTWARE. */
 #define FAILED_ENCRYPTED_WRITE 0xB6
 #define FAILED_CLEAR_WRITE 0xB7
 #define SIGNING_OPERATION_FORBIDDEN_BY_POLICY 0xB8
+#define SIGNING_POLICY_ENABLED_BUT_MESSAGE_HASHED 0xB9
 
 #define INVALID_KEY_ALIAS 0xA0
 #define CRYPTOCHIP_FAILED_TO_INITIALIZE 0xA1
@@ -125,7 +126,7 @@ typedef struct {
 
 typedef struct {
     uint8_t tezos_ops[N_TEZOS_OPS] = {0}; // no ops allowed by default
-	uint8_t hsm_ops[N_HSM_OPS] = {0}; // no ops allowed by default
+	bool enabled = false;
 } policyStruct;
 
 class TezioHSM_API {
@@ -145,6 +146,8 @@ class TezioHSM_API {
 		uint16_t validate_param_3(uint16_t param, uint16_t minVal, uint16_t maxVal);
 		uint16_t validate_data(uint8_t *data, uint16_t dataLength, uint16_t minLength, uint16_t maxLength);
 		uint16_t reset_packet();
+		
+		Cryptochip myChip;
 		
     public:
 	
@@ -169,7 +172,6 @@ class TezioHSM_API {
 		uint16_t send_status_code();
 
 		void enable_tezos_op(uint8_t key_alias, uint8_t op);
-		void disable_hsm_op(uint8_t key_alias, uint8_t op);
 
 		void set_level_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);
 		void set_round_hwm(uint8_t key_alias, uint8_t baking_op, uint32_t hwmValue);

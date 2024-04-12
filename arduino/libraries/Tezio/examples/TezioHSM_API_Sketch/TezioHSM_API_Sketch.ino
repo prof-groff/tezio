@@ -78,17 +78,17 @@ void loop() {
       	if (myHSM.validate_packet() == 0) {
         	// fail, send error code and proceed after short wait
         	myHSM.send_status_code();
-        	delay(1);
+        	// delay(1);
       	}
       	else if (myHSM.parse_message() == 0) {
         	// fail, send error code and proceed after short wait
         	myHSM.send_status_code();
-        	delay(1);
+        	// delay(1);
 		}
       	else if (myHSM.execute_op() == 0) {
         	// failed to execute op command
         	myHSM.send_status_code();
-        	delay(1);
+        	// delay(1);
       	}
       	else {
         	myHSM.send_reply();

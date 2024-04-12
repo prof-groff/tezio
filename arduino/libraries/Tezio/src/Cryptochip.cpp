@@ -787,6 +787,7 @@ int Cryptochip::idle()
   return 1;
 }
 
+
 long Cryptochip::version()
 {
   uint32_t version = 0;

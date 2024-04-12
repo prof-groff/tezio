@@ -1,60 +1,13 @@
 # Tezio Signer Configuration
 
 # security: remote_ip_check - only allow requests from IPs listed in allowed_ips below
-#              auth_check - only accept requests that include a signature that auth_key must validate
-#              signing_policy_check - for each signing key, only sign requests for Tezos operations enumerated in allowed_ops
-#              high_water_mark_check - for Tezos baking operations, validate level and round to prevent double attestation and baking
+#           auth_check - only accept requests that include a signature that auth_key must validate
 
 security:
     remote_ip_check: True
     auth_check: True
-    signing_policy_check: True
-    high_water_mark_check: True
 
 verbose: False # Print URL and any data received with request and high water mark data
 
-high_water_marks: # enter starting high water marks for level and round for each baking operation
-    level:
-        0x11: 0
-        0x12: 0
-        0x13: 0
-    round:
-        0x11: 0
-        0x12: 0
-        0x13: 0
-
 allowed_ips: 
     ["127.0.0.1"]
-
-# MAGIC BYTES
-# 0x01 - LEGACY BLOCK
-# 0x02 - LEGACY ENDORSEMENT
-# 0x03 - TRANSFER
-# 0x04 - AUTHENTICATED SIGNING REQUEST
-# 0x05 - MICHELSON DATA
-# 0x11 - BLOCK
-# 0x12 - PRE-ATTESTATION
-# 0x13 - ATTESTATION
-
-policy:
-    signing_keys:
-        "tz1MPxCXbc1mNHSDA9fXXRTTdVY1r1yDkjn7":
-            curve_alias: 1
-            allowed_ops: [0x03]
-            auth_req: True
-            auth_prefix: "040100"
-        "tz2Wk2wpRs3U3Pu2XFdjjqRz84LLynKqv3jd":
-            curve_alias: 2
-            allowed_ops: [0x03]
-            auth_req: True
-            auth_prefix: "040101"
-        "tz3WqrfXaNnCckfofeeCGAehhZhZQ6nShz3i":
-            curve_alias: 3
-            allowed_ops: [0x03, 0x11, 0x12, 0x13]
-            auth_req: True
-            auth_prefix: "040102"
-    auth_key:
-        pkh:
-            "tz3RunZg4JQw5Hiy7mDpPCTgVpiCXkP9JMT6"
-        curve_alias:
-            0
