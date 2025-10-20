@@ -1,4 +1,4 @@
-## Getting Started with Tezos BLS Signer
+## Getting Started with Tezos BLS Signer (and Transistioning from TezBake to Octez-Baker)
 
 I’ve been baking on tezos for years using a Ledger Nano S (and later an S+) and TezBake, an fantastic product for small bakers developed by the team at [Tez Capital](https://tez.capital/). Unfortunately, the Ledger devices and the Ledger Tezos Baking App do not support BLS keys. So with the arrival of the Seoul protocol and BLS keys on mainnet, I got started experimenting with the new [BLS Signer](https://forum.tezosagora.org/t/announcing-the-raspberry-pi-bls-signer-for-tezos-bakers/6911/4) developed by the team at Nomadic Labs. BLS Signer is basically a Raspberry Pi Zero running octez-signer and configured to connect to a baking machine via USB. While the Tez Capital team is working on support for BLS Signer or an alternative they are developing, TezBake does not currently support the device. So, I had to transition to using octez-baker directly. I wasn’t particularly eager to do so since in my experience TezBake is much easier to set up then octez-baker directly. But my Ledger Nano S+ decided to break on me last week, creating urgency. Here is what I did to make the switch.
 
@@ -31,13 +31,16 @@ export release=noble
 Download an ASCII armored public key from Nomadic Labs, pipe it through gpg to convert it into binary format, and save it as octez.gpg. This key will be used to verify the nomadic labs repositories.
 
 ```
-curl -s "https://packages.nomadic-labs.com/$distribution/octez.asc" | sudo gpg --dearmor -o /etc/apt/keyrings/octez.gpg
+curl -s "https://packages.nomadic-labs.com/$distribution/octez.asc" \
+| sudo gpg --dearmor -o /etc/apt/keyrings/octez.gpg
 ```
 
 Use echo to form the full repository string for your distribution and release then pipe this string to tee which will write it to a filed octez.list in your apt repository sources.list.d directory.
 
 ```
-echo "deb [signed-by=/etc/apt/keyrings/octez.gpg] https://packages.nomadic-labs.com/$distribution $release main" | sudo tee /etc/apt/sources.list.d/octez.list
+echo "deb [signed-by=/etc/apt/keyrings/octez.gpg] \
+https://packages.nomadic-labs.com/$distribution $release main" \
+| sudo tee /etc/apt/sources.list.d/octez.list
 ```
 
 Update apt (or apt-get) and install octez. You just need to include octez-baker in the command because octez-client, octez-node, octez-signer, octez-dal-node, and octez-accuser are all dependencies. 
@@ -47,9 +50,12 @@ sudo apt-get update
 sudo apt-get install octez-baker
 ```
 
-During the installation process you will be prompted with the option to configure octez-node. I recommend doing so. I set up the node as in rolling mode on mainnet, with instructions to download a snapshot when it is first started up, and with the liquidity toggle vote set to PASS. 
+During the installation process you will be prompted with the option to configure octez-node. I recommend doing so. I set up the node in rolling history mode, on mainnet, with instructions to download a snapshot when it is first started up, and with the liquidity toggle vote set to PASS. If you skip node configuration during installation it can be done later by switching to the tezos user and using `octez-node config init ...` like the following.
 
-[[ADD IN THE DETAILS WHEN YOU DO THIS AGAIN]]
+```
+sudo su - tezos
+octez-node config init --network=mainnet --history-mode=rolling 
+```
 
 ### Step 3: Build and Setup BLS Signer
 
@@ -89,7 +95,8 @@ sudo su - tezos
 Create and initialize the dal node configuration file to point to your baker. Note, that this is the baker manager key registered on the blockchain (the tz address, not an alias you may be using with octez-client, and not the BLS keys on the BLS signer device that will be used as consensus and companion keys). 
 
 ```
-octez-dal-node config init --endpoint http://127.0.0.1:8732 --attester-profiles=tz1tHisIsMyreGiSterEdBakerManAGERKeY
+octez-dal-node config init --endpoint http://127.0.0.1:8732 \
+--attester-profiles=tz1tHisIsMyreGiSterEdBakerManAGERKeY
 ```
 
 Exit the tezos users (type exit in the terminal) and restart the dal node using the new configuration
@@ -121,13 +128,15 @@ Tezos remote known keys:
 Import the first one as your new baker consensus key. Here I am assigning the alias baker_consensus to this key.
 
 ```
-octez-client import secret key baker_consensus \ tcp://10.0.0.1:7732/tz4YXJteWF0bW9zcGhlcmVydW5uaW5naGVyZ
+octez-client import secret key baker_consensus \
+tcp://10.0.0.1:7732/tz4YXJteWF0bW9zcGhlcmVydW5uaW5naGVyZ
 ```		   
 
 Import the second one as your new baker companion key. 
 
 ```
-octez-client import secret key baker_companion \ tcp://10.0.0.1:7732/tz4GxvY2FseW91d2hlbmR1bGx0cmFjZWFpcn  
+octez-client import secret key baker_companion \
+tcp://10.0.0.1:7732/tz4GxvY2FseW91d2hlbmR1bGx0cmFjZWFpcn  
 ```
 
 My understanding is the companion key is used to sign DAL attestations. I’m not sure and I don’t currently understand why a separate key is needed besides it having to do with signature aggregation, which BLS elliptic curve cryptography enables. 
@@ -142,9 +151,9 @@ BAKING_KEY="baker_consensus baker_companion ledger_baker"
 RUNTIME_OPTS="--keep-alive --dal-node http://127.0.0.1:10732"
 ```
 
-The `BAKER_KEY` variable apparently does nothing but is in there to start so I kept it. It is probably a typo because the variable that is actually referenced in the execution string in octez-baker@.service is `$BAKING_KEYS', which is what I added. The `RUNTIME_OPTS` points to my DAL node so I can participate in DAL attestations and the `BAKING_KEY` variable lists both of the BLS baking keys using the aliases created when they were imported. The `ledger_baker` alias is my tz1 baking key currenlty signing from my Ledger Nano S+. This is here because my new BLS keys will not take effect until a future cycle. See below for more details about importing a key from the ledger device and setting the BLS keys as my future consensus and companion key.
+The `BAKER_KEY` variable apparently does nothing but is in in the default file so I kept it. It is probably a typo because the variable that is actually referenced in the execution string in octez-baker@.service is `$BAKING_KEYS`, which is what I added. The `RUNTIME_OPTS` points to my DAL node so I can participate in DAL attestations and the `BAKING_KEY` variable lists both of the BLS baking keys using the aliases created when they were imported. The `ledger_baker` alias is my tz1 baking key currenlty signing from my Ledger Nano S+. This is here because my new BLS keys will not take effect until a future cycle. See below for more details about importing a key from the ledger device and setting the BLS keys as my future consensus and companion key. Note, the strings with spaces are quoted so the variable's value is the entire string including the spaces. Quotes make no difference if the variable's value has no spaces (e.g., `AGNOSTIC_BAKER=false` and `AGNOSTIC_BAKER="false"` are equivelent). Having the manager key on a ledger will allow you to submit operations for things like changing your stake, changing your delegate parameters, etc. 
 
-### Aside: Getting Ledger Nano S Plus Working and Setting the BLS Keys for Consensus and Companion
+### Aside: Getting Ledger Nano S Plus Working and Setting the BLS Keys for Consensus and Companion Keys
 
 Initialize the Nano S Plus with a new or existing seed phrase. Use a 24 word seed to get a full 32-bytes (256-bits) of entropy. Don’t make it easier for quantum computers to crack your secret key.
 
@@ -196,5 +205,34 @@ Now that my tezos delagate (manager) key is known to tezos-client I can use it t
 ```
 octez-client --wait none set consensus key for ledger_baker to baker_consensus
 octez-client --wait none set companion key for <DELEGATE> to baker_companion
+```
+### Aside: Other Baking-Related Operations
+
+By the way, if the baker manager key is not already registered as a delegate these commands must be preceeded by the following (as the tezos user).
+
+```
+octez-client register key ledger_baker as delegate
+```
+
+The baker's delegate paramters can also be set using the following.
+
+```
+octez-client set delegate parameters for ledger_baker --limit-of-staking-over-baking 9 --edge-of-baking-over-staking 0.1
+```
+
+The `--limit-of-staking-over-baking` value can be between 0 and 9 (default 0) and is the multiple of how much external stake a baker can accept over their own stake. The `--edge-of-baking-over-staking` value can be between 0 and 1 (default is 1) and represents proportion of rewards kept by the baker with the rest being paid to external stakers. 
+
+To stake, unstake, and finalize unstake funds do the following.
+
+```
+octez-client stake <amount> for <staker>
+octez-client unstake <amount|"everything"> for <staker>
+octez-client finalize unstake for <staker>
+```
+
+For me the `<staker>` is ledger_baker for self-stake or the other account doing the staking. If the intention is to stake to a delagate other than yourself, then these commands need to be preceeded by an operation to set the delagate for the staker account.
+
+```
+octez-client set delegate for <staker> to <delagate>
 ```
 
