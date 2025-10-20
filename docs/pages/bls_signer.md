@@ -50,7 +50,7 @@ sudo apt-get update
 sudo apt-get install octez-baker
 ```
 
-During the installation process you will be prompted with the option to configure octez-node. I recommend doing so. I set up the node in rolling history mode, on mainnet, with instructions to download a snapshot when it is first started up, and with the liquidity toggle vote set to PASS. If you skip node configuration during installation it can be done later by switching to the tezos user and using `octez-node config init ...` like the following.
+During the installation process you will be prompted with the option to configure octez-node. I recommend doing so. I set up the node in rolling history mode, on mainnet, and with instructions to download a snapshot when it is first started up. You can also set some default baker configuration items like setting the liquidity toggle vote. I set mine to PASS. I participate in liquidity baking because it pays well but does it do anything for us as a community (shrug). Maybe I should cash out my sirus tokens for xtz before xtz takes off (double shrug). If you skip node configuration during installation it can be done later by switching to the tezos user and using `octez-node config init ...` like the following.
 
 ```
 sudo su - tezos
