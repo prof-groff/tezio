@@ -162,8 +162,8 @@ Use ledger live to Install the tezos wallet and tezos baker apps. The latter req
 Set up udev rules so you can connect to the ledger device. Simply running the script Ledger provides will probably not work because it will not grant sufficient privileges to the tezos user. Instead, create a custom udev rules file that grants privileges to all members of the plugdev group, which is a group that allows users to mount and unmount usb connected devices.
 
 ```
-echo ‘SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", TAG+="uaccess", \
-TAG+="udev-acl", MODE="0660", GROUP="plugdev"’ \
+echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", TAG+="uaccess", \
+TAG+="udev-acl", MODE="0660", GROUP="plugdev"' \
 | sudo tee /etc/udev/rules.d/20-leger.rules
 ```
 
