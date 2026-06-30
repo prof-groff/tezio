@@ -25,7 +25,7 @@ Then, open a terminal, add the distribution and release as variables in your she
 
 ```
 export distribution=ubuntu
-export release=noble
+export release=24.04
 ```
 
 Download an ASCII armored public key from Nomadic Labs, pipe it through gpg to convert it into binary format, and save it as octez.gpg. This key will be used to verify the nomadic labs repositories.
